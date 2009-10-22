@@ -34,7 +34,7 @@ use \Memcache;
  * @author  Jonathan Wage <jonwage@gmail.com>
  * @author  Roman Borschel <roman@code-factory.org>
  */
-class MemcacheCache implements Cache
+class MemcacheCache extends AbstractCache
 {
     /**
      * @var Memcache
@@ -64,7 +64,7 @@ class MemcacheCache implements Cache
     /**
      * {@inheritdoc}
      */
-    public function fetch($id) 
+    protected function _doFetch($id) 
     {
         return $this->_memcache->get($id);
     }
@@ -72,7 +72,7 @@ class MemcacheCache implements Cache
     /**
      * {@inheritdoc}
      */
-    public function contains($id) 
+    protected function _doContains($id) 
     {
         return (bool) $this->_memcache->get($id);
     }
@@ -80,7 +80,7 @@ class MemcacheCache implements Cache
     /**
      * {@inheritdoc}
      */
-    public function save($id, $data, $lifeTime = false)
+    protected function _doSave($id, $data, $lifeTime = false)
     {
         return $this->_memcache->set($id, $data, 0, $lifeTime);
     }
@@ -88,7 +88,7 @@ class MemcacheCache implements Cache
     /**
      * {@inheritdoc}
      */
-    public function delete($id) 
+    protected function _doDelete($id) 
     {
         return $this->_memcache->delete($id);
     }
