@@ -2,8 +2,6 @@
 
 namespace Doctrine\Tests\Common\Cache;
 
-require_once __DIR__ . '/../../TestInit.php';
-
 abstract class CacheTest extends \Doctrine\Tests\DoctrineTestCase
 {
     public function testBasics()

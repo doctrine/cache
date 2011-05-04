@@ -4,8 +4,6 @@ namespace Doctrine\Tests\Common\Cache;
 
 use Doctrine\Common\Cache\ApcCache;
 
-require_once __DIR__ . '/../../TestInit.php';
-
 class ApcCacheTest extends CacheTest
 {
     public function setUp()
