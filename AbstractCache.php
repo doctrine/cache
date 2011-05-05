@@ -34,7 +34,7 @@ abstract class AbstractCache implements Cache
     private $_cacheIdsIndexId = 'doctrine_cache_ids';
 
     /** @var string The namespace to prefix all cache ids with */
-    private $_namespace = null;
+    private $_namespace = '';
 
     /**
      * Set the namespace to prefix all cache ids with.
@@ -44,7 +44,7 @@ abstract class AbstractCache implements Cache
      */
     public function setNamespace($namespace)
     {
-        $this->_namespace = $namespace;
+        $this->_namespace = (string) $namespace;
     }
 
     /**
@@ -176,11 +176,7 @@ abstract class AbstractCache implements Cache
      */
     private function _getNamespacedId($id)
     {
-        if ( ! $this->_namespace || strpos($id, $this->_namespace) === 0) {
-            return $id;
-        } else {
-            return $this->_namespace . $id;
-        }
+        return $this->_namespace . $id;
     }
 
     /**
