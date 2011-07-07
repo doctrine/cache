@@ -92,7 +92,7 @@ abstract class AbstractCache implements Cache
         $ids = $this->getIds();
 
         foreach ($ids as $id) {
-            $this->delete($id);
+            $this->_doDelete($id);
         }
 
         return $ids;
@@ -106,13 +106,12 @@ abstract class AbstractCache implements Cache
      */
     public function deleteByRegex($regex)
     {
+        $ids     = $this->getIds();
         $deleted = array();
-
-        $ids = $this->getIds();
 
         foreach ($ids as $id) {
             if (preg_match($regex, $id)) {
-                $this->delete($id);
+                $this->_doDelete($id);
                 $deleted[] = $id;
             }
         }
@@ -124,18 +123,17 @@ abstract class AbstractCache implements Cache
      * Delete cache entries where the id has the passed prefix
      *
      * @param string $prefix
-     * @return array $deleted  Array of the deleted cache ids
+     * @return array $deleted Array of the deleted cache ids
      */
     public function deleteByPrefix($prefix)
     {
+        $prefix  = $this->_getNamespacedId($prefix);
+        $ids     = $this->getIds();
         $deleted = array();
-
-        $prefix = $this->_getNamespacedId($prefix);
-        $ids = $this->getIds();
 
         foreach ($ids as $id) {
             if (strpos($id, $prefix) === 0) {
-                $this->delete($id);
+                $this->_doDelete($id);
                 $deleted[] = $id;
             }
         }
@@ -147,17 +145,16 @@ abstract class AbstractCache implements Cache
      * Delete cache entries where the id has the passed suffix
      *
      * @param string $suffix
-     * @return array $deleted  Array of the deleted cache ids
+     * @return array $deleted Array of the deleted cache ids
      */
     public function deleteBySuffix($suffix)
     {
+        $ids     = $this->getIds();
         $deleted = array();
-
-        $ids = $this->getIds();
 
         foreach ($ids as $id) {
             if (substr($id, -1 * strlen($suffix)) === $suffix) {
-                $this->delete($id);
+                $this->_doDelete($id);
                 $deleted[] = $id;
             }
         }
