@@ -26,26 +26,14 @@ namespace Doctrine\Common\Cache;
  * @link    www.doctrine-project.org
  * @since   2.0
  * @author  Ralph Schindler <ralph.schindler@zend.com>
+ * @author  Guilherme Blanco <guilhermeblanco@hotmail.com>
  */
-class ZendDataCache extends AbstractCache
+class ZendDataCache extends CacheProvider
 {
-    public function __construct()
-    {
-        $this->setNamespace('doctrine::'); // zend data cache format for namespaces ends in ::
-    }
-    
     /**
      * {@inheritdoc}
      */
-    public function getIds()
-    {
-        throw new \BadMethodCallException("getIds() is not supported by ZendDataCache");
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function _doFetch($id)
+    protected function doFetch($id)
     {
         return zend_shm_cache_fetch($id);
     }
@@ -53,15 +41,15 @@ class ZendDataCache extends AbstractCache
     /**
      * {@inheritdoc}
      */
-    protected function _doContains($id)
+    protected function doContains($id)
     {
-        return (zend_shm_cache_fetch($id) !== FALSE);
+        return (false !== zend_shm_cache_fetch($id));
     }
 
     /**
      * {@inheritdoc}
      */
-    protected function _doSave($id, $data, $lifeTime = 0)
+    protected function doSave($id, $data, $lifeTime = 0)
     {
         return zend_shm_cache_store($id, $data, $lifeTime);
     }
@@ -69,8 +57,16 @@ class ZendDataCache extends AbstractCache
     /**
      * {@inheritdoc}
      */
-    protected function _doDelete($id)
+    protected function doDelete($id)
     {
         return zend_shm_cache_delete($id);
+    }
+    
+    /**
+     * {@inheritdoc}
+     */
+    protected function doFlush()
+    {
+        return empty($this->getNamespace()) ? zend_shm_cache_clear() : zend_shm_cache_clear($this->getNamespace());
     }
 }

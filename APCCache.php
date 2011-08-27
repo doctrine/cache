@@ -21,7 +21,7 @@
 namespace Doctrine\Common\Cache;
 
 /**
- * Xcache cache driver.
+ * APC cache provider.
  *
  * @license http://www.opensource.org/licenses/lgpl-license.php LGPL
  * @link    www.doctrine-project.org
@@ -32,14 +32,14 @@ namespace Doctrine\Common\Cache;
  * @author  Roman Borschel <roman@code-factory.org>
  * @author  David Abdemoulaie <dave@hobodave.com>
  */
-class XcacheCache extends CacheProvider
+class APCCache extends CacheProvider
 {
     /**
      * {@inheritdoc}
      */
     protected function doFetch($id)
     {
-        return $this->doContains($id) ? unserialize(xcache_get($id)) : false;
+        return apc_fetch($id);
     }
 
     /**
@@ -47,7 +47,11 @@ class XcacheCache extends CacheProvider
      */
     protected function doContains($id)
     {
-        return xcache_isset($id);
+        $found = false;
+
+        apc_fetch($id, $found);
+
+        return $found;
     }
 
     /**
@@ -55,7 +59,7 @@ class XcacheCache extends CacheProvider
      */
     protected function doSave($id, $data, $lifeTime = 0)
     {
-        return xcache_set($id, serialize($data), (int) $lifeTime);
+        return (bool) apc_store($id, $data, (int) $lifeTime);
     }
 
     /**
@@ -63,7 +67,7 @@ class XcacheCache extends CacheProvider
      */
     protected function doDelete($id)
     {
-        return xcache_unset($id);
+        return apc_delete($id);
     }
     
     /**
@@ -71,23 +75,6 @@ class XcacheCache extends CacheProvider
      */
     protected function doFlush()
     {
-        $this->checkAuthorization();
-        
-        xcache_clear_cache(XC_TYPE_VAR, 0);
-        
-        return true;
-    }
-
-    /**
-     * Checks that xcache.admin.enable_auth is Off
-     *
-     * @throws \BadMethodCallException When xcache.admin.enable_auth is On
-     * @return void
-     */
-    protected function checkAuthorization()
-    {
-        if (ini_get('xcache.admin.enable_auth')) {
-            throw new \BadMethodCallException('To use all features of \Doctrine\Common\Cache\XcacheCache, you must set "xcache.admin.enable_auth" to "Off" in your php.ini.');
-        }
+        return apc_clear_cache();
     }
 }

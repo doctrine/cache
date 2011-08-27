@@ -1,7 +1,6 @@
 <?php
+
 /*
- *  $Id$
- *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -21,70 +20,84 @@
 
 namespace Doctrine\Common\Cache;
 
+use \Memcached;
+
 /**
- * APC cache driver.
+ * Memcached cache provider.
  *
  * @license http://www.opensource.org/licenses/lgpl-license.php LGPL
  * @link    www.doctrine-project.org
- * @since   2.0
- * @version $Revision$
+ * @since   2.2
  * @author  Benjamin Eberlei <kontakt@beberlei.de>
  * @author  Guilherme Blanco <guilhermeblanco@hotmail.com>
  * @author  Jonathan Wage <jonwage@gmail.com>
  * @author  Roman Borschel <roman@code-factory.org>
  * @author  David Abdemoulaie <dave@hobodave.com>
- * @todo Rename: APCCache
  */
-class ApcCache extends AbstractCache
+class MemcacheCache extends CacheProvider
 {
     /**
-     * {@inheritdoc}
+     * @var Memcached
      */
-    public function getIds()
+    private $memcached;
+
+    /**
+     * Sets the memcache instance to use.
+     *
+     * @param Memcached $memcached
+     */
+    public function setMemcached(Memcached $memcached)
     {
-        $ci = apc_cache_info('user');
-        $keys = array();
+        $this->memcached = $memcached;
+    }
 
-        foreach ($ci['cache_list'] as $entry) {
-            $keys[] = $entry['info'];
-        }
-
-        return $keys;
+    /**
+     * Gets the memcached instance used by the cache.
+     *
+     * @return Memcached
+     */
+    public function getMemcached()
+    {
+        return $this->memcached;
     }
 
     /**
      * {@inheritdoc}
      */
-    protected function _doFetch($id)
+    protected function doFetch($id)
     {
-        return apc_fetch($id);
+        return $this->memcached->get($id);
     }
 
     /**
      * {@inheritdoc}
      */
-    protected function _doContains($id)
+    protected function doContains($id)
     {
-        $found = false;
-
-        apc_fetch($id, $found);
-
-        return $found;
+        return (false !== $this->memcache->get($id));
     }
 
     /**
      * {@inheritdoc}
      */
-    protected function _doSave($id, $data, $lifeTime = 0)
+    protected function doSave($id, $data, $lifeTime = 0)
     {
-        return (bool) apc_store($id, $data, (int) $lifeTime);
+        return $this->memcache->set($id, $data, 0, (int) $lifeTime);
     }
 
     /**
      * {@inheritdoc}
      */
-    protected function _doDelete($id)
+    protected function doDelete($id)
     {
-        return apc_delete($id);
+        return $this->memcache->delete($id);
+    }
+    
+    /**
+     * {@inheritdoc}
+     */
+    protected function doFlush()
+    {
+        return $this->memcache->flush();
     }
 }
