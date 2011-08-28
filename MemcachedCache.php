@@ -74,7 +74,7 @@ class MemcacheCache extends CacheProvider
      */
     protected function doContains($id)
     {
-        return (false !== $this->memcache->get($id));
+        return (false !== $this->memcached->get($id));
     }
 
     /**
@@ -82,7 +82,7 @@ class MemcacheCache extends CacheProvider
      */
     protected function doSave($id, $data, $lifeTime = 0)
     {
-        return $this->memcache->set($id, $data, 0, (int) $lifeTime);
+        return $this->memcached->set($id, $data, 0, (int) $lifeTime);
     }
 
     /**
@@ -90,14 +90,14 @@ class MemcacheCache extends CacheProvider
      */
     protected function doDelete($id)
     {
-        return $this->memcache->delete($id);
+        return $this->memcached->delete($id);
     }
-    
+
     /**
      * {@inheritdoc}
      */
     protected function doFlush()
     {
-        return $this->memcache->flush();
+        return $this->memcached->flush();
     }
 }
