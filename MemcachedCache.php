@@ -34,7 +34,7 @@ use \Memcached;
  * @author  Roman Borschel <roman@code-factory.org>
  * @author  David Abdemoulaie <dave@hobodave.com>
  */
-class MemcacheCache extends CacheProvider
+class MemcachedCache extends CacheProvider
 {
     /**
      * @var Memcached
@@ -82,7 +82,7 @@ class MemcacheCache extends CacheProvider
      */
     protected function doSave($id, $data, $lifeTime = 0)
     {
-        return $this->memcached->set($id, $data, 0, (int) $lifeTime);
+        return $this->memcache->set($id, $data, (int) $lifeTime);
     }
 
     /**
