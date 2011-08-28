@@ -13,7 +13,7 @@ class MemcachedCacheTest extends CacheTest
         if (extension_loaded('memcached')) {
             $this->memcached = new \Memcached();
             $this->memcached->setOption(\Memcached::OPT_COMPRESSION, false);
-            $ok = $this->memcached->addServer('localhost', 11211);
+            $ok = $this->memcached->addServer('127.0.0.1', 11211);
             if (!$ok) {
                 $this->markTestSkipped('The ' . __CLASS__ .' requires the use of memcache');
             }
