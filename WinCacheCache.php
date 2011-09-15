@@ -79,12 +79,15 @@ class WincacheCache extends CacheProvider
      */
     protected function doGetStats()
     {
+        $info   = wincache_ucache_info();
+        $meminfo= wincache_scache_meminfo();
+        
         return array(
-            Cache::STATS_HITS   => null,
-            Cache::STATS_MISSES => null,
-            Cache::STATS_UPTIME => null,
-            Cache::STATS_MEMORY_USAGE       => null,
-            Cache::STATS_MEMORY_AVAILIABLE  => null,
+            Cache::STATS_HITS   => $info['total_hit_count'],
+            Cache::STATS_MISSES => $info['total_miss_count'],
+            Cache::STATS_UPTIME => $info['total_cache_uptime'],
+            Cache::STATS_MEMORY_USAGE       => $info['memory_total'],
+            Cache::STATS_MEMORY_AVAILIABLE  => $info['memory_free'],
         );
     }
 }
