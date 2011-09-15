@@ -2,6 +2,8 @@
 
 namespace Doctrine\Tests\Common\Cache;
 
+use Doctrine\Common\Cache\Cache;
+
 abstract class CacheTest extends \Doctrine\Tests\DoctrineTestCase
 {
     public function testBasics()
@@ -57,6 +59,25 @@ abstract class CacheTest extends \Doctrine\Tests\DoctrineTestCase
         
         $this->assertFalse($cache->contains('key1'));
     }
-
+    
+    /**
+     * @group DCOM-43
+     */
+    public function testGetStats()
+    {
+        $cache = $this->_getCacheDriver();
+        $stats = $cache->getStats();
+        
+        
+        $this->assertTrue(array_key_exists(Cache::STATS_HITS,   $stats));
+        $this->assertTrue(array_key_exists(Cache::STATS_MISSES, $stats));
+        $this->assertTrue(array_key_exists(Cache::STATS_UPTIME, $stats));
+        $this->assertTrue(array_key_exists(Cache::STATS_MEMORY_USAGE, $stats));
+        $this->assertTrue(array_key_exists(Cache::STATS_MEMORY_AVAILIABLE, $stats));
+    }
+    
+    /**
+     * @return \Doctrine\Common\Cache\CacheProvider
+     */
     abstract protected function _getCacheDriver();
 }
