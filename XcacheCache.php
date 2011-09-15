@@ -90,4 +90,18 @@ class XcacheCache extends CacheProvider
             throw new \BadMethodCallException('To use all features of \Doctrine\Common\Cache\XcacheCache, you must set "xcache.admin.enable_auth" to "Off" in your php.ini.');
         }
     }
+    
+    /**
+     * {@inheritdoc}
+     */
+    protected function doGetStats()
+    {
+        return array(
+            Cache::STATS_HITS   => null,
+            Cache::STATS_MISSES => null,
+            Cache::STATS_UPTIME => null,
+            Cache::STATS_MEMORY_USAGE       => null,
+            Cache::STATS_MEMORY_AVAILIABLE  => null,
+        );
+    }
 }

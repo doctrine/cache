@@ -28,6 +28,7 @@ namespace Doctrine\Common\Cache;
  * @author  Guilherme Blanco <guilhermeblanco@hotmail.com>
  * @author  Jonathan Wage <jonwage@gmail.com>
  * @author  Roman Borschel <roman@code-factory.org>
+ * @author  Fabio B. Silva <fabio.bat.silva@gmail.com>
  */
 abstract class CacheProvider implements Cache
 {
@@ -89,6 +90,14 @@ abstract class CacheProvider implements Cache
     public function delete($id)
     {
         return $this->doDelete($this->getNamespacedId($id));
+    }
+    
+    /**
+     * {@inheritdoc}
+     */
+    public function getStats()
+    {
+        return $this->doGetStats();
     }
 
     /**
@@ -169,4 +178,12 @@ abstract class CacheProvider implements Cache
      * @return boolean TRUE if the cache entry was successfully deleted, FALSE otherwise.
      */
     abstract protected function doFlush();
+    
+     /**
+     * Retrieves cached information from data store
+     * 
+     * @since   2.2
+     * @return  array An associative array with server's statistics.
+     */
+    abstract protected function doGetStats();
 }

@@ -31,9 +31,19 @@ namespace Doctrine\Common\Cache;
  * @author  Guilherme Blanco <guilhermeblanco@hotmail.com>
  * @author  Jonathan Wage <jonwage@gmail.com>
  * @author  Roman Borschel <roman@code-factory.org>
+ * @author  Fabio B. Silva <fabio.bat.silva@gmail.com>
  */
 interface Cache
 {
+    const STATS_INFO    = 'info';
+    const STATS_HITS    = 'hits';
+    const STATS_MISSES  = 'misses';
+    const STATS_UPTIME  = 'uptime';
+    const STATS_MEMORY_USAGE        = 'memory_usage';
+    const STATS_MEMORY_AVAILIABLE   = 'memory_available';
+    
+    
+    
     /**
      * Fetches an entry from the cache.
      * 
@@ -67,4 +77,26 @@ interface Cache
      * @return boolean TRUE if the cache entry was successfully deleted, FALSE otherwise.
      */
     function delete($id);
+    
+    /**
+     * Retrieves cached information from data store
+     * 
+     * The server's statistics array has the following values:
+     *
+     * - <b>hits</b>
+     * Number of keys that have been requested and found present.
+     * 
+     * - <b>misses</b>
+     * Number of items that have been requested and not found 
+     *
+     * - <b>uptime</b>
+     * Time that the server is running
+     * 
+     * - <b>info</b>
+     * All driver info
+     *
+     * @since   2.2
+     * @var     array Associative array with server's statistics.
+     */
+    function getStats();
 }
