@@ -35,7 +35,6 @@ namespace Doctrine\Common\Cache;
  */
 interface Cache
 {
-    const STATS_INFO    = 'info';
     const STATS_HITS    = 'hits';
     const STATS_MISSES  = 'misses';
     const STATS_UPTIME  = 'uptime';
@@ -87,13 +86,16 @@ interface Cache
      * Number of keys that have been requested and found present.
      * 
      * - <b>misses</b>
-     * Number of items that have been requested and not found 
+     * Number of items that have been requested and not found.
      *
      * - <b>uptime</b>
-     * Time that the server is running
+     * Time that the server is running.
      * 
-     * - <b>info</b>
-     * All driver info
+     * - <b>memory_usage</b>
+     * Memory used by this server to store items.
+     * 
+     * * - <b>memory_available</b>
+     * Memory allowed to use for storage.
      *
      * @since   2.2
      * @var     array Associative array with server's statistics.
