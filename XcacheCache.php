@@ -96,6 +96,10 @@ class XcacheCache extends CacheProvider
      */
     protected function doGetStats()
     {
+        $this->checkAuthorization();
+        
+        //$info =  xcache_info();
+        //var_dump($info);
         return array(
             Cache::STATS_HITS   => null,
             Cache::STATS_MISSES => null,

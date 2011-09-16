@@ -106,7 +106,10 @@ class MemcachedCache extends CacheProvider
      */
     protected function doGetStats()
     {
-        $stats = $this->memcache->getStats();
+        $stats   = $this->memcached->getStats();
+        $servers = $this->memcached->getServerList();
+        $key     = $servers[0]['host'] . ':' . $servers[0]['port'];
+        $stats   = $stats[$key];
         return array(
             Cache::STATS_HITS   => $stats['get_hits'],
             Cache::STATS_MISSES => $stats['get_misses'],
