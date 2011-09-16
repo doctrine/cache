@@ -65,6 +65,10 @@ abstract class CacheTest extends \Doctrine\Tests\DoctrineTestCase
      */
     public function testGetStats()
     {
+        if($this instanceof ArrayCacheTest){
+            $this->markTestSkipped();
+        }
+        
         $cache = $this->_getCacheDriver();
         $stats = $cache->getStats();
         
