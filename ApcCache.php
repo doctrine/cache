@@ -32,7 +32,7 @@ namespace Doctrine\Common\Cache;
  * @author  Roman Borschel <roman@code-factory.org>
  * @author  David Abdemoulaie <dave@hobodave.com>
  */
-class APCCache extends CacheProvider
+class ApcCache extends CacheProvider
 {
     /**
      * {@inheritdoc}
