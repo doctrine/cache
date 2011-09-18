@@ -65,8 +65,8 @@ abstract class CacheTest extends \Doctrine\Tests\DoctrineTestCase
      */
     public function testGetStats()
     {
-        if($this instanceof ArrayCacheTest){
-            $this->markTestSkipped();
+        if ($this instanceof ArrayCacheTest || $this instanceof ZendDataCacheTest ) {
+            $this->markTestSkipped("Statistics are not available for this driver");
         }
         
         $cache = $this->_getCacheDriver();
