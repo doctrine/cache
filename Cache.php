@@ -41,8 +41,6 @@ interface Cache
     const STATS_MEMORY_USAGE        = 'memory_usage';
     const STATS_MEMORY_AVAILIABLE   = 'memory_available';
     
-    
-    
     /**
      * Fetches an entry from the cache.
      * 
