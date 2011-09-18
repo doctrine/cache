@@ -94,11 +94,11 @@ interface Cache
      * - <b>memory_usage</b>
      * Memory used by this server to store items.
      * 
-     * * - <b>memory_available</b>
+     * - <b>memory_available</b>
      * Memory allowed to use for storage.
      *
      * @since   2.2
-     * @var     array Associative array with server's statistics.
+     * @var     array Associative array with server's statistics if available, NULL otherwise.
      */
     function getStats();
 }

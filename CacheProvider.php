@@ -183,7 +183,7 @@ abstract class CacheProvider implements Cache
      * Retrieves cached information from data store
      * 
      * @since   2.2
-     * @return  array An associative array with server's statistics.
+     * @return  array An associative array with server's statistics if available, NULL otherwise.
      */
     abstract protected function doGetStats();
 }
