@@ -73,11 +73,11 @@ abstract class CacheTest extends \Doctrine\Tests\DoctrineTestCase
         $stats = $cache->getStats();
         
         
-        $this->assertTrue(array_key_exists(Cache::STATS_HITS,   $stats));
-        $this->assertTrue(array_key_exists(Cache::STATS_MISSES, $stats));
-        $this->assertTrue(array_key_exists(Cache::STATS_UPTIME, $stats));
-        $this->assertTrue(array_key_exists(Cache::STATS_MEMORY_USAGE, $stats));
-        $this->assertTrue(array_key_exists(Cache::STATS_MEMORY_AVAILIABLE, $stats));
+        $this->assertArrayHasKey(Cache::STATS_HITS,   $stats);
+        $this->assertArrayHasKey(Cache::STATS_MISSES, $stats);
+        $this->assertArrayHasKey(Cache::STATS_UPTIME, $stats);
+        $this->assertArrayHasKey(Cache::STATS_MEMORY_USAGE, $stats);
+        $this->assertArrayHasKey(Cache::STATS_MEMORY_AVAILIABLE, $stats);
     }
     
     /**
