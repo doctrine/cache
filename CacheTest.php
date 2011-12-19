@@ -35,7 +35,7 @@ abstract class CacheTest extends \Doctrine\Tests\DoctrineTestCase
         $this->assertFalse($cache->contains('test_key1'));
         $this->assertFalse($cache->contains('test_key2'));
     }
-    
+
     public function testFlushAll()
     {
         $cache = $this->_getCacheDriver();
@@ -52,14 +52,14 @@ abstract class CacheTest extends \Doctrine\Tests\DoctrineTestCase
         $cache = $this->_getCacheDriver();
         $cache->setNamespace('test_');
         $cache->save('key1', 'test');
-        
+
         $this->assertTrue($cache->contains('key1'));
-        
+
         $cache->setNamespace('test2_');
-        
+
         $this->assertFalse($cache->contains('key1'));
     }
-    
+
     /**
      * @group DCOM-43
      */
@@ -68,18 +68,18 @@ abstract class CacheTest extends \Doctrine\Tests\DoctrineTestCase
         if ($this instanceof ArrayCacheTest || $this instanceof ZendDataCacheTest ) {
             $this->markTestSkipped("Statistics are not available for this driver");
         }
-        
+
         $cache = $this->_getCacheDriver();
         $stats = $cache->getStats();
-        
-        
+
+
         $this->assertArrayHasKey(Cache::STATS_HITS,   $stats);
         $this->assertArrayHasKey(Cache::STATS_MISSES, $stats);
         $this->assertArrayHasKey(Cache::STATS_UPTIME, $stats);
         $this->assertArrayHasKey(Cache::STATS_MEMORY_USAGE, $stats);
         $this->assertArrayHasKey(Cache::STATS_MEMORY_AVAILIABLE, $stats);
     }
-    
+
     /**
      * @return \Doctrine\Common\Cache\CacheProvider
      */
