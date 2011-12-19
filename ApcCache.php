@@ -69,7 +69,7 @@ class ApcCache extends CacheProvider
     {
         return apc_delete($id);
     }
-    
+
     /**
      * {@inheritdoc}
      */
@@ -77,7 +77,7 @@ class ApcCache extends CacheProvider
     {
         return apc_clear_cache() && apc_clear_cache('user');
     }
-    
+
     /**
      * {@inheritdoc}
      */
@@ -85,7 +85,7 @@ class ApcCache extends CacheProvider
     {
         $info = apc_cache_info();
         $sma  = apc_sma_info();
-        
+
         return array(
             Cache::STATS_HITS              => $info['num_hits'],
             Cache::STATS_MISSES            => $info['num_misses'],

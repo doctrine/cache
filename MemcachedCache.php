@@ -100,7 +100,7 @@ class MemcachedCache extends CacheProvider
     {
         return $this->memcached->flush();
     }
-    
+
     /**
      * {@inheritdoc}
      */

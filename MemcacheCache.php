@@ -92,7 +92,7 @@ class MemcacheCache extends CacheProvider
     {
         return $this->memcache->delete($id);
     }
-    
+
     /**
      * {@inheritdoc}
      */
@@ -100,7 +100,7 @@ class MemcacheCache extends CacheProvider
     {
         return $this->memcache->flush();
     }
-    
+
     /**
      * {@inheritdoc}
      */

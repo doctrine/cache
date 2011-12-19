@@ -72,20 +72,20 @@ class ArrayCache extends CacheProvider
     protected function doDelete($id)
     {
         unset($this->data[$id]);
-        
+
         return true;
     }
-    
+
     /**
      * {@inheritdoc}
      */
     protected function doFlush()
     {
         $this->data = array();
-        
+
         return true;
     }
-    
+
     /**
      * {@inheritdoc}
      */

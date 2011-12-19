@@ -65,7 +65,7 @@ class WincacheCache extends CacheProvider
     {
         return wincache_ucache_delete($id);
     }
-    
+
     /**
      * {@inheritdoc}
      */
@@ -73,7 +73,7 @@ class WincacheCache extends CacheProvider
     {
         return wincache_ucache_clear();
     }
-    
+
     /**
      * {@inheritdoc}
      */
