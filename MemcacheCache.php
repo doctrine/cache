@@ -82,7 +82,7 @@ class MemcacheCache extends CacheProvider
      */
     protected function doSave($id, $data, $lifeTime = 0)
     {
-        return $this->memcache->set($id, $data, 0, (int) $lifeTime);
+        return $this->memcache->set($id, $data, 0, time() + (int) $lifeTime);
     }
 
     /**
