@@ -21,6 +21,13 @@ class MemcacheCacheTest extends CacheTest
         }
     }
 
+    public function testLongLifetime()
+    {
+        $cache = $this->_getCacheDriver();
+        $cache->save('key', 'value', 30 * 24 * 3600 + 1);
+        $this->assertTrue($cache->contains('key'), 'Memcache provider should support TTL > 30 days');
+    }
+
     protected function _getCacheDriver()
     {
         $driver = new MemcacheCache();
