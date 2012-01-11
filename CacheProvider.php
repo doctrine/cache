@@ -133,7 +133,6 @@ abstract class CacheProvider implements Cache
     {
         $namespaceCacheKey = sprintf(self::DOCTRINE_NAMESPACE_CACHEKEY, $this->namespace);
         $namespaceVersion  = ($this->doContains($namespaceCacheKey)) ? $this->doFetch($namespaceCacheKey) : 1;
-        $idCacheKey        = strtr($id,  array('[' => '', ']' => ''));
 
         return sprintf('%s[%s][%s]', $this->namespace, $id, $namespaceVersion);
     }
