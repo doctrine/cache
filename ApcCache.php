@@ -49,9 +49,7 @@ class ApcCache extends CacheProvider
     {
         $found = false;
 
-        apc_fetch($id, $found);
-
-        return $found;
+        return apc_exists($id);
     }
 
     /**
