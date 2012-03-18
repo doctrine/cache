@@ -44,6 +44,7 @@ class RedisCache extends CacheProvider
      */
     public function setRedis(Redis $redis)
     {
+        $redis->setOption(Redis::OPT_SERIALIZER, Redis::SERIALIZER_IGBINARY);
         $this->redis = $redis;
     }
 
