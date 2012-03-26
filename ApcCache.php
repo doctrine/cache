@@ -47,8 +47,6 @@ class ApcCache extends CacheProvider
      */
     protected function doContains($id)
     {
-        $found = false;
-
         return apc_exists($id);
     }
 
