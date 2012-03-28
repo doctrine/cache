@@ -40,6 +40,11 @@ abstract class CacheProvider implements Cache
     private $namespace = '';
 
     /**
+     * @var string The namespace version
+     */
+    private $namespaceVersion = NULL;
+
+    /**
      * Set the namespace to prefix all cache ids with.
      *
      * @param string $namespace
@@ -117,10 +122,11 @@ abstract class CacheProvider implements Cache
      */
     public function deleteAll()
     {
-        $namespaceCacheKey = sprintf(self::DOCTRINE_NAMESPACE_CACHEKEY, $this->namespace);
-        $namespaceVersion  = ($this->doContains($namespaceCacheKey)) ? $this->doFetch($namespaceCacheKey) : 1;
+        $namespaceCacheKey = $this->getNamespaceCacheKey();
+        $namespaceVersion  = $this->getNamespaceVersion() + 1;
+        $this->namespaceVersion = $namespaceVersion;
 
-        return $this->doSave($namespaceCacheKey, $namespaceVersion + 1);
+        return $this->doSave($namespaceCacheKey, $namespaceVersion);
     }
 
     /**
@@ -131,10 +137,35 @@ abstract class CacheProvider implements Cache
      */
     private function getNamespacedId($id)
     {
-        $namespaceCacheKey = sprintf(self::DOCTRINE_NAMESPACE_CACHEKEY, $this->namespace);
-        $namespaceVersion  = ($this->doContains($namespaceCacheKey)) ? $this->doFetch($namespaceCacheKey) : 1;
+        $namespaceVersion  = $this->getNamespaceVersion();
 
         return sprintf('%s[%s][%s]', $this->namespace, $id, $namespaceVersion);
+    }
+
+    /**
+     * Namespace cache key
+     *
+     * @return string $namespaceCacheKey
+     */
+    private function getNamespaceCacheKey()
+    {
+        return sprintf(self::DOCTRINE_NAMESPACE_CACHEKEY, $this->namespace);
+    }
+
+    /**
+     * Namespace version
+     *
+     * @return string $namespaceVersion
+     */
+    private function getNamespaceVersion()
+    {
+        if (NULL === $this->namespaceVersion)
+        {
+            $namespaceCacheKey = $this->getNamespaceCacheKey();
+            $this->namespaceVersion = ($this->doContains($namespaceCacheKey)) ? $this->doFetch($namespaceCacheKey) : 1;
+        }
+
+        return $this->namespaceVersion;
     }
 
     /**
