@@ -162,7 +162,12 @@ abstract class CacheProvider implements Cache
         if (NULL === $this->namespaceVersion)
         {
             $namespaceCacheKey = $this->getNamespaceCacheKey();
-            $this->namespaceVersion = ($this->doContains($namespaceCacheKey)) ? $this->doFetch($namespaceCacheKey) : 1;
+            $namespaceVersion = $this->doFetch($namespaceCacheKey);
+            if (false === $namespaceVersion) {
+                $namespaceVersion = 1;
+                $this->doSave($namespaceCacheKey, $namespaceVersion);
+            }
+            $this->namespaceVersion = $namespaceVersion;
         }
 
         return $this->namespaceVersion;
