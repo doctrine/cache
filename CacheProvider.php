@@ -42,7 +42,7 @@ abstract class CacheProvider implements Cache
     /**
      * @var string The namespace version
      */
-    private $namespaceVersion = NULL;
+    private $namespaceVersion;
 
     /**
      * Set the namespace to prefix all cache ids with.
@@ -124,6 +124,7 @@ abstract class CacheProvider implements Cache
     {
         $namespaceCacheKey = $this->getNamespaceCacheKey();
         $namespaceVersion  = $this->getNamespaceVersion() + 1;
+
         $this->namespaceVersion = $namespaceVersion;
 
         return $this->doSave($namespaceCacheKey, $namespaceVersion);
@@ -159,16 +160,20 @@ abstract class CacheProvider implements Cache
      */
     private function getNamespaceVersion()
     {
-        if (NULL === $this->namespaceVersion)
-        {
-            $namespaceCacheKey = $this->getNamespaceCacheKey();
-            $namespaceVersion = $this->doFetch($namespaceCacheKey);
-            if (false === $namespaceVersion) {
-                $namespaceVersion = 1;
-                $this->doSave($namespaceCacheKey, $namespaceVersion);
-            }
-            $this->namespaceVersion = $namespaceVersion;
+        if (null !== $this->namespaceVersion) {
+            return $this->namespaceVersion;
         }
+
+        $namespaceCacheKey = $this->getNamespaceCacheKey();
+        $namespaceVersion = $this->doFetch($namespaceCacheKey);
+
+        if (false === $namespaceVersion) {
+            $namespaceVersion = 1;
+
+            $this->doSave($namespaceCacheKey, $namespaceVersion);
+        }
+
+        $this->namespaceVersion = $namespaceVersion;
 
         return $this->namespaceVersion;
     }
