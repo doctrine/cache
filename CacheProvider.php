@@ -199,7 +199,9 @@ abstract class CacheProvider implements Cache
      *
      * @param string $id The cache id.
      * @param string $data The cache entry/data.
-     * @param int $lifeTime The lifetime. If != false, sets a specific lifetime for this cache entry (null => infinite lifeTime).
+     * @param bool|int $lifeTime The lifetime. If != false, sets a specific lifetime for this
+     *                           cache entry (null => infinite lifeTime).
+     *
      * @return boolean TRUE if the entry was successfully stored in the cache, FALSE otherwise.
      */
     abstract protected function doSave($id, $data, $lifeTime = false);
