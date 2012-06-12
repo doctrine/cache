@@ -94,7 +94,7 @@ class FilesystemCache extends CacheProvider
      */
     private function getFilename($id)
     {
-        return $this->directory . DIRECTORY_SEPARATOR . $id . $this->extension;
+        return $this->directory . DIRECTORY_SEPARATOR . md5($id) . $this->extension;
     }
 
     /**
@@ -121,7 +121,18 @@ class FilesystemCache extends CacheProvider
      */
     protected function doContains($id)
     {
-        return file_exists($this->getFilename($id));
+        $filename = $this->getFilename($id);
+
+        if ( ! file_exists($filename)) {
+            return false;
+        }
+
+        $item = include $filename;
+        if($item['lifetime'] !== 0 && $item['lifetime'] < time()) {
+            return false;
+        }
+
+        return true;
     }
 
     /**
