@@ -13,6 +13,13 @@ class ZendDataCacheTest extends CacheTest
         }
     }
 
+    public function testGetStats()
+    {
+        $cache = $this->_getCacheDriver();
+        $stats = $cache->getStats();
+        $this->assertNull($stats);
+    }
+
     protected function _getCacheDriver()
     {
         return new ZendDataCache();
