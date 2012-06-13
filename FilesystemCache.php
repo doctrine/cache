@@ -94,7 +94,10 @@ class FilesystemCache extends CacheProvider
      */
     private function getFilename($id)
     {
-        return $this->directory . DIRECTORY_SEPARATOR . md5($id) . $this->extension;
+        $path = implode(str_split(md5($id), 12), DIRECTORY_SEPARATOR);
+        $path = $this->directory . DIRECTORY_SEPARATOR . $path;
+
+        return $path . DIRECTORY_SEPARATOR . $id . $this->extension;
     }
 
     /**
@@ -146,9 +149,17 @@ class FilesystemCache extends CacheProvider
 
         $item['data']       = $data;
         $item['lifetime']   = $lifeTime;
-        $path               = $this->getFilename($id);
+        $filename           = $this->getFilename($id);
+        $filepath           = pathinfo($filename, PATHINFO_DIRNAME);
 
-        return file_put_contents($path, '<?php return unserialize(' . var_export(serialize($item), true) . ');');
+        if ( ! is_dir($filepath)) {
+            mkdir($filepath, 0777, true);
+        }
+
+        $data   = var_export(serialize($item), true);
+        $data   = sprintf('<?php return unserialize(%s);',$data);
+
+        return file_put_contents($filename, $data);
     }
 
     /**
@@ -164,8 +175,13 @@ class FilesystemCache extends CacheProvider
      */
     protected function doFlush()
     {
-        foreach (glob($this->directory . '/*' . $this->extension) as $file) {
-            unlink($file);
+        $patter   = '/^.+\\' . $this->extension . '$/i';
+        $iterator = new \RecursiveDirectoryIterator($this->directory);
+        $iterator = new \RecursiveIteratorIterator($iterator);
+        $iterator = new \RegexIterator($iterator, $patter);
+
+        foreach($iterator as $name => $file) {
+            unlink($name);
         }
 
         return true;
