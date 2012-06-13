@@ -68,14 +68,17 @@ class FilesystemCacheTest extends CacheTest
 
     public function tearDown()
     {
-        $dir = $this->driver->getDirectory();
-        $ext = $this->driver->getExtension();
+        $dir    = $this->driver->getDirectory();
+        $ext    = $this->driver->getExtension();
+        $list   = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($dir));
 
-        foreach (glob($dir . '/*' . $ext) as $file) {
-            unlink($file);
+        foreach($list as $file){
+            if($file->isDir()) {
+                rmdir($file->getRealPath());
+                continue;
+            }
+            unlink($file->getRealPath());
         }
-
-        rmdir($dir);
     }
 
 }
