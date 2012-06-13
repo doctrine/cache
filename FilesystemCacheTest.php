@@ -63,6 +63,7 @@ class FilesystemCacheTest extends CacheTest
     {
         $cache = $this->_getCacheDriver();
         $stats = $cache->getStats();
+
         $this->assertNull($stats);
     }
 
@@ -71,6 +72,7 @@ class FilesystemCacheTest extends CacheTest
         $dir        = $this->driver->getDirectory();
         $ext        = $this->driver->getExtension();
         $iterator   = new \RecursiveDirectoryIterator($dir);
+
         foreach (new \RecursiveIteratorIterator($iterator, \RecursiveIteratorIterator::CHILD_FIRST) as $file) {
             if ($file->isFile()) {
                 @unlink($file->getRealPath());
