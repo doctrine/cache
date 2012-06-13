@@ -110,13 +110,13 @@ class FilesystemCache extends CacheProvider
             return false;
         }
 
-        $item = include $filename;
+        $value = include $filename;
 
-        if($item['lifetime'] !== 0 && $item['lifetime'] < time()) {
+        if($value['lifetime'] !== 0 && $value['lifetime'] < time()) {
             return false;
         }
 
-        return $item['data'];
+        return $value['data'];
     }
 
     /**
@@ -130,9 +130,9 @@ class FilesystemCache extends CacheProvider
             return false;
         }
 
-        $item = include $filename;
+        $value = include $filename;
 
-        if ($item['lifetime'] !== 0 && $item['lifetime'] < time()) {
+        if ($value['lifetime'] !== 0 && $value['lifetime'] < time()) {
             return false;
         }
 
@@ -150,20 +150,26 @@ class FilesystemCache extends CacheProvider
 
         $filename   = $this->getFilename($id);
         $filepath   = pathinfo($filename, PATHINFO_DIRNAME);
+        $serialize  = is_object($data) && ! method_exists($data, '__set_state');
 
         if ( ! is_dir($filepath)) {
             mkdir($filepath, 0777, true);
         }
 
-        $item = array(
+        $value = array(
             'lifetime'  => $lifeTime,
             'data'      => $data
         );
 
-        $data   = var_export(serialize($item), true);
-        $data   = sprintf('<?php return unserialize(%s);', $data);
+        if ($serialize) {
+            $value = serialize($value);
+        }
 
-        return file_put_contents($filename, $data);
+        $value  = var_export($value, true);
+        $code   = $serialize ? "unserialize($value)" : $value;
+        $code   = sprintf('<?php return %s;', $code);
+
+        return file_put_contents($filename, $code);
     }
 
     /**
