@@ -59,6 +59,44 @@ class FilesystemCacheTest extends CacheTest
         $this->assertFalse($cache->fetch('test_key'));
     }
 
+    public function testImplementsSetState()
+    {
+        $cache = $this->_getCacheDriver();
+
+        // Test save
+        $cache->save('test_set_state', new SetStateClass(array(1,2,3)));
+
+        //Test __set_state call
+        $this->assertCount(0, SetStateClass::$values);
+
+        // Test fetch
+        $value = $cache->fetch('test_set_state');
+        $this->assertInstanceOf('Doctrine\Tests\Common\Cache\SetStateClass', $value);
+        $this->assertEquals(array(1,2,3), $value->getValue());
+
+        //Test __set_state call
+        $this->assertCount(1, SetStateClass::$values);
+
+        // Test contains
+        $this->assertTrue($cache->contains('test_set_state'));
+    }
+
+    public function testNotImplementsSetState()
+    {
+        $cache = $this->_getCacheDriver();
+
+        // Test save
+        $cache->save('test_not_set_state', new NotSetStateClass(array(1,2,3)));
+
+        // Test fetch
+        $value = $cache->fetch('test_not_set_state');
+        $this->assertInstanceOf('Doctrine\Tests\Common\Cache\NotSetStateClass', $value);
+        $this->assertEquals(array(1,2,3), $value->getValue());
+
+        // Test contains
+        $this->assertTrue($cache->contains('test_not_set_state'));
+    }
+
     public function testGetStats()
     {
         $cache = $this->_getCacheDriver();
@@ -82,4 +120,30 @@ class FilesystemCacheTest extends CacheTest
         }
     }
 
+}
+
+class NotSetStateClass
+{
+    private $value;
+
+    public function __construct($value)
+    {
+        $this->value = $value;
+    }
+
+    public function getValue()
+    {
+        return $this->value;
+    }
+}
+
+class SetStateClass extends NotSetStateClass
+{
+    public static $values = array();
+
+    public static function __set_state($data)
+    {
+        self::$values = $data;
+        return new self($data['value']);
+    }
 }
