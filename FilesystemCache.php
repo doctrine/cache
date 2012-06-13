@@ -28,25 +28,24 @@ namespace Doctrine\Common\Cache;
  */
 class FilesystemCache extends CacheProvider
 {
-
     const EXTENSION = '.doctrinecache.php';
 
     /**
-     * The cache directory.
-     *
-     * @var string
+     * @var string Cache directory.
      */
     private $directory;
 
     /**
-     * The cache file extension.
-     *
-     * @var string
+     * @var string Cache file extension.
      */
     private $extension;
 
     /**
-     * @param string $directory The cache directory
+     * Constructor
+     *
+     * @param string $directory Cache directory.
+     * @param string $directory Cache file extension.
+     *
      * @throws \InvalidArgumentException
      */
     public function __construct($directory, $extension = self::EXTENSION)
@@ -112,6 +111,7 @@ class FilesystemCache extends CacheProvider
         }
 
         $item = include $filename;
+
         if($item['lifetime'] !== 0 && $item['lifetime'] < time()) {
             return false;
         }
@@ -131,7 +131,8 @@ class FilesystemCache extends CacheProvider
         }
 
         $item = include $filename;
-        if($item['lifetime'] !== 0 && $item['lifetime'] < time()) {
+
+        if ($item['lifetime'] !== 0 && $item['lifetime'] < time()) {
             return false;
         }
 
@@ -147,14 +148,17 @@ class FilesystemCache extends CacheProvider
             $lifeTime = time() + $lifeTime;
         }
 
-        $item['data']       = $data;
-        $item['lifetime']   = $lifeTime;
-        $filename           = $this->getFilename($id);
-        $filepath           = pathinfo($filename, PATHINFO_DIRNAME);
+        $filename   = $this->getFilename($id);
+        $filepath   = pathinfo($filename, PATHINFO_DIRNAME);
 
         if ( ! is_dir($filepath)) {
             mkdir($filepath, 0777, true);
         }
+
+        $item = array(
+            'lifetime'  => $lifeTime,
+            'data'      => $data
+        );
 
         $data   = var_export(serialize($item), true);
         $data   = sprintf('<?php return unserialize(%s);', $data);
