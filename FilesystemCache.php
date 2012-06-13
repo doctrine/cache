@@ -157,7 +157,7 @@ class FilesystemCache extends CacheProvider
         }
 
         $data   = var_export(serialize($item), true);
-        $data   = sprintf('<?php return unserialize(%s);',$data);
+        $data   = sprintf('<?php return unserialize(%s);', $data);
 
         return file_put_contents($filename, $data);
     }
@@ -175,12 +175,12 @@ class FilesystemCache extends CacheProvider
      */
     protected function doFlush()
     {
-        $patter   = '/^.+\\' . $this->extension . '$/i';
+        $pattern  = '/^.+\\' . $this->extension . '$/i';
         $iterator = new \RecursiveDirectoryIterator($this->directory);
         $iterator = new \RecursiveIteratorIterator($iterator);
-        $iterator = new \RegexIterator($iterator, $patter);
+        $iterator = new \RegexIterator($iterator, $pattern);
 
-        foreach($iterator as $name => $file) {
+        foreach ($iterator as $name => $file) {
             unlink($name);
         }
 
