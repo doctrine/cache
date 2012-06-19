@@ -2,7 +2,7 @@
 
 namespace Doctrine\Tests\Common\Cache;
 
-use Doctrine\Common\Cache\FilesystemCache;
+use Doctrine\Common\Cache\PhpFileCache;
 
 /**
  * @group DCOM-101
@@ -10,7 +10,7 @@ use Doctrine\Common\Cache\FilesystemCache;
 class PhpFileCacheTest extends CacheTest
 {
     /**
-     * @var \Doctrine\Common\Cache\FilesystemCache
+     * @var \Doctrine\Common\Cache\PhpFileCache
      */
     private $driver;
 
@@ -20,7 +20,7 @@ class PhpFileCacheTest extends CacheTest
         $this->assertFalse(is_dir($dir));
 
         
-        $this->driver = new FilesystemCache($dir);
+        $this->driver = new PhpFileCache($dir);
         $this->assertTrue(is_dir($dir));
 
         return $this->driver;
