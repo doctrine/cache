@@ -7,7 +7,7 @@ use Doctrine\Common\Cache\FilesystemCache;
 /**
  * @group DCOM-101
  */
-class FilesystemCacheTest extends CacheTest
+class PhpFileCacheTest extends CacheTest
 {
     /**
      * @var \Doctrine\Common\Cache\FilesystemCache
