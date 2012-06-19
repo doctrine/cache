@@ -26,77 +26,16 @@ namespace Doctrine\Common\Cache;
  * @since   2.3
  * @author  Fabio B. Silva <fabio.bat.silva@gmail.com>
  */
-class PhpFileCache extends CacheProvider
+class PhpFileCache extends FileCache
 {
     const EXTENSION = '.doctrinecache.php';
 
-    /**
-     * @var string Cache directory.
-     */
-    private $directory;
-
-    /**
-     * @var string Cache file extension.
-     */
-    private $extension;
-
-    /**
-     * Constructor
-     *
-     * @param string $directory Cache directory.
-     * @param string $directory Cache file extension.
-     *
-     * @throws \InvalidArgumentException
+     /**
+     * {@inheritdoc}
      */
     public function __construct($directory, $extension = self::EXTENSION)
     {
-        if ( ! is_dir($directory) && ! @mkdir($directory, 0777, true)) {
-            throw new \InvalidArgumentException(sprintf(
-                'The directory "%s" does not exist and could not be created.',
-                $directory
-            ));
-        }
-
-        if ( ! is_writable($directory)) {
-            throw new \InvalidArgumentException(sprintf(
-                'The directory "%s" is not writable.',
-                $directory
-            ));
-        }
-
-        $this->extension = $extension;
-        $this->directory = realpath($directory);
-    }
-
-    /**
-     * Gets the cache directory.
-     * 
-     * @return string
-     */
-    public function getDirectory()
-    {
-        return $this->directory;
-    }
-
-    /**
-     * Gets the cache file extension.
-     * 
-     * @return string
-     */
-    public function getExtension()
-    {
-        return $this->extension;
-    }
-
-    /**
-     * @return string
-     */
-    private function getFilename($id)
-    {
-        $path = implode(str_split(md5($id), 12), DIRECTORY_SEPARATOR);
-        $path = $this->directory . DIRECTORY_SEPARATOR . $path;
-
-        return $path . DIRECTORY_SEPARATOR . $id . $this->extension;
+        parent::__construct($directory, $extension);
     }
 
     /**
@@ -170,38 +109,5 @@ class PhpFileCache extends CacheProvider
         $code   = sprintf('<?php return %s;', $code);
 
         return file_put_contents($filename, $code);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function doDelete($id)
-    {
-        return unlink($this->getFilename($id));
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function doFlush()
-    {
-        $pattern  = '/^.+\\' . $this->extension . '$/i';
-        $iterator = new \RecursiveDirectoryIterator($this->directory);
-        $iterator = new \RecursiveIteratorIterator($iterator);
-        $iterator = new \RegexIterator($iterator, $pattern);
-
-        foreach ($iterator as $name => $file) {
-            unlink($name);
-        }
-
-        return true;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function doGetStats()
-    {
-        return null;
     }
 }
