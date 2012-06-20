@@ -68,7 +68,7 @@ class PhpFileCache extends FileCache
 
         $value = include $filename;
 
-        return ! ($value['lifetime'] !== 0 && $value['lifetime'] < time());
+        return $value['lifetime'] === 0 || $value['lifetime'] > time();
     }
 
     /**
