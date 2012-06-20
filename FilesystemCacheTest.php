@@ -82,8 +82,6 @@ class FilesystemCacheTest extends CacheTest
 
     public function tearDown()
     {
-        return;
-
         $dir        = $this->driver->getDirectory();
         $ext        = $this->driver->getExtension();
         $iterator   = new \RecursiveDirectoryIterator($dir);
