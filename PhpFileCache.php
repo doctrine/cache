@@ -48,7 +48,7 @@ class PhpFileCache extends FileCache
 
         $value = include $filename;
 
-        if($value['lifetime'] !== 0 && $value['lifetime'] < time()) {
+        if ($value['lifetime'] !== 0 && $value['lifetime'] < time()) {
             return false;
         }
 
@@ -68,11 +68,7 @@ class PhpFileCache extends FileCache
 
         $value = include $filename;
 
-        if ($value['lifetime'] !== 0 && $value['lifetime'] < time()) {
-            return false;
-        }
-
-        return true;
+        return ! ($value['lifetime'] !== 0 && $value['lifetime'] < time());
     }
 
     /**

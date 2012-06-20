@@ -55,7 +55,6 @@ class FilesystemCache extends FileCache
         }
 
         if ($lifetime !== 0 && $lifetime < time()) {
-
             fclose($resource);
 
             return false;
@@ -90,11 +89,7 @@ class FilesystemCache extends FileCache
 
         fclose($resource);
 
-        if ($lifetime !== 0 && $lifetime < time()) {
-            return false;
-        }
-
-        return true;
+        return ! ($lifetime !== 0 && $lifetime < time());
     }
 
     /**
