@@ -40,7 +40,7 @@ class FilesystemCache extends FileCache
      */
     protected function doFetch($id)
     {
-        $data     = null;
+        $data     = '';
         $lifetime = -1;
         $filename = $this->getFilename($id);
 
