@@ -33,10 +33,7 @@ class PhpFileCache extends FileCache
      /**
      * {@inheritdoc}
      */
-    public function __construct($directory, $extension = self::EXTENSION)
-    {
-        parent::__construct($directory, $extension);
-    }
+    protected $extension = self::EXTENSION;
 
     /**
      * {@inheritdoc}

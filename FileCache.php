@@ -46,7 +46,7 @@ abstract class FileCache extends CacheProvider
      *
      * @throws \InvalidArgumentException
      */
-    public function __construct($directory, $extension)
+    public function __construct($directory, $extension = null)
     {
         if ( ! is_dir($directory) && ! @mkdir($directory, 0777, true)) {
             throw new \InvalidArgumentException(sprintf(
@@ -62,8 +62,8 @@ abstract class FileCache extends CacheProvider
             ));
         }
 
-        $this->extension = $extension;
         $this->directory = realpath($directory);
+        $this->extension = $extension ?: $this->extension;
     }
 
     /**
