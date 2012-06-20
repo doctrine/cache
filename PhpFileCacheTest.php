@@ -19,7 +19,6 @@ class PhpFileCacheTest extends CacheTest
         $dir = sys_get_temp_dir() . "/doctrine_cache_". uniqid();
         $this->assertFalse(is_dir($dir));
 
-        
         $this->driver = new PhpFileCache($dir);
         $this->assertTrue(is_dir($dir));
 

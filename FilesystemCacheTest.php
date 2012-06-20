@@ -18,7 +18,6 @@ class FilesystemCacheTest extends CacheTest
     {
         $dir = sys_get_temp_dir() . "/doctrine_cache_". uniqid();
         $this->assertFalse(is_dir($dir));
-
         
         $this->driver = new FilesystemCache($dir);
         $this->assertTrue(is_dir($dir));
@@ -28,7 +27,6 @@ class FilesystemCacheTest extends CacheTest
 
     public function testLifetime()
     {
-
         $cache = $this->_getCacheDriver();
 
         // Test save
@@ -50,8 +48,7 @@ class FilesystemCacheTest extends CacheTest
         $id         = $getNamespacedId->invoke($cache, 'test_key');
         $filename   = $getFilename->invoke($cache, $id);
 
-
-        $data       = null;
+        $data       = '';
         $lifetime   = 0;
         $resource   = fopen($filename, "r");
 
@@ -59,9 +56,11 @@ class FilesystemCacheTest extends CacheTest
             $lifetime = (integer) $line;
         }
 
-        while ( ($line = fgets($resource)) !== false) {
+        while (false !== ($line = fgets($resource))) {
             $data .= $line;
         }
+
+        $this->assertNotEquals(0, $lifetime, "previous lifetime could not be loaded");
 
         // update lifetime
         $lifetime = $lifetime - 20;
