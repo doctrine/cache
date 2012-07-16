@@ -25,6 +25,11 @@ class PhpFileCacheTest extends CacheTest
         return $this->driver;
     }
 
+    public function testObjects()
+    {
+        $this->markTestSkipped('PhpFileCache does not support saving objects that dont implement __set_state()');
+    }
+
     public function testLifetime()
     {
         $cache = $this->_getCacheDriver();
@@ -84,16 +89,8 @@ class PhpFileCacheTest extends CacheTest
     {
         $cache = $this->_getCacheDriver();
 
-        // Test save
+        $this->setExpectedException('InvalidArgumentException');
         $cache->save('test_not_set_state', new NotSetStateClass(array(1,2,3)));
-
-        // Test fetch
-        $value = $cache->fetch('test_not_set_state');
-        $this->assertInstanceOf('Doctrine\Tests\Common\Cache\NotSetStateClass', $value);
-        $this->assertEquals(array(1,2,3), $value->getValue());
-
-        // Test contains
-        $this->assertTrue($cache->contains('test_not_set_state'));
     }
 
     public function testGetStats()
@@ -106,6 +103,10 @@ class PhpFileCacheTest extends CacheTest
 
     public function tearDown()
     {
+        if (!$this->driver) {
+            return;
+        }
+
         $dir        = $this->driver->getDirectory();
         $ext        = $this->driver->getExtension();
         $iterator   = new \RecursiveDirectoryIterator($dir);
