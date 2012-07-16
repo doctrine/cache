@@ -80,9 +80,16 @@ class PhpFileCache extends FileCache
             $lifeTime = time() + $lifeTime;
         }
 
+        if (is_object($data) && ! method_exists($data, '__set_state')) {
+            throw new \InvalidArgumentException(
+                "Invalid argument given, PhpFileCache only allows objects that implement __set_state() " .
+                "and fully support var_export(). You can use the FilesystemCache to save arbitrary object " .
+                "graphs using serialize()/deserialize()."
+            );
+        }
+
         $filename   = $this->getFilename($id);
         $filepath   = pathinfo($filename, PATHINFO_DIRNAME);
-        $serialize  = is_object($data) && ! method_exists($data, '__set_state');
 
         if ( ! is_dir($filepath)) {
             mkdir($filepath, 0777, true);
@@ -93,13 +100,8 @@ class PhpFileCache extends FileCache
             'data'      => $data
         );
 
-        if ($serialize) {
-            $value = serialize($value);
-        }
-
         $value  = var_export($value, true);
-        $code   = $serialize ? "unserialize($value)" : $value;
-        $code   = sprintf('<?php return %s;', $code);
+        $code   = sprintf('<?php return %s;', $value);
 
         return file_put_contents($filename, $code);
     }
