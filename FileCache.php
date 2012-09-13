@@ -102,7 +102,7 @@ abstract class FileCache extends CacheProvider
      */
     protected function doDelete($id)
     {
-        return unlink($this->getFilename($id));
+        return @unlink($this->getFilename($id));
     }
 
     /**
@@ -116,7 +116,7 @@ abstract class FileCache extends CacheProvider
         $iterator = new \RegexIterator($iterator, $pattern);
 
         foreach ($iterator as $name => $file) {
-            unlink($name);
+            @unlink($name);
         }
 
         return true;
