@@ -38,6 +38,13 @@ class CouchbaseCacheTest extends CacheTest
         $this->assertTrue($cache->contains('key'), 'Couchbase provider should support TTL > 30 days');
     }
 
+    public function testFalseOnFailedFetch() {
+        $cache = $this->_getCacheDriver();
+        $result = $cache->fetch('nonexistent_key');
+        $this->assertFalse($result);
+        $this->assertNotNull($result);
+    }
+
     protected function _getCacheDriver()
     {
         $driver = new CouchbaseCache();
