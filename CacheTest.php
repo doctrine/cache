@@ -85,6 +85,18 @@ abstract class CacheTest extends \Doctrine\Tests\DoctrineTestCase
     }
 
     /**
+     * Make sure that all supported caches return "false" instead of "null" to be compatible
+     * with ORM integration.
+     */
+    public function testFalseOnFailedFetch()
+    {
+        $cache = $this->_getCacheDriver();
+        $result = $cache->fetch('nonexistent_key');
+        $this->assertFalse($result);
+        $this->assertNotNull($result);
+    }
+
+    /**
      * @return \Doctrine\Common\Cache\CacheProvider
      */
     abstract protected function _getCacheDriver();
