@@ -63,7 +63,7 @@ class CouchbaseCache extends CacheProvider
      */
     protected function doFetch($id)
     {
-        return $this->couchbase->get($id);
+        return $this->couchbase->get($id) ?: false;
     }
 
     /**
