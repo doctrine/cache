@@ -1,5 +1,4 @@
 <?php
-
 /*
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -23,14 +22,13 @@ namespace Doctrine\Common\Cache;
 /**
  * Xcache cache driver.
  *
- * @license http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @link    www.doctrine-project.org
- * @since   2.0
- * @author  Benjamin Eberlei <kontakt@beberlei.de>
- * @author  Guilherme Blanco <guilhermeblanco@hotmail.com>
- * @author  Jonathan Wage <jonwage@gmail.com>
- * @author  Roman Borschel <roman@code-factory.org>
- * @author  David Abdemoulaie <dave@hobodave.com>
+ * @link   www.doctrine-project.org
+ * @since  2.0
+ * @author Benjamin Eberlei <kontakt@beberlei.de>
+ * @author Guilherme Blanco <guilhermeblanco@hotmail.com>
+ * @author Jonathan Wage <jonwage@gmail.com>
+ * @author Roman Borschel <roman@code-factory.org>
+ * @author David Abdemoulaie <dave@hobodave.com>
  */
 class XcacheCache extends CacheProvider
 {
@@ -79,10 +77,11 @@ class XcacheCache extends CacheProvider
     }
 
     /**
-     * Checks that xcache.admin.enable_auth is Off
+     * Checks that xcache.admin.enable_auth is Off.
      *
-     * @throws \BadMethodCallException When xcache.admin.enable_auth is On
      * @return void
+     *
+     * @throws \BadMethodCallException When xcache.admin.enable_auth is On.
      */
     protected function checkAuthorization()
     {

@@ -1,5 +1,4 @@
 <?php
-
 /*
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -23,26 +22,30 @@ namespace Doctrine\Common\Cache;
 /**
  * Base file cache driver.
  *
- * @since   2.3
- * @author  Fabio B. Silva <fabio.bat.silva@gmail.com>
+ * @since  2.3
+ * @author Fabio B. Silva <fabio.bat.silva@gmail.com>
  */
 abstract class FileCache extends CacheProvider
 {
     /**
-     * @var string Cache directory.
+     * The cache directory.
+     *
+     * @var string
      */
     protected $directory;
 
     /**
-     * @var string Cache file extension.
+     * The cache file extension.
+     *
+     * @var string|null
      */
     protected $extension;
 
     /**
-     * Constructor
+     * Constructor.
      *
-     * @param string $directory Cache directory.
-     * @param string $directory Cache file extension.
+     * @param string      $directory The cache directory.
+     * @param string|null $extension The cache file extension.
      *
      * @throws \InvalidArgumentException
      */
@@ -68,7 +71,7 @@ abstract class FileCache extends CacheProvider
 
     /**
      * Gets the cache directory.
-     * 
+     *
      * @return string
      */
     public function getDirectory()
@@ -78,8 +81,8 @@ abstract class FileCache extends CacheProvider
 
     /**
      * Gets the cache file extension.
-     * 
-     * @return string
+     *
+     * @return string|null
      */
     public function getExtension()
     {
@@ -87,6 +90,8 @@ abstract class FileCache extends CacheProvider
     }
 
     /**
+     * @param string $id
+     *
      * @return string
      */
     protected function getFilename($id)
