@@ -1,5 +1,4 @@
 <?php
-
 /*
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -25,15 +24,14 @@ use Redis;
 /**
  * Redis cache provider.
  *
- * @license http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @link    www.doctrine-project.org
- * @since   2.2
- * @author  Osman Ungur <osmanungur@gmail.com>
+ * @link   www.doctrine-project.org
+ * @since  2.2
+ * @author Osman Ungur <osmanungur@gmail.com>
  */
 class RedisCache extends CacheProvider
 {
     /**
-     * @var Redis
+     * @var Redis|null
      */
     private $redis;
 
@@ -41,6 +39,8 @@ class RedisCache extends CacheProvider
      * Sets the redis instance to use.
      *
      * @param Redis $redis
+     *
+     * @return void
      */
     public function setRedis(Redis $redis)
     {
@@ -51,7 +51,7 @@ class RedisCache extends CacheProvider
     /**
      * Gets the redis instance used by the cache.
      *
-     * @return Redis
+     * @return Redis|null
      */
     public function getRedis()
     {
