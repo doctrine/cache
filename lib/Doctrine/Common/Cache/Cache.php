@@ -1,7 +1,5 @@
 <?php
 /*
- *  $Id$
- *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
  * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
@@ -24,35 +22,36 @@ namespace Doctrine\Common\Cache;
 /**
  * Interface for cache drivers.
  *
- * @license http://www.opensource.org/licenses/lgpl-license.php LGPL
- * @link    www.doctrine-project.org
- * @since   2.0
- * @author  Benjamin Eberlei <kontakt@beberlei.de>
- * @author  Guilherme Blanco <guilhermeblanco@hotmail.com>
- * @author  Jonathan Wage <jonwage@gmail.com>
- * @author  Roman Borschel <roman@code-factory.org>
- * @author  Fabio B. Silva <fabio.bat.silva@gmail.com>
+ * @link   www.doctrine-project.org
+ * @since  2.0
+ * @author Benjamin Eberlei <kontakt@beberlei.de>
+ * @author Guilherme Blanco <guilhermeblanco@hotmail.com>
+ * @author Jonathan Wage <jonwage@gmail.com>
+ * @author Roman Borschel <roman@code-factory.org>
+ * @author Fabio B. Silva <fabio.bat.silva@gmail.com>
  */
 interface Cache
 {
-    const STATS_HITS    = 'hits';
-    const STATS_MISSES  = 'misses';
-    const STATS_UPTIME  = 'uptime';
-    const STATS_MEMORY_USAGE        = 'memory_usage';
-    const STATS_MEMORY_AVAILIABLE   = 'memory_available';
+    const STATS_HITS              = 'hits';
+    const STATS_MISSES            = 'misses';
+    const STATS_UPTIME            = 'uptime';
+    const STATS_MEMORY_USAGE      = 'memory_usage';
+    const STATS_MEMORY_AVAILIABLE = 'memory_available';
 
     /**
      * Fetches an entry from the cache.
      *
-     * @param string $id cache id The id of the cache entry to fetch.
+     * @param string $id The id of the cache entry to fetch.
+     *
      * @return mixed The cached data or FALSE, if no cache entry exists for the given id.
      */
     function fetch($id);
 
     /**
-     * Test if an entry exists in the cache.
+     * Tests if an entry exists in the cache.
      *
-     * @param string $id cache id The cache id of the entry to check for.
+     * @param string $id The cache id of the entry to check for.
+     *
      * @return boolean TRUE if a cache entry exists for the given cache id, FALSE otherwise.
      */
     function contains($id);
@@ -60,9 +59,11 @@ interface Cache
     /**
      * Puts data into the cache.
      *
-     * @param string $id The cache id.
-     * @param mixed $data The cache entry/data.
-     * @param int $lifeTime The lifetime. If != 0, sets a specific lifetime for this cache entry (0 => infinite lifeTime).
+     * @param string $id       The cache id.
+     * @param mixed  $data     The cache entry/data.
+     * @param int    $lifeTime The cache lifetime.
+     *                         If != 0, sets a specific lifetime for this cache entry (0 => infinite lifeTime).
+     *
      * @return boolean TRUE if the entry was successfully stored in the cache, FALSE otherwise.
      */
     function save($id, $data, $lifeTime = 0);
@@ -70,13 +71,14 @@ interface Cache
     /**
      * Deletes a cache entry.
      *
-     * @param string $id cache id
+     * @param string $id The cache id.
+     *
      * @return boolean TRUE if the cache entry was successfully deleted, FALSE otherwise.
      */
     function delete($id);
 
     /**
-     * Retrieves cached information from data store
+     * Retrieves cached information from the data store.
      *
      * The server's statistics array has the following values:
      *
@@ -95,8 +97,9 @@ interface Cache
      * - <b>memory_available</b>
      * Memory allowed to use for storage.
      *
-     * @since   2.2
-     * @return  array Associative array with server's statistics if available, NULL otherwise.
+     * @since 2.2
+     *
+     * @return array|null An associative array with server's statistics if available, NULL otherwise.
      */
     function getStats();
 }
