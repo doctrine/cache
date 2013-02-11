@@ -1,5 +1,4 @@
 <?php
-
 /*
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -20,21 +19,18 @@
 
 namespace Doctrine\Common\Cache;
 
-
 /**
  * MongoDB cache provider.
  *
- * @license http://www.opensource.org/licenses/lgpl-license.php LGPL
+ * @license http://www.opensource.org/licenses/MIT
  * @link    www.doctrine-project.org
  */
 class MongoDBCache extends CacheProvider
 {
-
     /**
      * @var \MongoCollection
      */
     protected $collection;
-
 
     /**
      * Sets the collection to use.
@@ -56,13 +52,13 @@ class MongoDBCache extends CacheProvider
         return $this->collection;
     }
 
-
     /**
      * {@inheritdoc}
      */
     protected function doFetch($id)
     {
-        $payload = $this->collection->findOne(array('cache_id' => $id), array('payload'));
+        $payload = $this->collection->findOne(array('_id' => $id), array('payload'));
+
         if (null === $payload) {
             return false;
         }
@@ -75,7 +71,7 @@ class MongoDBCache extends CacheProvider
      */
     protected function doContains($id)
     {
-        return $this->collection->count(array('cache_id' => $id)) > 0;
+        return $this->collection->count(array('_id' => $id)) > 0;
     }
 
     /**
@@ -85,7 +81,7 @@ class MongoDBCache extends CacheProvider
     {
         // unfortunately we have to serialize the data
         // on our own, otherwise objects aren't fetched correctly
-        return $this->collection->save(array('cache_id' => $id, 'payload' => serialize($data)));
+        return $this->collection->save(array('_id' => $id, 'payload' => serialize($data)));
     }
 
     /**
@@ -93,7 +89,7 @@ class MongoDBCache extends CacheProvider
      */
     protected function doDelete($id)
     {
-        return $this->collection->remove(array('cache_id' => $id));
+        return $this->collection->remove(array('_id' => $id));
     }
 
     /**
@@ -101,7 +97,7 @@ class MongoDBCache extends CacheProvider
      */
     protected function doFlush()
     {
-        return $this->collection->remove(array());
+        return $this->collection->remove();
     }
 
     /**
@@ -109,12 +105,6 @@ class MongoDBCache extends CacheProvider
      */
     protected function doGetStats()
     {
-        return array(
-            Cache::STATS_HITS => 0,
-            Cache::STATS_MISSES => 0,
-            Cache::STATS_UPTIME => 0,
-            Cache::STATS_MEMORY_USAGE => 0,
-            Cache::STATS_MEMORY_AVAILIABLE => 0
-        );
+        return null;
     }
 }

@@ -6,34 +6,44 @@ use Doctrine\Common\Cache\MongoDBCache;
 
 class MongoDBCacheTest extends CacheTest
 {
-    private $_name;
+    private $name;
 
     /**
      * @var \MongoCollection
      */
-    private $_collection;
+    private $collection;
 
 
     public function setUp()
     {
-        if (extension_loaded('mongo')) {
-            $this->_name = str_replace('\\', '_', __CLASS__);
-            $mongo = new \Mongo();
-            $this->_collection = $mongo->selectCollection('db_' . $this->_name, $this->_name);
-        } else {
+        if (!extension_loaded('mongo')) {
             $this->markTestSkipped('The ' . __CLASS__ .' requires the use of mongo');
+            return;
         }
+
+        $this->name = str_replace('\\', '_', __CLASS__);
+        $mongo = new \Mongo();
+        $this->collection = $mongo->selectCollection('db_' . $this->name, $this->name);
     }
 
     protected function _getCacheDriver()
     {
         $driver = new MongoDBCache();
-        $driver->setCollection($this->_collection);
+        $driver->setCollection($this->collection);
+
         return $driver;
+    }
+
+    public function testGetStats()
+    {
+        $cache = $this->_getCacheDriver();
+        $stats = $cache->getStats();
+
+        $this->assertNull($stats);
     }
 
     public function tearDown()
     {
-        $this->_collection->db->dropCollection(__CLASS__);
+        $this->collection->db->dropCollection($this->name);
     }
 }
