@@ -81,11 +81,11 @@ class WinCacheCache extends CacheProvider
         $meminfo = wincache_ucache_meminfo();
 
         return array(
-            Cache::STATS_HITS              => $info['total_hit_count'],
-            Cache::STATS_MISSES            => $info['total_miss_count'],
-            Cache::STATS_UPTIME            => $info['total_cache_uptime'],
-            Cache::STATS_MEMORY_USAGE      => $meminfo['memory_total'],
-            Cache::STATS_MEMORY_AVAILIABLE => $meminfo['memory_free'],
+            Cache::STATS_HITS             => $info['total_hit_count'],
+            Cache::STATS_MISSES           => $info['total_miss_count'],
+            Cache::STATS_UPTIME           => $info['total_cache_uptime'],
+            Cache::STATS_MEMORY_USAGE     => $meminfo['memory_total'],
+            Cache::STATS_MEMORY_AVAILABLE => $meminfo['memory_free'],
         );
     }
 }

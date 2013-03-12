@@ -32,10 +32,16 @@ namespace Doctrine\Common\Cache;
  */
 interface Cache
 {
-    const STATS_HITS              = 'hits';
-    const STATS_MISSES            = 'misses';
-    const STATS_UPTIME            = 'uptime';
-    const STATS_MEMORY_USAGE      = 'memory_usage';
+    const STATS_HITS             = 'hits';
+    const STATS_MISSES           = 'misses';
+    const STATS_UPTIME           = 'uptime';
+    const STATS_MEMORY_USAGE     = 'memory_usage';
+    const STATS_MEMORY_AVAILABLE = 'memory_available';
+    /**
+     * Only for backward compatibility (may be removed in next major release)
+     *
+     * @deprecated
+     */
     const STATS_MEMORY_AVAILIABLE = 'memory_available';
 
     /**

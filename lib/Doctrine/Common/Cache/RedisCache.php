@@ -81,7 +81,7 @@ class RedisCache extends CacheProvider
     {
         $result = $this->redis->set($id, $data);
         if ($lifeTime > 0) {
-            $this->redis->expire($id, $lifeTime);        
+            $this->redis->expire($id, $lifeTime);
         }
         return $result;
     }
@@ -112,8 +112,8 @@ class RedisCache extends CacheProvider
             Cache::STATS_HITS   => false,
             Cache::STATS_MISSES => false,
             Cache::STATS_UPTIME => $info['uptime_in_seconds'],
-            Cache::STATS_MEMORY_USAGE       => $info['used_memory'],
-            Cache::STATS_MEMORY_AVAILIABLE  => false
+            Cache::STATS_MEMORY_USAGE      => $info['used_memory'],
+            Cache::STATS_MEMORY_AVAILABLE  => false
         );
     }
 }
