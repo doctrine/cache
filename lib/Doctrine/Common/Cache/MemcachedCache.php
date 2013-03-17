@@ -117,8 +117,8 @@ class MemcachedCache extends CacheProvider
             Cache::STATS_HITS   => $stats['get_hits'],
             Cache::STATS_MISSES => $stats['get_misses'],
             Cache::STATS_UPTIME => $stats['uptime'],
-            Cache::STATS_MEMORY_USAGE       => $stats['bytes'],
-            Cache::STATS_MEMORY_AVAILIABLE  => $stats['limit_maxbytes'],
+            Cache::STATS_MEMORY_USAGE     => $stats['bytes'],
+            Cache::STATS_MEMORY_AVAILABLE => $stats['limit_maxbytes'],
         );
     }
 }
