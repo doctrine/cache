@@ -28,6 +28,7 @@ namespace Doctrine\Common\Cache;
  * @author Jonathan Wage <jonwage@gmail.com>
  * @author Roman Borschel <roman@code-factory.org>
  * @author Fabio B. Silva <fabio.bat.silva@gmail.com>
+ * @author Gusakov Nikita <gusakov.nik@gmail.com>
  */
 abstract class CacheProvider implements Cache, \ArrayAccess
 {
