@@ -30,6 +30,11 @@ class PhpFileCacheTest extends CacheTest
         $this->markTestSkipped('PhpFileCache does not support saving objects that dont implement __set_state()');
     }
 
+    public function testObjectsArrayAccess()
+    {
+        $this->markTestSkipped('PhpFileCache does not support saving objects that dont implement __set_state()');
+    }
+
     public function testLifetime()
     {
         $cache = $this->_getCacheDriver();

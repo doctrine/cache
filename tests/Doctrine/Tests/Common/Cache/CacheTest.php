@@ -63,13 +63,13 @@ abstract class CacheTest extends \Doctrine\Tests\DoctrineTestCase
         $this->assertTrue($cache->fetch('test_object_key') instanceof \ArrayObject);
     }
 
-//    public function testObjectsArrayAccess()
-//    {
-//        $cache = $this->_getCacheDriver();
-//
-//        $cache['test_object_key'] = new \ArrayObject();
-//        $this->assertTrue($cache['test_object_key'] instanceof \ArrayObject);
-//    }
+    public function testObjectsArrayAccess()
+    {
+        $cache = $this->_getCacheDriver();
+
+        $cache['test_object_key'] = new \ArrayObject();
+        $this->assertTrue($cache['test_object_key'] instanceof \ArrayObject);
+    }
 
     public function testDeleteAll()
     {
