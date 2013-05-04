@@ -47,8 +47,6 @@ abstract class CacheProvider implements Cache, \ArrayAccess
      */
     private $namespaceVersion;
 
-    private $defaultTime = 0;
-
     /**
      * Sets the namespace to prefix all cache ids with.
      *
