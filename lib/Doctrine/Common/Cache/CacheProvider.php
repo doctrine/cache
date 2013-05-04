@@ -29,7 +29,7 @@ namespace Doctrine\Common\Cache;
  * @author Roman Borschel <roman@code-factory.org>
  * @author Fabio B. Silva <fabio.bat.silva@gmail.com>
  */
-abstract class CacheProvider implements Cache
+abstract class CacheProvider implements Cache, \ArrayAccess
 {
     const DOCTRINE_NAMESPACE_CACHEKEY = 'DoctrineNamespaceCacheKey[%s]';
 
@@ -46,6 +46,8 @@ abstract class CacheProvider implements Cache
      * @var string
      */
     private $namespaceVersion;
+
+    private $defaultTime = 0;
 
     /**
      * Sets the namespace to prefix all cache ids with.
@@ -68,6 +70,33 @@ abstract class CacheProvider implements Cache
     {
         return $this->namespace;
     }
+
+    public function offsetExists($offset)
+    {
+        return $this->contains($offset);
+    }
+
+    public function offsetGet($offset)
+    {
+        return $this->fetch($offset);
+    }
+
+    public function offsetSet($offset, $value)
+    {
+        $data = explode('.', $offset);
+        $time = isset($data[1]) ? (int) $data[1] : 0;
+        $this->save($data[0], $value, $time);
+    }
+
+    public function offsetUnset($offset)
+    {
+        if ($offset == 'all') {
+            $this->deleteAll();
+        } else {
+            $this->delete($offset);
+        }
+    }
+
 
     /**
      * {@inheritdoc}
