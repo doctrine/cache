@@ -25,6 +25,18 @@ abstract class CacheTest extends \Doctrine\Tests\DoctrineTestCase
         $this->assertFalse($cache->contains('test_key2'));
     }
 
+    public function testSaveWithCustomTimeArrayAccess()
+    {
+        $cache = $this->_getCacheDriver();
+        $cache['test_key.1'] = 'test';
+        $this->assertTrue(isset($cache['test_key']));
+        $this->assertEquals('test', $cache['test_key']);
+
+        $cache['test.key.dot_test.1'] = 'test2';
+        $this->assertTrue(isset($cache['test.key.dot_test']));
+        $this->assertEquals('test2', $cache['test.key.dot_test']);
+    }
+
     public function testBasicsArrayAccess()
     {
         $cache = $this->_getCacheDriver();

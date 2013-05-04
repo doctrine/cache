@@ -81,9 +81,12 @@ abstract class CacheProvider implements Cache, \ArrayAccess
 
     public function offsetSet($offset, $value)
     {
-        $data = explode('.', $offset);
-        $time = isset($data[1]) ? (int) $data[1] : 0;
-        $this->save($data[0], $value, $time);
+        $lastDotPos = strrpos($offset, '.');
+        $time = (int) substr($offset, $lastDotPos + 1);
+        if ($time !== 0) {
+            $offset = substr($offset, 0, $lastDotPos);
+        }
+        $this->save($offset, $value, $time);
     }
 
     public function offsetUnset($offset)
