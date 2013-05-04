@@ -69,16 +69,29 @@ abstract class CacheProvider implements Cache, \ArrayAccess
         return $this->namespace;
     }
 
+    /**
+     * @alias contains
+     */
     public function offsetExists($offset)
     {
         return $this->contains($offset);
     }
 
+    /**
+     * @alias fetch
+     */
     public function offsetGet($offset)
     {
         return $this->fetch($offset);
     }
 
+    /**
+     * Custom lifetime must be specified in the offset through the point:
+     * $cache['foo.100'] = 'bar';
+     * In this case cache with key 'foo' have 100sec lifetime.
+     *
+     * @alias save
+     */
     public function offsetSet($offset, $value)
     {
         $lastDotPos = strrpos($offset, '.');
@@ -89,6 +102,13 @@ abstract class CacheProvider implements Cache, \ArrayAccess
         $this->save($offset, $value, $time);
     }
 
+    /**
+     * If id == all, this method call deleteAll method
+     * in other cases that alias for delete method
+     *
+     * @alias delete
+     * @alias deleteAll
+     */
     public function offsetUnset($offset)
     {
         if ($offset == 'all') {
