@@ -104,21 +104,12 @@ abstract class CacheProvider implements Cache, \ArrayAccess
     }
 
     /**
-     * If id == all, this method call deleteAll method
-     * in other cases that alias for delete method
-     *
      * @alias delete
-     * @alias deleteAll
      */
     public function offsetUnset($offset)
     {
-        if ($offset == 'all') {
-            $this->deleteAll();
-        } else {
-            $this->delete($offset);
-        }
+        $this->delete($offset);
     }
-
 
     /**
      * {@inheritdoc}

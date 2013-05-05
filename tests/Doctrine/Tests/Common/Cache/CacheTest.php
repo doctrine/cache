@@ -82,17 +82,6 @@ abstract class CacheTest extends \Doctrine\Tests\DoctrineTestCase
         $this->assertFalse($cache->contains('test_key2'));
     }
 
-    public function testDeleteAllArrayAccess()
-    {
-        $cache = $this->_getCacheDriver();
-        $cache['test_key1'] = '1';
-        $cache['test_key2'] = '2';
-        unset($cache['all']);
-
-        $this->assertFalse(($cache['test_key1']));
-        $this->assertFalse(isset($cache['test_key2']));
-    }
-
     public function testFlushAll()
     {
         $cache = $this->_getCacheDriver();
