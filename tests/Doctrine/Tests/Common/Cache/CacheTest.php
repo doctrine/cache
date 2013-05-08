@@ -25,6 +25,40 @@ abstract class CacheTest extends \Doctrine\Tests\DoctrineTestCase
         $this->assertFalse($cache->contains('test_key2'));
     }
 
+    public function testSaveWithCustomTimeArrayAccess()
+    {
+        $cache = $this->_getCacheDriver();
+        $cache['test_key.1'] = 'test';
+
+        $this->assertTrue(isset($cache['test_key']));
+
+        $this->assertEquals('test', $cache['test_key']);
+
+        $cache['test.key.dot_test.1'] = 'test2';
+        $this->assertTrue(isset($cache['test.key.dot_test']));
+
+        $this->assertEquals('test2', $cache['test.key.dot_test']);
+    }
+
+    public function testBasicsArrayAccess()
+    {
+        $cache = $this->_getCacheDriver();
+
+        // Test save
+        $cache['test_key'] = 'testing this out';
+
+        $this->assertTrue(isset($cache['test_key']));
+
+        // Test fetch
+        $this->assertEquals('testing this out', $cache['test_key']);
+
+        // Test delete
+        $cache['test_key2'] = 'test2';
+
+        unset($cache['test_key2']);
+        $this->assertFalse(isset($cache['test_key2']));
+    }
+
     public function testObjects()
     {
         $cache = $this->_getCacheDriver();
@@ -32,6 +66,15 @@ abstract class CacheTest extends \Doctrine\Tests\DoctrineTestCase
         // Fetch/save test with objects (Is cache driver serializes/unserializes objects correctly ?)
         $cache->save('test_object_key', new \ArrayObject());
         $this->assertTrue($cache->fetch('test_object_key') instanceof \ArrayObject);
+    }
+
+    public function testObjectsArrayAccess()
+    {
+        $cache = $this->_getCacheDriver();
+
+        $cache['test_object_key'] = new \ArrayObject();
+
+        $this->assertTrue($cache['test_object_key'] instanceof \ArrayObject);
     }
 
     public function testDeleteAll()
@@ -92,6 +135,15 @@ abstract class CacheTest extends \Doctrine\Tests\DoctrineTestCase
     {
         $cache = $this->_getCacheDriver();
         $result = $cache->fetch('nonexistent_key');
+        $this->assertFalse($result);
+        $this->assertNotNull($result);
+    }
+
+    public function testFalseOnFailedFetchArrayAccess()
+    {
+        $cache = $this->_getCacheDriver();
+        $result = $cache['nonexistent_key'];
+
         $this->assertFalse($result);
         $this->assertNotNull($result);
     }

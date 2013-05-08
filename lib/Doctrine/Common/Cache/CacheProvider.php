@@ -28,8 +28,9 @@ namespace Doctrine\Common\Cache;
  * @author Jonathan Wage <jonwage@gmail.com>
  * @author Roman Borschel <roman@code-factory.org>
  * @author Fabio B. Silva <fabio.bat.silva@gmail.com>
+ * @author Gusakov Nikita <gusakov.nik@gmail.com>
  */
-abstract class CacheProvider implements Cache
+abstract class CacheProvider implements Cache, \ArrayAccess
 {
     const DOCTRINE_NAMESPACE_CACHEKEY = 'DoctrineNamespaceCacheKey[%s]';
 
@@ -67,6 +68,49 @@ abstract class CacheProvider implements Cache
     public function getNamespace()
     {
         return $this->namespace;
+    }
+
+    /**
+     * @alias contains
+     */
+    public function offsetExists($offset)
+    {
+        return $this->contains($offset);
+    }
+
+    /**
+     * @alias fetch
+     */
+    public function offsetGet($offset)
+    {
+        return $this->fetch($offset);
+    }
+
+    /**
+     * Custom lifetime must be specified in the offset through the point:
+     * $cache['foo.100'] = 'bar';
+     * In this case cache with key 'foo' have 100sec lifetime.
+     *
+     * @alias save
+     */
+    public function offsetSet($offset, $value)
+    {
+        $lastDotPos = strrpos($offset, '.');
+        $time       = (int) substr($offset, $lastDotPos + 1);
+
+        if ($time !== 0) {
+            $offset = substr($offset, 0, $lastDotPos);
+        }
+
+        $this->save($offset, $value, $time);
+    }
+
+    /**
+     * @alias delete
+     */
+    public function offsetUnset($offset)
+    {
+        $this->delete($offset);
     }
 
     /**
