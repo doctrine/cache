@@ -29,6 +29,7 @@ abstract class CacheTest extends \Doctrine\Tests\DoctrineTestCase
     {
         $cache = $this->_getCacheDriver();
         $cache['test_key.1'] = 'test';
+
         $this->assertTrue(isset($cache['test_key']));
 
         $this->assertEquals('test', $cache['test_key']);
@@ -142,7 +143,7 @@ abstract class CacheTest extends \Doctrine\Tests\DoctrineTestCase
     {
         $cache = $this->_getCacheDriver();
         $result = $cache['nonexistent_key'];
-        
+
         $this->assertFalse($result);
         $this->assertNotNull($result);
     }
