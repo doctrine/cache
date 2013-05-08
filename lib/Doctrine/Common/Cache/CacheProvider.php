@@ -96,7 +96,7 @@ abstract class CacheProvider implements Cache, \ArrayAccess
     public function offsetSet($offset, $value)
     {
         $lastDotPos = strrpos($offset, '.');
-        $time = (int)substr($offset, $lastDotPos + 1);
+        $time       = (int) substr($offset, $lastDotPos + 1);
 
         if ($time !== 0) {
             $offset = substr($offset, 0, $lastDotPos);
