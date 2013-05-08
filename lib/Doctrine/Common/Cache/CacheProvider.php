@@ -98,8 +98,10 @@ abstract class CacheProvider implements Cache, \ArrayAccess
         $lastDotPos = strrpos($offset, '.');
         $time = (int) substr($offset, $lastDotPos + 1);
         if ($time !== 0) {
+
             $offset = substr($offset, 0, $lastDotPos);
         }
+
         $this->save($offset, $value, $time);
     }
 

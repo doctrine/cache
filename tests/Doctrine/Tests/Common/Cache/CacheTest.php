@@ -30,10 +30,12 @@ abstract class CacheTest extends \Doctrine\Tests\DoctrineTestCase
         $cache = $this->_getCacheDriver();
         $cache['test_key.1'] = 'test';
         $this->assertTrue(isset($cache['test_key']));
+
         $this->assertEquals('test', $cache['test_key']);
 
         $cache['test.key.dot_test.1'] = 'test2';
         $this->assertTrue(isset($cache['test.key.dot_test']));
+
         $this->assertEquals('test2', $cache['test.key.dot_test']);
     }
 
@@ -43,6 +45,7 @@ abstract class CacheTest extends \Doctrine\Tests\DoctrineTestCase
 
         // Test save
         $cache['test_key'] = 'testing this out';
+
         $this->assertTrue(isset($cache['test_key']));
 
         // Test fetch
@@ -50,6 +53,7 @@ abstract class CacheTest extends \Doctrine\Tests\DoctrineTestCase
 
         // Test delete
         $cache['test_key2'] = 'test2';
+
         unset($cache['test_key2']);
         $this->assertFalse(isset($cache['test_key2']));
     }
@@ -68,6 +72,7 @@ abstract class CacheTest extends \Doctrine\Tests\DoctrineTestCase
         $cache = $this->_getCacheDriver();
 
         $cache['test_object_key'] = new \ArrayObject();
+
         $this->assertTrue($cache['test_object_key'] instanceof \ArrayObject);
     }
 
@@ -137,6 +142,7 @@ abstract class CacheTest extends \Doctrine\Tests\DoctrineTestCase
     {
         $cache = $this->_getCacheDriver();
         $result = $cache['nonexistent_key'];
+        
         $this->assertFalse($result);
         $this->assertNotNull($result);
     }
