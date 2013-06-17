@@ -19,48 +19,30 @@
 
 namespace Doctrine\Common\Cache;
 
-use RiakBucket;
-use RiakObject;
-use RiakBadArgumentsException;
-use RiakConflictedObjectException;
-use RiakException;
-
 /**
  * Riak cache provider.
  *
  * @link   www.doctrine-project.org
  * @since  2.4
- * @author Osman Ungur <osmanungur@gmail.com>
+ * @author Guilherme Blanco <guilhermeblanco@hotmail.com>
  */
 class RiakCache extends CacheProvider
 {
     const EXPIRES_HEADER = 'X-Riak-Meta-Expires';
 
     /**
-     * @var RiakBucket|null
+     * @var \RiakBucket|null
      */
     private $riakBucket;
 
     /**
      * Sets the riak bucket instance to use.
      *
-     * @param RiakBucket $riakBucket
-     *
-     * @return void
+     * @param \RiakBucket $riakBucket
      */
-    public function setRiakBucket(RiakBucket $riakBucket)
+    public function __construct(\RiakBucket $riakBucket)
     {
         $this->riakBucket = $riakBucket;
-    }
-
-    /**
-     * Gets the riak bucket instance used by the cache.
-     *
-     * @return RiakBucket|null
-     */
-    public function getRiakBucket()
-    {
-        return $this->riakBucket;
     }
 
     /**
@@ -69,19 +51,20 @@ class RiakCache extends CacheProvider
     protected function doFetch($id)
     {
         try {
-            $object = $this->riakBucket->getObject(urlencode($id));
+            $object = $this->riakBucket->get(urlencode($id));
 
             if (isset($object->meta[self::EXPIRES_HEADER]) && $object->meta[self::EXPIRES_HEADER] < time()) {
-                $this->riakBucket->deleteObject($object);
+                $this->riakBucket->delete($object);
 
                 return false;
             }
 
             return unserialize($object->data);
-        } catch (RiakConflictedObjectException $e) {
+        } catch (\RiakConflictedObjectException $e) {
             // TODO: We should be able to resolve Conflict resolution here.
+            // May not be needed as of: https://github.com/TriKaspar/php_riak/issues/6
             // Exception provides two useful properties to help: vclock and objects
-        } catch (RiakException $e) {
+        } catch (\RiakException $e) {
             // Covers:
             // - RiakConnectionException
             // - RiakCommunicationException
@@ -98,10 +81,10 @@ class RiakCache extends CacheProvider
     protected function doContains($id)
     {
         try {
-            $this->riakBucket->getObject(urlencode($id));
+            $this->riakBucket->get(urlencode($id));
 
             return true;
-        } catch (RiakException $e) {
+        } catch (\RiakException $e) {
             // Do nothing
         }
 
@@ -114,7 +97,7 @@ class RiakCache extends CacheProvider
     protected function doSave($id, $data, $lifeTime = 0)
     {
         try {
-            $object = new RiakObject(urlencode($id));
+            $object = new \RiakObject(urlencode($id));
 
             $object->data = serialize($data);
 
@@ -122,10 +105,10 @@ class RiakCache extends CacheProvider
                 $object->metadata[self::EXPIRES_HEADER] = (string) (time() + $lifeTime);
             }
 
-            $this->riakBucket->putObject($object);
+            $this->riakBucket->put($object);
 
             return true;
-        } catch (RiakException $e) {
+        } catch (\RiakException $e) {
             // Do nothing
         }
 
@@ -138,14 +121,12 @@ class RiakCache extends CacheProvider
     protected function doDelete($id)
     {
         try {
-            $object = new RiakObject(urlencode($id));
-
-            $this->riakBucket->deleteObject($object);
+            $this->riakBucket->delete(urlencode($id));
 
             return true;
-        } catch (RiakBadArgumentsException $e) {
+        } catch (\RiakBadArgumentsException $e) {
             // Key did not exist on cluster already
-        } catch (RiakException $e) {
+        } catch (\RiakException $e) {
             // Covers:
             // - RiakConnectionException
             // - RiakCommunicationException
@@ -157,12 +138,20 @@ class RiakCache extends CacheProvider
 
     /**
      * {@inheritdoc}
-     *
-     * @throws \BadMethodCallException
      */
     protected function doFlush()
     {
-        throw new \BadMethodCallException('Feature not yet supported by php_riak extension.');
+        try {
+            $keyList = $this->riakBucket->listKeys();
+
+            foreach ($keyList as $key) {
+                $this->riakBucket->delete($key);
+            }
+
+            return true;
+        } catch (\RiakException $e) {
+            return false;
+        }
     }
 
     /**

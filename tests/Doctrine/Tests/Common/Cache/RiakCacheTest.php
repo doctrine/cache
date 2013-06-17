@@ -31,20 +31,8 @@ class RiakCacheTest extends CacheTest
                 $this->markTestSkipped('The ' . __CLASS__ .' requires the use of riak');
             }
         } else {
-            $this->markTestSkipped('The ' . __CLASS__ .' requires the use of redis');
+            $this->markTestSkipped('The ' . __CLASS__ .' requires the use of riak');
         }
-    }
-
-    /**
-     * {@inheritdoc}
-     *
-     * @expectedException \BadMethodCallException
-     */
-    public function testFlushAll()
-    {
-        $cache = $this->_getCacheDriver();
-
-        $cache->flushAll();
     }
 
     /**
@@ -65,9 +53,7 @@ class RiakCacheTest extends CacheTest
      */
     protected function _getCacheDriver()
     {
-        $driver = new RiakCache();
-
-        $driver->setRiakBucket($this->riakBucket);
+        $driver = new RiakCache($this->riakBucket);
 
         return $driver;
     }
