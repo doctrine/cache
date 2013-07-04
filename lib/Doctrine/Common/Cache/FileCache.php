@@ -117,12 +117,7 @@ abstract class FileCache extends CacheProvider
      */
     protected function doFlush()
     {
-        $pattern  = '/^.+\\' . $this->extension . '$/i';
-        $iterator = new \RecursiveDirectoryIterator($this->directory);
-        $iterator = new \RecursiveIteratorIterator($iterator);
-        $iterator = new \RegexIterator($iterator, $pattern);
-
-        foreach ($iterator as $name => $file) {
+        foreach ($this->getIterator() as $name => $file) {
             @unlink($name);
         }
 
@@ -134,6 +129,30 @@ abstract class FileCache extends CacheProvider
      */
     protected function doGetStats()
     {
-        return null;
+        $usage = 0;
+        foreach ($this->getIterator() as $name => $file) {
+            $usage += $file->getSize();
+        }
+
+        $free = disk_free_space($this->directory);
+
+        return array(
+            Cache::STATS_HITS               => null,
+            Cache::STATS_MISSES             => null,
+            Cache::STATS_UPTIME             => null,
+            Cache::STATS_MEMORY_USAGE       => $usage,
+            Cache::STATS_MEMORY_AVAILABLE   => $free,
+        );
+    }
+
+    /**
+     * @return \Iterator
+     */
+    private function getIterator()
+    {
+        $pattern = '/^.+\\' . $this->extension . '$/i';
+        $iterator = new \RecursiveDirectoryIterator($this->directory);
+        $iterator = new \RecursiveIteratorIterator($iterator);
+        return new \RegexIterator($iterator, $pattern);
     }
 }
