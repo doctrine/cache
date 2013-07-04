@@ -2,6 +2,7 @@
 
 namespace Doctrine\Tests\Common\Cache;
 
+use Doctrine\Common\Cache\Cache;
 use Doctrine\Common\Cache\FilesystemCache;
 
 /**
@@ -18,7 +19,7 @@ class FilesystemCacheTest extends CacheTest
     {
         $dir = sys_get_temp_dir() . "/doctrine_cache_". uniqid();
         $this->assertFalse(is_dir($dir));
-        
+
         $this->driver = new FilesystemCache($dir);
         $this->assertTrue(is_dir($dir));
 
@@ -76,7 +77,11 @@ class FilesystemCacheTest extends CacheTest
         $cache = $this->_getCacheDriver();
         $stats = $cache->getStats();
 
-        $this->assertNull($stats);
+        $this->assertNull($stats[Cache::STATS_HITS]);
+        $this->assertNull($stats[Cache::STATS_MISSES]);
+        $this->assertNull($stats[Cache::STATS_UPTIME]);
+        $this->assertEquals(0, $stats[Cache::STATS_MEMORY_USAGE]);
+        $this->assertGreaterThan(0, $stats[Cache::STATS_MEMORY_AVAILABLE]);
     }
 
     public function tearDown()
