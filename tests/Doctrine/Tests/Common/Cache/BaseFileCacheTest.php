@@ -32,4 +32,9 @@ abstract class BaseFileCacheTest extends CacheTest
             }
         }
     }
+
+    protected function isSharedStorage()
+    {
+        return false;
+    }
 }
