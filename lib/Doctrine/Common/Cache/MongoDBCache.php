@@ -19,6 +19,7 @@
 
 namespace Doctrine\Common\Cache;
 
+use MongoBinData;
 use MongoCollection;
 use MongoDate;
 
@@ -91,7 +92,7 @@ class MongoDBCache extends CacheProvider
             return false;
         }
 
-        return unserialize($document[self::DATA_FIELD]);
+        return unserialize($document[self::DATA_FIELD]->bin);
     }
 
     /**
@@ -122,7 +123,7 @@ class MongoDBCache extends CacheProvider
             array('_id' => $id),
             array('$set' => array(
                 self::EXPIRATION_FIELD => ($lifeTime > 0 ? new MongoDate(time() + $lifeTime) : null),
-                self::DATA_FIELD => serialize($data),
+                self::DATA_FIELD => new MongoBinData(serialize($data), MongoBinData::BYTE_ARRAY),
             )),
             array('upsert' => true, 'multiple' => false)
         );
