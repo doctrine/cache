@@ -64,7 +64,10 @@ class RiakCache extends CacheProvider
                 return false;
             }
 
-            $object = $response->getFirstObject();
+            // Check for attempted siblings
+            $object = ($response->hasSiblings())
+                ? $this->resolveConflict($id, $response->getVClock(), $response->getObjectList())
+                : $response->getFirstObject();
 
             if ($this->isExpired($object)) {
                 $this->bucket->delete($object);
@@ -74,9 +77,13 @@ class RiakCache extends CacheProvider
 
             return unserialize($object->getContent());
         } catch (Exception\ConflictedObjectException $e) {
-            // TODO: We should be able to resolve Conflict resolution here.
-            // May not be needed as of: https://github.com/TriKaspar/php_riak/issues/6
-            // Exception provides two useful properties to help: vclock and objects
+            // May not be needed later: https://github.com/TriKaspar/php_riak/issues/6
+            // API may break soon: https://github.com/TriKaspar/php_riak/issues/22
+            $object = $this->resolveConflict($id, $e->vclock, $e->objects);
+
+            return ( ! $this->isExpired($object))
+                ? unserialize($object->getContent())
+                : false;
         } catch (Exception\RiakException $e) {
             // Covers:
             // - Riak\ConnectionException
@@ -100,7 +107,18 @@ class RiakCache extends CacheProvider
 
             $response = $this->bucket->get(urlencode($id), $input);
 
-            return $response->hasObject();
+            // No objects found
+            if ( ! $response->hasObject()) {
+                return false;
+            }
+
+            $object = $response->getFirstObject();
+
+            if ($this->isExpired($object)) {
+                return false;
+            }
+
+            return true;
         } catch (Exception\RiakException $e) {
             // Do nothing
         }
@@ -194,5 +212,30 @@ class RiakCache extends CacheProvider
         $metadataMap = $object->getMetadataMap();
 
         return (isset($metadataMap[self::EXPIRES_HEADER]) && $metadataMap[self::EXPIRES_HEADER] < time());
+    }
+
+    /**
+     * Resolve conflict.
+     *
+     * @param string $id
+     * @param string $vClock
+     * @param array  $objectList
+     *
+     * @return \Riak\Object
+     */
+    private function resolveConflict($id, $vClock, array $objectList)
+    {
+        // Our approach here is last-write wins
+        $winner = $objectList[count($objectList)];
+
+        $putInput = new Input\PutInput();
+        $putInput->setVClock($vClock);
+
+        $mergedObject = new Object(urlencode($id));
+        $mergedObject->setContent($winner->getContent());
+
+        $this->bucket->put($mergedObject, $putInput);
+
+        return $mergedObject;
     }
 }

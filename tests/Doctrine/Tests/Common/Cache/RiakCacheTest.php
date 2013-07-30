@@ -4,6 +4,7 @@ namespace Doctrine\Tests\Common\Cache;
 
 use Riak\Bucket;
 use Riak\Connection;
+use Riak\Exception;
 use Doctrine\Common\Cache\RiakCache;
 
 /**
@@ -28,17 +29,15 @@ class RiakCacheTest extends CacheTest
      */
     public function setUp()
     {
-        if (extension_loaded('riak')) {
-            try {
-                $this->connection = new Connection('127.0.0.1', 8087);
-                $this->bucket     = new Bucket($this->connection, 'test');
-            } catch (\RiakException $e) {
-                fwrite(STDOUT, $e->getMessage());
+        if ( ! extension_loaded('riak')) {
+            $this->markTestSkipped('The ' . __CLASS__ .' requires the use of Riak');
+        }
 
-                $this->markTestSkipped('The ' . __CLASS__ .' requires the use of riak');
-            }
-        } else {
-            $this->markTestSkipped('The ' . __CLASS__ .' requires the use of riak');
+        try {
+            $this->connection = new Connection('127.0.0.1', 8087);
+            $this->bucket     = new Bucket($this->connection, 'test');
+        } catch (Exception\RiakException $e) {
+            $this->markTestSkipped('The ' . __CLASS__ .' requires the use of Riak');
         }
     }
 
@@ -60,8 +59,6 @@ class RiakCacheTest extends CacheTest
      */
     protected function _getCacheDriver()
     {
-        $driver = new RiakCache($this->bucket);
-
-        return $driver;
+        return new RiakCache($this->bucket);
     }
 }
