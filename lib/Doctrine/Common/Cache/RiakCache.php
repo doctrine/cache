@@ -211,11 +211,22 @@ class RiakCache extends CacheProvider
     {
         $metadataMap = $object->getMetadataMap();
 
-        return (isset($metadataMap[self::EXPIRES_HEADER]) && $metadataMap[self::EXPIRES_HEADER] < time());
+        return isset($metadataMap[self::EXPIRES_HEADER])
+            && $metadataMap[self::EXPIRES_HEADER] < time();
     }
 
     /**
-     * Resolve conflict.
+     * On-read conflict resolution. Applied approach here is last write wins.
+     *
+     * {@internal Riak does not attempt to resolve a write conflict, and store
+     * it as sibling of conflicted one. By following this approach, it is up to
+     * the next read to resolve the conflict. When this happens, your fetched
+     * object will have a list of siblings (read as a list of objects).
+     * In our specific case, we do not care about the intermediate ones since
+     * they are all the same read from storage, and we do apply a last sibling
+     * (last write) wins logic.
+     * If by any means our resolution generates another conflict, it'll up to
+     * next read to properly solve it.}
      *
      * @param string $id
      * @param string $vClock
