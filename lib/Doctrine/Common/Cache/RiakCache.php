@@ -19,11 +19,17 @@
 
 namespace Doctrine\Common\Cache;
 
+use Riak\Bucket;
+use Riak\Connection;
+use Riak\Input;
+use Riak\Exception;
+use Riak\Object;
+
 /**
  * Riak cache provider.
  *
  * @link   www.doctrine-project.org
- * @since  2.4
+ * @since  1.1
  * @author Guilherme Blanco <guilhermeblanco@hotmail.com>
  */
 class RiakCache extends CacheProvider
@@ -31,18 +37,18 @@ class RiakCache extends CacheProvider
     const EXPIRES_HEADER = 'X-Riak-Meta-Expires';
 
     /**
-     * @var \RiakBucket|null
+     * @var \Riak\Bucket
      */
-    private $riakBucket;
+    private $bucket;
 
     /**
      * Sets the riak bucket instance to use.
      *
-     * @param \RiakBucket $riakBucket
+     * @param \Riak\Bucket $bucket
      */
-    public function __construct(\RiakBucket $riakBucket)
+    public function __construct(Bucket $bucket)
     {
-        $this->riakBucket = $riakBucket;
+        $this->bucket = $bucket;
     }
 
     /**
@@ -51,25 +57,32 @@ class RiakCache extends CacheProvider
     protected function doFetch($id)
     {
         try {
-            $object = $this->riakBucket->get(urlencode($id));
+            $response = $this->bucket->get(urlencode($id));
 
-            if (isset($object->meta[self::EXPIRES_HEADER]) && $object->meta[self::EXPIRES_HEADER] < time()) {
-                $this->riakBucket->delete($object);
+            // No objects found
+            if ( ! $response->hasObject()) {
+                return false;
+            }
+
+            $object = $response->getFirstObject();
+
+            if ($this->isExpired($object)) {
+                $this->bucket->delete($object);
 
                 return false;
             }
 
-            return unserialize($object->data);
-        } catch (\RiakConflictedObjectException $e) {
+            return unserialize($object->getContent());
+        } catch (Exception\ConflictedObjectException $e) {
             // TODO: We should be able to resolve Conflict resolution here.
             // May not be needed as of: https://github.com/TriKaspar/php_riak/issues/6
             // Exception provides two useful properties to help: vclock and objects
-        } catch (\RiakException $e) {
+        } catch (Exception\RiakException $e) {
             // Covers:
-            // - RiakConnectionException
-            // - RiakCommunicationException
-            // - RiakResponseException
-            // - RiakNotFoundException
+            // - Riak\ConnectionException
+            // - Riak\CommunicationException
+            // - Riak\UnexpectedResponseException
+            // - Riak\NotFoundException
         }
 
         return false;
@@ -81,10 +94,14 @@ class RiakCache extends CacheProvider
     protected function doContains($id)
     {
         try {
-            $this->riakBucket->get(urlencode($id));
+            $input = new Input\GetInput();
 
-            return true;
-        } catch (\RiakException $e) {
+            $input->setReturnHead(true);
+
+            $response = $this->bucket->get(urlencode($id), $input);
+
+            return $response->hasObject();
+        } catch (Exception\RiakException $e) {
             // Do nothing
         }
 
@@ -97,18 +114,18 @@ class RiakCache extends CacheProvider
     protected function doSave($id, $data, $lifeTime = 0)
     {
         try {
-            $object = new \RiakObject(urlencode($id));
+            $object = new Object(urlencode($id));
 
-            $object->data = serialize($data);
+            $object->setContent(serialize($data));
 
             if ($lifeTime > 0) {
-                $object->metadata[self::EXPIRES_HEADER] = (string) (time() + $lifeTime);
+                $object->addMetadata(self::EXPIRES_HEADER, (string) (time() + $lifeTime));
             }
 
-            $this->riakBucket->put($object);
+            $this->bucket->put($object);
 
             return true;
-        } catch (\RiakException $e) {
+        } catch (Exception\RiakException $e) {
             // Do nothing
         }
 
@@ -121,16 +138,16 @@ class RiakCache extends CacheProvider
     protected function doDelete($id)
     {
         try {
-            $this->riakBucket->delete(urlencode($id));
+            $this->bucket->delete(urlencode($id));
 
             return true;
-        } catch (\RiakBadArgumentsException $e) {
+        } catch (Exception\BadArgumentsException $e) {
             // Key did not exist on cluster already
-        } catch (\RiakException $e) {
+        } catch (Exception\RiakException $e) {
             // Covers:
-            // - RiakConnectionException
-            // - RiakCommunicationException
-            // - RiakResponseException
+            // - Riak\Exception\ConnectionException
+            // - Riak\Exception\CommunicationException
+            // - Riak\Exception\UnexpectedResponseException
         }
 
         return false;
@@ -142,16 +159,18 @@ class RiakCache extends CacheProvider
     protected function doFlush()
     {
         try {
-            $keyList = $this->riakBucket->listKeys();
+            $keyList = $this->bucket->getKeyList();
 
             foreach ($keyList as $key) {
-                $this->riakBucket->delete($key);
+                $this->bucket->delete($key);
             }
 
             return true;
-        } catch (\RiakException $e) {
-            return false;
+        } catch (Exception\RiakException $e) {
+            // Do nothing
         }
+
+        return false;
     }
 
     /**
@@ -164,14 +183,16 @@ class RiakCache extends CacheProvider
     }
 
     /**
-     * Check if a given riak object have expired.
+     * Check if a given Riak Object have expired.
      *
-     * @param RiakObject $object
+     * @param \Riak\Object $object
      *
      * @return boolean
      */
-    private function isExpired(RiakObject $object)
+    private function isExpired(Object $object)
     {
-        return (isset($object->metadata[self::EXPIRES_HEADER]) && $object->metadata[self::EXPIRES_HEADER] < time());
+        $metadataMap = $object->getMetadataMap();
+
+        return (isset($metadataMap[self::EXPIRES_HEADER]) && $metadataMap[self::EXPIRES_HEADER] < time());
     }
 }
