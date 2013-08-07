@@ -69,6 +69,7 @@ class RiakCache extends CacheProvider
                 ? $this->resolveConflict($id, $response->getVClock(), $response->getObjectList())
                 : $response->getFirstObject();
 
+            // Check for expired object
             if ($this->isExpired($object)) {
                 $this->bucket->delete($object);
 
@@ -76,14 +77,6 @@ class RiakCache extends CacheProvider
             }
 
             return unserialize($object->getContent());
-        } catch (Exception\ConflictedObjectException $e) {
-            // May not be needed later: https://github.com/TriKaspar/php_riak/issues/6
-            // API may break soon: https://github.com/TriKaspar/php_riak/issues/22
-            $object = $this->resolveConflict($id, $e->vclock, $e->objects);
-
-            return ( ! $this->isExpired($object))
-                ? unserialize($object->getContent())
-                : false;
         } catch (Exception\RiakException $e) {
             // Covers:
             // - Riak\ConnectionException
@@ -101,6 +94,7 @@ class RiakCache extends CacheProvider
     protected function doContains($id)
     {
         try {
+            // We only need the HEAD, not the entire object
             $input = new Input\GetInput();
 
             $input->setReturnHead(true);
@@ -114,7 +108,10 @@ class RiakCache extends CacheProvider
 
             $object = $response->getFirstObject();
 
+            // Check for expired object
             if ($this->isExpired($object)) {
+                $this->bucket->delete($object);
+
                 return false;
             }
 
@@ -217,6 +214,7 @@ class RiakCache extends CacheProvider
 
     /**
      * On-read conflict resolution. Applied approach here is last write wins.
+     * Specific needs may override this method to apply alternate conflict resolutions.
      *
      * {@internal Riak does not attempt to resolve a write conflict, and store
      * it as sibling of conflicted one. By following this approach, it is up to
@@ -234,7 +232,7 @@ class RiakCache extends CacheProvider
      *
      * @return \Riak\Object
      */
-    private function resolveConflict($id, $vClock, array $objectList)
+    protected function resolveConflict($id, $vClock, array $objectList)
     {
         // Our approach here is last-write wins
         $winner = $objectList[count($objectList)];
