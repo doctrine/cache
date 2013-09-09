@@ -69,6 +69,25 @@ abstract class CacheTest extends \Doctrine\Tests\DoctrineTestCase
         $this->assertFalse($cache->contains('key1'));
     }
 
+    public function testNamespaceDeleteAll()
+    {
+        $cache = $this->_getCacheDriver();
+        $cache->setNamespace('test_');
+        $cache->save('key1', 'test');
+        $this->assertTrue($cache->contains('key1'));
+
+        $cache->setNamespace('test2_');
+        $cache->save('key2', 'test');
+        $this->assertTrue($cache->contains('key2'));
+		
+		$cache->deleteAll();
+        $this->assertFalse($cache->contains('key2'));
+		
+		$cache->setNamespace('test_');
+        $this->assertTrue($cache->contains('key1'));
+    }
+	
+	
     /**
      * @group DCOM-43
      */

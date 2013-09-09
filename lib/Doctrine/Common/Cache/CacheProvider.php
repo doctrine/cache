@@ -57,6 +57,7 @@ abstract class CacheProvider implements Cache
     public function setNamespace($namespace)
     {
         $this->namespace = (string) $namespace;
+		$this->namespaceVersion = null;
     }
 
     /**
