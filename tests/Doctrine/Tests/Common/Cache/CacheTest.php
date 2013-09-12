@@ -80,10 +80,10 @@ abstract class CacheTest extends \Doctrine\Tests\DoctrineTestCase
         $cache->save('key2', 'test');
         $this->assertTrue($cache->contains('key2'));
 		
-		$cache->deleteAll();
+        $cache->deleteAll();
         $this->assertFalse($cache->contains('key2'));
 		
-		$cache->setNamespace('test_');
+        $cache->setNamespace('test_');
         $this->assertTrue($cache->contains('key1'));
     }
 	
