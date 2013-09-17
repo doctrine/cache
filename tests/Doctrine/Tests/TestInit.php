@@ -6,18 +6,16 @@ namespace Doctrine\Tests;
 
 error_reporting(E_ALL | E_STRICT);
 
-// register silently failing autoloader
-spl_autoload_register(function($class)
-{
-    if (0 === strpos($class, 'Doctrine\Tests\\')) {
-        $path = __DIR__.'/../../'.strtr($class, '\\', '/').'.php';
-        if (is_file($path) && is_readable($path)) {
-            require_once $path;
+if (file_exists(__DIR__ . '/../../../vendor/autoload.php')) {
+    // dependencies were installed via composer - this is the main project
+    $classLoader = require __DIR__ . '/../../../vendor/autoload.php';
+} elseif (file_exists(__DIR__ . '/../../../../../autoload.php')) {
+    // installed as a dependency in `vendor`
+    $classLoader = require __DIR__ . '/../../../../../autoload.php';
+} else {
+    throw new \Exception('Can\'t find autoload.php. Did you install dependencies via composer?');
+}
 
-            return true;
-        }
-    }
-});
-
-require_once __DIR__ . "/../../../vendor/autoload.php";
-
+/* @var $classLoader \Composer\Autoload\ClassLoader */
+$classLoader->add('Doctrine\\Tests\\', __DIR__ . '/../../');
+unset($classLoader);
