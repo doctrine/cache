@@ -51,6 +51,8 @@ abstract class FileCache extends CacheProvider
      */
     public function __construct($directory, $extension = null)
     {
+        $directory = realpath($directory);
+
         if ( ! is_dir($directory) && ! @mkdir($directory, 0777, true)) {
             throw new \InvalidArgumentException(sprintf(
                 'The directory "%s" does not exist and could not be created.',
@@ -65,7 +67,7 @@ abstract class FileCache extends CacheProvider
             ));
         }
 
-        $this->directory = realpath($directory);
+        $this->directory = $directory;
         $this->extension = $extension ?: $this->extension;
     }
 
