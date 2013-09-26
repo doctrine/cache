@@ -108,6 +108,6 @@ class FilesystemCache extends FileCache
             mkdir($filepath, 0777, true);
         }
 
-        return file_put_contents($filename, $lifeTime . PHP_EOL . $data);
+        return file_put_contents($filename, $lifeTime . PHP_EOL . $data) !== false;
     }
 }
