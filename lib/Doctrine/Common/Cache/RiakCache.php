@@ -57,7 +57,7 @@ class RiakCache extends CacheProvider
     protected function doFetch($id)
     {
         try {
-            $response = $this->bucket->get(urlencode($id));
+            $response = $this->bucket->get($id);
 
             // No objects found
             if ( ! $response->hasObject()) {
@@ -99,7 +99,7 @@ class RiakCache extends CacheProvider
 
             $input->setReturnHead(true);
 
-            $response = $this->bucket->get(urlencode($id), $input);
+            $response = $this->bucket->get($id, $input);
 
             // No objects found
             if ( ! $response->hasObject()) {
@@ -129,7 +129,7 @@ class RiakCache extends CacheProvider
     protected function doSave($id, $data, $lifeTime = 0)
     {
         try {
-            $object = new Object(urlencode($id));
+            $object = new Object($id);
 
             $object->setContent(serialize($data));
 
@@ -153,7 +153,7 @@ class RiakCache extends CacheProvider
     protected function doDelete($id)
     {
         try {
-            $this->bucket->delete(urlencode($id));
+            $this->bucket->delete($id);
 
             return true;
         } catch (Exception\BadArgumentsException $e) {
@@ -240,7 +240,7 @@ class RiakCache extends CacheProvider
         $putInput = new Input\PutInput();
         $putInput->setVClock($vClock);
 
-        $mergedObject = new Object(urlencode($id));
+        $mergedObject = new Object($id);
         $mergedObject->setContent($winner->getContent());
 
         $this->bucket->put($mergedObject, $putInput);
