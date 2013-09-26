@@ -8,29 +8,8 @@ use Doctrine\Common\Cache\PhpFileCache;
 /**
  * @group DCOM-101
  */
-class PhpFileCacheTest extends CacheTest
+class PhpFileCacheTest extends BaseFileCacheTest
 {
-    /**
-     * @var \Doctrine\Common\Cache\PhpFileCache
-     */
-    private $driver;
-
-    protected function _getCacheDriver()
-    {
-        $dir = sys_get_temp_dir() . "/doctrine_cache_". uniqid();
-        $this->assertFalse(is_dir($dir));
-
-        $this->driver = new PhpFileCache($dir);
-        $this->assertTrue(is_dir($dir));
-
-        return $this->driver;
-    }
-
-    public function testObjects()
-    {
-        $this->markTestSkipped('PhpFileCache does not support saving objects that dont implement __set_state()');
-    }
-
     public function testLifetime()
     {
         $cache = $this->_getCacheDriver();
@@ -106,25 +85,10 @@ class PhpFileCacheTest extends CacheTest
         $this->assertGreaterThan(0, $stats[Cache::STATS_MEMORY_AVAILABLE]);
     }
 
-    public function tearDown()
+    protected function _getCacheDriver()
     {
-        if (!$this->driver) {
-            return;
-        }
-
-        $dir        = $this->driver->getDirectory();
-        $ext        = $this->driver->getExtension();
-        $iterator   = new \RecursiveDirectoryIterator($dir);
-
-        foreach (new \RecursiveIteratorIterator($iterator, \RecursiveIteratorIterator::CHILD_FIRST) as $file) {
-            if ($file->isFile()) {
-                @unlink($file->getRealPath());
-            } else {
-                @rmdir($file->getRealPath());
-            }
-        }
+        return new PhpFileCache($this->directory);
     }
-
 }
 
 class NotSetStateClass

@@ -3,25 +3,35 @@
 namespace Doctrine\Tests\Common\Cache;
 
 use Doctrine\Common\Cache\MemcacheCache;
+use Memcache;
 
 class MemcacheCacheTest extends CacheTest
 {
-    private $_memcache;
+    private $memcache;
 
     public function setUp()
     {
-        if (extension_loaded('memcache')) {
-            $this->_memcache = new \Memcache;
-            $ok = @$this->_memcache->connect('localhost', 11211);
-            if (!$ok) {
-                $this->markTestSkipped('The ' . __CLASS__ .' requires the use of memcache');
-            }
-        } else {
+        if ( ! extension_loaded('memcache')) {
             $this->markTestSkipped('The ' . __CLASS__ .' requires the use of memcache');
+        }
+
+        $this->memcache = new Memcache();
+
+        if (@$this->memcache->connect('localhost', 11211) === false) {
+            unset($this->memcache);
+            $this->markTestSkipped('The ' . __CLASS__ .' cannot connect to memcache');
         }
     }
 
-    public function testNoExpire() {
+    public function tearDown()
+    {
+        if ($this->memcache instanceof Memcache) {
+            $this->memcache->flush();
+        }
+    }
+
+    public function testNoExpire()
+    {
         $cache = $this->_getCacheDriver();
         $cache->save('noexpire', 'value', 0);
         sleep(1);
@@ -38,8 +48,7 @@ class MemcacheCacheTest extends CacheTest
     protected function _getCacheDriver()
     {
         $driver = new MemcacheCache();
-        $driver->setMemcache($this->_memcache);
+        $driver->setMemcache($this->memcache);
         return $driver;
     }
-
 }
