@@ -25,12 +25,12 @@ class DefaultCacheNamespaceTest extends DoctrineTestCase
         $this->cacheNamespace->setNamespace('foo');
 
         $this->assertEquals('foo', $this->cacheNamespace->getNamespace());
-        $this->assertEquals('foo_key1_1', $this->cacheNamespace->getNamespacedKey('key1'));
+        $this->assertEquals('foo[key1][1]', $this->cacheNamespace->getNamespacedKey('key1'));
 
         $this->cacheNamespace->setNamespace('bar');
 
         $this->assertEquals('bar', $this->cacheNamespace->getNamespace());
-        $this->assertEquals('bar_key1_1', $this->cacheNamespace->getNamespacedKey('key1'));
+        $this->assertEquals('bar[key1][1]', $this->cacheNamespace->getNamespacedKey('key1'));
     }
 
     public function testChangeFormat()
@@ -53,12 +53,12 @@ class DefaultCacheNamespaceTest extends DoctrineTestCase
     {
         $this->cacheNamespace->setNamespace('ns');
 
-        $this->assertEquals('ns_key1_1', $this->cacheNamespace->getNamespacedKey('key1'));
-        $this->assertEquals('ns_key2_1', $this->cacheNamespace->getNamespacedKey('key2'));
+        $this->assertEquals('ns[key1][1]', $this->cacheNamespace->getNamespacedKey('key1'));
+        $this->assertEquals('ns[key2][1]', $this->cacheNamespace->getNamespacedKey('key2'));
 
         $this->cacheNamespace->increment();
 
-        $this->assertEquals('ns_key1_2', $this->cacheNamespace->getNamespacedKey('key1'));
-        $this->assertEquals('ns_key2_2', $this->cacheNamespace->getNamespacedKey('key2'));
+        $this->assertEquals('ns[key1][2]', $this->cacheNamespace->getNamespacedKey('key1'));
+        $this->assertEquals('ns[key2][2]', $this->cacheNamespace->getNamespacedKey('key2'));
     }
 }

@@ -47,8 +47,6 @@ class MemcacheCacheTest extends CacheTest
 
     protected function _getCacheDriver()
     {
-        $driver = new MemcacheCache();
-        $driver->setMemcache($this->memcache);
-        return $driver;
+        return new MemcacheCache($this->memcache);
     }
 }

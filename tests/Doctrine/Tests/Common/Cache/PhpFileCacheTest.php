@@ -28,7 +28,7 @@ class PhpFileCacheTest extends BaseFileCacheTest
 
         $getFilename->setAccessible(true);
 
-        $id     = 'test_key';
+        $id     = $cache->getCacheNamespace()->getNamespacedKey('test_key');
         $path   = $getFilename->invoke($cache, $id);
         $value  = include $path;
 

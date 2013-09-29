@@ -27,7 +27,7 @@ class FilesystemCacheTest extends BaseFileCacheTest
         $getFilename = new \ReflectionMethod($cache, 'getFilename');
         $getFilename->setAccessible(true);
 
-        $id         = 'test_key';
+        $id         = $cache->getCacheNamespace()->getNamespacedKey('test_key');
         $filename   = $getFilename->invoke($cache, $id);
 
         $data       = '';

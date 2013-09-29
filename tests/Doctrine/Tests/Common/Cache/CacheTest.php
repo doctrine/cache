@@ -2,6 +2,8 @@
 
 namespace Doctrine\Tests\Common\Cache;
 
+use Doctrine\Common\Cache\DefaultCacheNamespace;
+use Doctrine\Common\Cache\CacheProvider;
 use Doctrine\Common\Cache\Cache;
 use ArrayObject;
 
@@ -76,6 +78,46 @@ abstract class CacheTest extends \Doctrine\Tests\DoctrineTestCase
         $this->assertFalse($cache->contains('key1'));
     }
 
+    public function testPlainCacheKey()
+    {
+        $cache = $this->_getCacheDriver();
+        $mock  = $this->getMock(get_class($cache), array(
+            'doFetch',
+            'doContains',
+            'doSave',
+            'doDelete',
+            'doFlush',
+            'doGetStats',
+        ), array(), '', false);
+
+        $mock->setCacheNamespace(null);
+
+        $mock->expects($this->once())
+            ->method('doContains')
+            ->with($this->equalTo('key1'))
+            ->will($this->returnValue(false));
+
+        $mock->expects($this->once())
+            ->method('doSave')
+            ->with($this->equalTo('key1'), $this->equalTo('value1'))
+            ->will($this->returnValue(true));
+
+        $mock->expects($this->once())
+            ->method('doFetch')
+            ->with($this->equalTo('key1'))
+            ->will($this->returnValue('value1'));
+
+        $mock->expects($this->once())
+            ->method('doDelete')
+            ->with($this->equalTo('key1'))
+            ->will($this->returnValue(true));
+
+        $this->assertFalse($mock->contains('key1'));
+        $this->assertTrue($mock->save('key1', 'value1'));
+        $this->assertEquals('value1', $mock->fetch('key1'));
+        $this->assertTrue($mock->delete('key1'));
+    }
+
     public function testDeleteAllAndNamespaceVersioningBetweenCaches()
     {
         if ( ! $this->isSharedStorage()) {
@@ -84,9 +126,6 @@ abstract class CacheTest extends \Doctrine\Tests\DoctrineTestCase
 
         $cache1 = $this->_getCacheDriver();
         $cache2 = $this->_getCacheDriver();
-
-        $cache1->setNamespace('ns');
-        $cache2->setNamespace('ns');
 
         $this->assertTrue($cache1->save('key1', 1));
         $this->assertTrue($cache2->save('key2', 2));
@@ -114,9 +153,6 @@ abstract class CacheTest extends \Doctrine\Tests\DoctrineTestCase
          * namespace version will be initialized.
          */
         $cache3 = $this->_getCacheDriver();
-
-        $cache3->setNamespace('ns');
-
         $this->assertFalse($cache3->contains('key1'));
         $this->assertFalse($cache3->contains('key2'));
     }
@@ -141,13 +177,10 @@ abstract class CacheTest extends \Doctrine\Tests\DoctrineTestCase
         $cache1 = $this->_getCacheDriver();
         $cache2 = $this->_getCacheDriver();
 
-        $cache1->setNamespace('ns');
-        $cache2->setNamespace('ns');
-
         /* Deleting all elements from the first provider should increment its
          * namespace version before saving the first entry.
          */
-        $this->assertTrue($cache1->deleteAll());
+        $cache1->deleteAll();
         $this->assertTrue($cache1->save('key1', 1));
 
         /* The second provider will be initialized with the same namespace
@@ -183,9 +216,6 @@ abstract class CacheTest extends \Doctrine\Tests\DoctrineTestCase
          * version and not share any visibility with the first two providers.
          */
         $cache3 = $this->_getCacheDriver();
-
-        $cache3->setNamespace('ns');
-
         $this->assertFalse($cache3->contains('key1'));
         $this->assertFalse($cache3->contains('key2'));
         $this->assertTrue($cache3->save('key3', 3));

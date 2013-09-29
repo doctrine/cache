@@ -34,6 +34,14 @@ abstract class CacheProvider implements Cache
     const DOCTRINE_NAMESPACE_CACHEKEY = 'DoctrineNamespaceCacheKey[%s]';
 
     /**
+     * @param \Doctrine\Common\Cache\CacheNamespace $cacheNamespace
+     */
+    public function __construct(CacheNamespace $cacheNamespace = null)
+    {
+        $this->cacheNamespace = $cacheNamespace ?: new DefaultCacheNamespace($this);
+    }
+
+    /**
      * @var \Doctrine\Common\Cache\CacheNamespace
      */
     private $cacheNamespace;
@@ -47,10 +55,6 @@ abstract class CacheProvider implements Cache
      */
     public function setNamespace($namespace)
     {
-        if ($this->cacheNamespace == null) {
-            $this->cacheNamespace = new DefaultCacheNamespace($this, self::DOCTRINE_NAMESPACE_CACHEKEY);
-        }
-
         $this->cacheNamespace->setNamespace($namespace);
     }
 
@@ -61,10 +65,6 @@ abstract class CacheProvider implements Cache
      */
     public function getNamespace()
     {
-        if ($this->cacheNamespace == null) {
-            return null;
-        }
-
         return $this->cacheNamespace->getNamespace();
     }
 
@@ -75,7 +75,7 @@ abstract class CacheProvider implements Cache
      */
     public function setCacheNamespace(CacheNamespace $cacheNamespace = null)
     {
-        $this->cacheNamespace = $cacheNamespace;
+        $this->cacheNamespace = $cacheNamespace ?: new NullCacheNamespace();
     }
 
     /**
@@ -119,11 +119,7 @@ abstract class CacheProvider implements Cache
      */
     public function fetch($id)
     {
-        if ($this->cacheNamespace) {
-            $id = $this->cacheNamespace->getNamespacedKey($id);
-        }
-
-        return $this->doFetch($id);
+        return $this->doFetch($this->cacheNamespace->getNamespacedKey($id));
     }
 
     /**
@@ -131,11 +127,7 @@ abstract class CacheProvider implements Cache
      */
     public function contains($id)
     {
-        if ($this->cacheNamespace) {
-            $id = $this->cacheNamespace->getNamespacedKey($id);
-        }
-
-        return $this->doContains($id);
+        return $this->doContains($this->cacheNamespace->getNamespacedKey($id));
     }
 
     /**
@@ -143,11 +135,7 @@ abstract class CacheProvider implements Cache
      */
     public function save($id, $data, $lifeTime = 0)
     {
-        if ($this->cacheNamespace) {
-            $id = $this->cacheNamespace->getNamespacedKey($id);
-        }
-
-        return $this->doSave($id, $data, $lifeTime);
+        return $this->doSave($this->cacheNamespace->getNamespacedKey($id), $data, $lifeTime);
     }
 
     /**
@@ -155,11 +143,7 @@ abstract class CacheProvider implements Cache
      */
     public function delete($id)
     {
-        if ($this->cacheNamespace) {
-            $id = $this->cacheNamespace->getNamespacedKey($id);
-        }
-
-        return $this->doDelete($id);
+        return $this->doDelete($this->cacheNamespace->getNamespacedKey($id));
     }
 
     /**
@@ -187,10 +171,6 @@ abstract class CacheProvider implements Cache
      */
     public function deleteAll()
     {
-        if ($this->cacheNamespace === null) {
-            $this->cacheNamespace = new DefaultCacheNamespace($this, self::DOCTRINE_NAMESPACE_CACHEKEY);
-        }
-
         return $this->cacheNamespace->increment();
     }
 

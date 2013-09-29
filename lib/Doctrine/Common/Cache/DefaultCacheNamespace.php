@@ -27,8 +27,6 @@ namespace Doctrine\Common\Cache;
  */
 class DefaultCacheNamespace implements CacheNamespace
 {
-    const DOCTRINE_NAMESPACE_CACHEKEY = 'doctrine_cache_ns_version_';
-
     /**
      * The namespace to prefix all cache keys with.
      *
@@ -58,7 +56,7 @@ class DefaultCacheNamespace implements CacheNamespace
     /**
      * @var string
      */
-    protected $format = '%s_%s_%s';
+    protected $format = '%s[%s][%s]';
 
     /**
      * @param \Doctrine\Common\Cache\CacheProvider $cache
@@ -111,7 +109,7 @@ class DefaultCacheNamespace implements CacheNamespace
     /**
      * Gets the format string for the namespaced cache keys.
      *
-     * @return type
+     * @return string
      */
     public function getFormat()
     {
@@ -125,7 +123,7 @@ class DefaultCacheNamespace implements CacheNamespace
     {
         $this->version   = null;
         $this->namespace = $namespace;
-        $this->cacheKey  = self::DOCTRINE_NAMESPACE_CACHEKEY . $this->namespace;
+        $this->cacheKey  = sprintf(CacheProvider::DOCTRINE_NAMESPACE_CACHEKEY, $this->namespace);
     }
 
     /**

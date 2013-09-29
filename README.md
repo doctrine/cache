@@ -12,8 +12,3 @@ Cache component extracted from the Doctrine Common project.
 
 * Added support for MongoDB as Cache Provider
 * Fix namespace version reset
-
-### v1.3
-
-* Added CacheNamespace component
-* Namespace (cache key prefix) is no logger added by default - **BC Break**

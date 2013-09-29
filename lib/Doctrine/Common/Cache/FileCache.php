@@ -44,13 +44,16 @@ abstract class FileCache extends CacheProvider
     /**
      * Constructor.
      *
-     * @param string      $directory The cache directory.
-     * @param string|null $extension The cache file extension.
+     * @param string                                     $directory      The cache directory.
+     * @param string|null                                $extension      The cache file extension.
+     * @param \Doctrine\Common\Cache\CacheNamespace|null $cacheNamespace The cache namespace.
      *
      * @throws \InvalidArgumentException
      */
-    public function __construct($directory, $extension = null)
+    public function __construct($directory, $extension = null, CacheNamespace $cacheNamespace = null)
     {
+        parent::__construct($cacheNamespace);
+
         if ( ! is_dir($directory) && ! @mkdir($directory, 0777, true)) {
             throw new \InvalidArgumentException(sprintf(
                 'The directory "%s" does not exist and could not be created.',
@@ -153,6 +156,7 @@ abstract class FileCache extends CacheProvider
         $pattern = '/^.+\\' . $this->extension . '$/i';
         $iterator = new \RecursiveDirectoryIterator($this->directory);
         $iterator = new \RecursiveIteratorIterator($iterator);
+
         return new \RegexIterator($iterator, $pattern);
     }
 }

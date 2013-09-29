@@ -43,10 +43,13 @@ class RiakCache extends CacheProvider
     /**
      * Sets the riak bucket instance to use.
      *
-     * @param \Riak\Bucket $bucket
+     * @param \Riak\Bucket                               $bucket
+     * @param \Doctrine\Common\Cache\CacheNamespace|null $cacheNamespace
      */
-    public function __construct(Bucket $bucket)
+    public function __construct(Bucket $bucket, CacheNamespace $cacheNamespace = null)
     {
+        parent::__construct($cacheNamespace);
+
         $this->bucket = $bucket;
     }
 
