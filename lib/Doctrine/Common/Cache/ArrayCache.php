@@ -42,7 +42,11 @@ class ArrayCache extends CacheProvider
      */
     protected function doFetch($id)
     {
-        return (isset($this->data[$id])) ? $this->data[$id] : false;
+        if (!$this->doContains($id)) {
+            return false;
+        }
+
+        return $this->data[$id]['data'];
     }
 
     /**
@@ -50,7 +54,15 @@ class ArrayCache extends CacheProvider
      */
     protected function doContains($id)
     {
-        return isset($this->data[$id]);
+        if (!isset($this->data[$id])) {
+            return false;
+        }
+
+        if (0 === $this->data[$id]['expiration']) {
+            return true;
+        }
+
+        return $this->data[$id]['expiration'] > time();
     }
 
     /**
@@ -58,7 +70,14 @@ class ArrayCache extends CacheProvider
      */
     protected function doSave($id, $data, $lifeTime = 0)
     {
-        $this->data[$id] = $data;
+        if ($lifeTime > 0) {
+            $lifeTime = time() + $lifeTime;
+        }
+
+        $this->data[$id] = array(
+            'data'       => $data,
+            'expiration' => $lifeTime,
+        );
 
         return true;
     }
