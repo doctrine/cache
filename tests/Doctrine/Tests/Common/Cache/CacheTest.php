@@ -28,6 +28,20 @@ abstract class CacheTest extends \Doctrine\Tests\DoctrineTestCase
         $this->assertTrue($cache->delete('key'));
         $this->assertFalse($cache->contains('key'));
     }
+    
+    public function testFetchMulti()
+    {
+        $cache = $this->_getCacheDriver();
+
+        // Test saving some values, checking if it exists, and fetching it back with multiGet
+        $this->assertTrue($cache->save('key1', 'value1'));
+        $this->assertTrue($cache->save('key2', 'value2'));
+
+        $this->assertEquals(array('key1'=>'value1', 'key2'=>'value2'), $cache->fetchMultiple(array('key1', 'key2')));
+        $this->assertEquals(array('key1'=>'value1', 'key2'=>'value2'), $cache->fetchMultiple(array('key1', 'key3', 'key2')));
+        $this->assertEquals(array('key1'=>'value1', 'key2'=>'value2'), $cache->fetchMultiple(array('key1', 'key2', 'key3')));
+
+    }
 
     public function provideCrudValues()
     {
