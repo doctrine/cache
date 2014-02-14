@@ -29,7 +29,7 @@ namespace Doctrine\Common\Cache;
  * @author Roman Borschel <roman@code-factory.org>
  * @author Fabio B. Silva <fabio.bat.silva@gmail.com>
  */
-abstract class CacheProvider implements Cache
+abstract class CacheProvider implements Cache, CacheMultiGet
 {
     const DOCTRINE_NAMESPACE_CACHEKEY = 'DoctrineNamespaceCacheKey[%s]';
 
@@ -76,6 +76,33 @@ abstract class CacheProvider implements Cache
     public function fetch($id)
     {
         return $this->doFetch($this->getNamespacedId($id));
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function fetchMultiple(array $keys)
+    {
+        if (!count($keys)) {
+            return array();
+        }
+
+        $queryKeys = array();
+        foreach ($keys as $index => $id) {
+            $queryKeys[$index] = $this->getNamespacedId($id);
+        }
+
+        $items = $this->doFetchMultiple($queryKeys);
+
+        foreach ($keys as $index => $key) {
+            $queryKey = $queryKeys[$index];
+            if (isset($items[$queryKey])) {
+                $items[$key] = $items[$queryKey];
+                unset ($items[$queryKey]);
+            }
+        }
+
+        return $items;
     }
 
     /**
@@ -182,6 +209,25 @@ abstract class CacheProvider implements Cache
         $this->namespaceVersion = $namespaceVersion;
 
         return $this->namespaceVersion;
+    }
+
+    /**
+     * Default implementation of doFetchMultiple. Each driver that supports multi-get should owerwrite it.
+     *
+     * @param array $keys Array of keys to retrieve from cache
+     * @return array Array of values retrieved for the given keys.
+     */
+    protected function doFetchMultiple(array $keys)
+    {
+        $returnValues = array();
+
+        foreach ($keys as $index => $key) {
+            if (false !== ($item = $this->doFetch($key))) {
+                $returnValues[$key] = $item;
+            }
+        }
+
+        return $returnValues;
     }
 
     /**
