@@ -56,6 +56,40 @@ class FilesystemCacheTest extends BaseFileCacheTest
         $this->assertFalse($cache->fetch('test_key'));
     }
 
+    public function testSetFileMode()
+    {
+        if (DIRECTORY_SEPARATOR !== '/') {
+            $this->markTestSkipped('The test ' . __METHOD__ .' requires a UNIX-like environment to test file permissions');
+        }
+
+        $cache = $this->_getCacheDriver();
+
+        $test_mode = 0764;
+
+        // Set file mode for testing
+        $cache->setFileMode($test_mode);
+
+        // Test save
+        $cache->save('test_key', 'testing this out', 10);
+
+        // access private methods
+        $getFilename        = new \ReflectionMethod($cache, 'getFilename');
+        $getNamespacedId    = new \ReflectionMethod($cache, 'getNamespacedId');
+
+        $getFilename->setAccessible(true);
+        $getNamespacedId->setAccessible(true);
+
+        $id         = $getNamespacedId->invoke($cache, 'test_key');
+        $filename   = $getFilename->invoke($cache, $id);
+
+        $created_mode = fileperms($filename);
+
+        $nice_test_mode = '0'.decoct($test_mode & 0777);
+        $nice_created_mode = '0'.decoct($created_mode & 0777);
+
+        $this->assertSame($nice_test_mode, $nice_created_mode);
+    }
+
     public function testGetStats()
     {
         $cache = $this->_getCacheDriver();

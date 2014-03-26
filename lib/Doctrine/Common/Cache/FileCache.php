@@ -42,6 +42,21 @@ abstract class FileCache extends CacheProvider
     protected $extension;
 
     /**
+     * The mode that directories will be created with.
+     *
+     * @var int
+     */
+    protected $directory_mode = 0777;
+
+    /**
+     * The mode that files will be created with.  Null means the file will be created
+     * with the current umask.
+     *
+     * @var int|null
+     */
+    protected $file_mode;
+
+    /**
      * Constructor.
      *
      * @param string      $directory The cache directory.
@@ -51,7 +66,7 @@ abstract class FileCache extends CacheProvider
      */
     public function __construct($directory, $extension = null)
     {
-        if ( ! is_dir($directory) && ! @mkdir($directory, 0777, true)) {
+        if ( ! is_dir($directory) && ! @mkdir($directory, $this->directory_mode, true)) {
             throw new \InvalidArgumentException(sprintf(
                 'The directory "%s" does not exist and could not be created.',
                 $directory
@@ -67,6 +82,24 @@ abstract class FileCache extends CacheProvider
 
         $this->directory = realpath($directory);
         $this->extension = $extension ?: $this->extension;
+    }
+
+    /**
+     * Sets the mode that new directories will be created with.
+     * @param int $mode Mode, normally in octal (ex: 0755)
+     */
+    public function setDirectoryMode($mode)
+    {
+        $this->directory_mode = $mode;
+    }
+
+    /**
+     * Sets the mode that new files will be created with.
+     * @param int $mode Mode, normally in octal (ex: 0644)
+     */
+    public function setFileMode($mode)
+    {
+        $this->file_mode = $mode;
     }
 
     /**
