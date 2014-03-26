@@ -56,6 +56,29 @@ class FilesystemCacheTest extends BaseFileCacheTest
         $this->assertFalse($cache->fetch('test_key'));
     }
 
+    /**
+     * @expectedException \InvalidArgumentException
+     */
+    public function testSetDirectoryModeAsNonIntThrows()
+    {
+        $cache = $this->_getCacheDriver();
+
+        // This may look right, but if it is cast to (int) it will be 
+        // (dec)755 instead of (oct)755, or 0755.  This is not what you want.
+        $cache->setDirectoryMode('0775');
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     */
+    public function testSetFileModeAsNonIntThrows()
+    {
+        $cache = $this->_getCacheDriver();
+
+        // String permissions are not allowed
+        $cache->setFileMode('ugo+rwx');
+    }
+
     public function testSetFileMode()
     {
         if (DIRECTORY_SEPARATOR !== '/') {

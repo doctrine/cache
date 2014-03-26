@@ -46,7 +46,7 @@ abstract class FileCache extends CacheProvider
      *
      * @var int
      */
-    protected $directory_mode = 0777;
+    protected $directoryMode = 0777;
 
     /**
      * The mode that files will be created with.  Null means the file will be created
@@ -54,7 +54,7 @@ abstract class FileCache extends CacheProvider
      *
      * @var int|null
      */
-    protected $file_mode;
+    protected $fileMode;
 
     /**
      * Constructor.
@@ -66,7 +66,7 @@ abstract class FileCache extends CacheProvider
      */
     public function __construct($directory, $extension = null)
     {
-        if ( ! is_dir($directory) && ! @mkdir($directory, $this->directory_mode, true)) {
+        if ( ! is_dir($directory) && ! @mkdir($directory, $this->directoryMode, true)) {
             throw new \InvalidArgumentException(sprintf(
                 'The directory "%s" does not exist and could not be created.',
                 $directory
@@ -90,7 +90,10 @@ abstract class FileCache extends CacheProvider
      */
     public function setDirectoryMode($mode)
     {
-        $this->directory_mode = $mode;
+        if ( ! is_int($mode)) {
+            throw new \InvalidArgumentException("You must specify permissions modes as an int");
+        }
+        $this->directoryMode = $mode;
     }
 
     /**
@@ -99,7 +102,10 @@ abstract class FileCache extends CacheProvider
      */
     public function setFileMode($mode)
     {
-        $this->file_mode = $mode;
+        if ( ! is_int($mode)) {
+            throw new \InvalidArgumentException("You must specify permissions modes as an int");
+        }
+        $this->fileMode = $mode;
     }
 
     /**
