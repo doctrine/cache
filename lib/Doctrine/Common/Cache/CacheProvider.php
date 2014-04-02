@@ -34,18 +34,17 @@ abstract class CacheProvider implements Cache
     const DOCTRINE_NAMESPACE_CACHEKEY = 'DoctrineNamespaceCacheKey[%s]';
 
     /**
-     * The namespace to prefix all cache ids with.
-     *
-     * @var string
+     * @param \Doctrine\Common\Cache\CacheNamespace $cacheNamespace
      */
-    private $namespace = '';
+    public function __construct(CacheNamespace $cacheNamespace = null)
+    {
+        $this->cacheNamespace = $cacheNamespace ?: new DefaultCacheNamespace($this);
+    }
 
     /**
-     * The namespace version.
-     *
-     * @var string
+     * @var \Doctrine\Common\Cache\CacheNamespace
      */
-    private $namespaceVersion;
+    private $cacheNamespace;
 
     /**
      * Sets the namespace to prefix all cache ids with.
@@ -56,8 +55,7 @@ abstract class CacheProvider implements Cache
      */
     public function setNamespace($namespace)
     {
-        $this->namespace        = (string) $namespace;
-        $this->namespaceVersion = null;
+        $this->cacheNamespace->setNamespace($namespace);
     }
 
     /**
@@ -67,7 +65,53 @@ abstract class CacheProvider implements Cache
      */
     public function getNamespace()
     {
-        return $this->namespace;
+        return $this->cacheNamespace->getNamespace();
+    }
+
+    /**
+     * Sets the CacheNamespace
+     *
+     * @param \Doctrine\Common\Cache\CacheNamespace $cacheNamespace The cache namespace or NULL to disable it.
+     */
+    public function setCacheNamespace(CacheNamespace $cacheNamespace = null)
+    {
+        $this->cacheNamespace = $cacheNamespace ?: new NullCacheNamespace();
+    }
+
+    /**
+     * @return \Doctrine\Common\Cache\CacheNamespace
+     */
+    public function getCacheNamespace()
+    {
+        return $this->cacheNamespace;
+    }
+
+    /**
+     * Fetches an entry from the cache.
+     * Does not apply any cache key change.
+     *
+     * @param string $key The key of the cache entry to fetch.
+     *
+     * @return mixed The cached data or FALSE, if no cache entry exists for the given id.
+     */
+    public function fetchUsingRealKey($id)
+    {
+        return $this->doFetch($id);
+    }
+
+    /**
+     * Puts data into the cache.
+     * Does not apply any cache key change.
+     *
+     * @param string $id       The cache id.
+     * @param mixed  $data     The cache entry/data.
+     * @param int    $lifeTime The cache lifetime.
+     *
+     * @return boolean TRUE if the entry was successfully stored in the cache, FALSE otherwise.
+     */
+    public function saveUsingRealKey($id, $data, $lifeTime = 0)
+    {
+        return $this->doSave($id, $data, $lifeTime);
     }
 
     /**
@@ -75,7 +119,7 @@ abstract class CacheProvider implements Cache
      */
     public function fetch($id)
     {
-        return $this->doFetch($this->getNamespacedId($id));
+        return $this->doFetch($this->cacheNamespace->getNamespacedKey($id));
     }
 
     /**
@@ -83,7 +127,7 @@ abstract class CacheProvider implements Cache
      */
     public function contains($id)
     {
-        return $this->doContains($this->getNamespacedId($id));
+        return $this->doContains($this->cacheNamespace->getNamespacedKey($id));
     }
 
     /**
@@ -91,7 +135,7 @@ abstract class CacheProvider implements Cache
      */
     public function save($id, $data, $lifeTime = 0)
     {
-        return $this->doSave($this->getNamespacedId($id), $data, $lifeTime);
+        return $this->doSave($this->cacheNamespace->getNamespacedKey($id), $data, $lifeTime);
     }
 
     /**
@@ -99,7 +143,7 @@ abstract class CacheProvider implements Cache
      */
     public function delete($id)
     {
-        return $this->doDelete($this->getNamespacedId($id));
+        return $this->doDelete($this->cacheNamespace->getNamespacedKey($id));
     }
 
     /**
@@ -127,61 +171,7 @@ abstract class CacheProvider implements Cache
      */
     public function deleteAll()
     {
-        $namespaceCacheKey = $this->getNamespaceCacheKey();
-        $namespaceVersion  = $this->getNamespaceVersion() + 1;
-
-        $this->namespaceVersion = $namespaceVersion;
-
-        return $this->doSave($namespaceCacheKey, $namespaceVersion);
-    }
-
-    /**
-     * Prefixes the passed id with the configured namespace value.
-     *
-     * @param string $id The id to namespace.
-     *
-     * @return string The namespaced id.
-     */
-    private function getNamespacedId($id)
-    {
-        $namespaceVersion  = $this->getNamespaceVersion();
-
-        return sprintf('%s[%s][%s]', $this->namespace, $id, $namespaceVersion);
-    }
-
-    /**
-     * Returns the namespace cache key.
-     *
-     * @return string
-     */
-    private function getNamespaceCacheKey()
-    {
-        return sprintf(self::DOCTRINE_NAMESPACE_CACHEKEY, $this->namespace);
-    }
-
-    /**
-     * Returns the namespace version.
-     *
-     * @return string
-     */
-    private function getNamespaceVersion()
-    {
-        if (null !== $this->namespaceVersion) {
-            return $this->namespaceVersion;
-        }
-
-        $namespaceCacheKey = $this->getNamespaceCacheKey();
-        $namespaceVersion = $this->doFetch($namespaceCacheKey);
-
-        if (false === $namespaceVersion) {
-            $namespaceVersion = 1;
-
-            $this->doSave($namespaceCacheKey, $namespaceVersion);
-        }
-
-        $this->namespaceVersion = $namespaceVersion;
-
-        return $this->namespaceVersion;
+        return $this->cacheNamespace->increment();
     }
 
     /**

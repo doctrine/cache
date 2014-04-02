@@ -2,6 +2,8 @@
 
 namespace Doctrine\Tests\Common\Cache;
 
+use Doctrine\Common\Cache\DefaultCacheNamespace;
+use Doctrine\Common\Cache\CacheProvider;
 use Doctrine\Common\Cache\Cache;
 use ArrayObject;
 
@@ -49,6 +51,71 @@ abstract class CacheTest extends \Doctrine\Tests\DoctrineTestCase
         $this->assertTrue($cache->deleteAll());
         $this->assertFalse($cache->contains('key1'));
         $this->assertFalse($cache->contains('key2'));
+    }
+
+    public function testCacheNamespace()
+    {
+        $cache = $this->_getCacheDriver();
+        $mock  = $this->getMock('Doctrine\Common\Cache\CacheNamespace', array(
+            'getNamespacedKey',
+            'getNamespace',
+            'setNamespace',
+            'increment',
+        ));
+
+        $mock->expects($this->exactly(6))
+            ->method('getNamespacedKey')
+            ->with($this->equalTo('key1'))
+            ->will($this->returnValue('DoctrineNamespaceCacheKey[key1][1]'));
+
+        $cache->setCacheNamespace($mock);
+
+        $this->assertFalse($cache->contains('key1'));
+        $this->assertTrue($cache->save('key1', 'value1'));
+        $this->assertTrue($cache->contains('key1'));
+        $this->assertEquals('value1', $cache->fetch('key1'));
+        $this->assertTrue($cache->delete('key1'));
+        $this->assertFalse($cache->contains('key1'));
+    }
+
+    public function testPlainCacheKey()
+    {
+        $cache = $this->_getCacheDriver();
+        $mock  = $this->getMock(get_class($cache), array(
+            'doFetch',
+            'doContains',
+            'doSave',
+            'doDelete',
+            'doFlush',
+            'doGetStats',
+        ), array(), '', false);
+
+        $mock->setCacheNamespace(null);
+
+        $mock->expects($this->once())
+            ->method('doContains')
+            ->with($this->equalTo('key1'))
+            ->will($this->returnValue(false));
+
+        $mock->expects($this->once())
+            ->method('doSave')
+            ->with($this->equalTo('key1'), $this->equalTo('value1'))
+            ->will($this->returnValue(true));
+
+        $mock->expects($this->once())
+            ->method('doFetch')
+            ->with($this->equalTo('key1'))
+            ->will($this->returnValue('value1'));
+
+        $mock->expects($this->once())
+            ->method('doDelete')
+            ->with($this->equalTo('key1'))
+            ->will($this->returnValue(true));
+
+        $this->assertFalse($mock->contains('key1'));
+        $this->assertTrue($mock->save('key1', 'value1'));
+        $this->assertEquals('value1', $mock->fetch('key1'));
+        $this->assertTrue($mock->delete('key1'));
     }
 
     public function testDeleteAllAndNamespaceVersioningBetweenCaches()

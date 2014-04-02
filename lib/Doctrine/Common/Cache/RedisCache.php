@@ -36,6 +36,17 @@ class RedisCache extends CacheProvider
     private $redis;
 
     /**
+     * @param \Redis|null                                $redis
+     * @param \Doctrine\Common\Cache\CacheNamespace|null $cacheNamespace
+     */
+    public function __construct(Redis $redis = null, CacheNamespace $cacheNamespace = null)
+    {
+        parent::__construct($cacheNamespace);
+
+        $this->redis = $redis;
+    }
+
+    /**
      * Sets the redis instance to use.
      *
      * @param Redis $redis
@@ -108,6 +119,7 @@ class RedisCache extends CacheProvider
     protected function doGetStats()
     {
         $info = $this->redis->info();
+
         return array(
             Cache::STATS_HITS   => false,
             Cache::STATS_MISSES => false,

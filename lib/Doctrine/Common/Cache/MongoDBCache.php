@@ -69,10 +69,14 @@ class MongoDBCache extends CacheProvider
      *
      * @see http://www.php.net/manual/en/mongo.readpreferences.php
      * @see http://www.php.net/manual/en/mongo.writeconcerns.php
-     * @param MongoCollection $collection
+     *
+     * @param \MongoCollection                           $collection
+     * @param \Doctrine\Common\Cache\CacheNamespace|null $cacheNamespace
      */
-    public function __construct(MongoCollection $collection)
+    public function __construct(MongoCollection $collection, CacheNamespace $cacheNamespace = null)
     {
+        parent::__construct($cacheNamespace);
+
         $this->collection = $collection;
     }
 
@@ -89,6 +93,7 @@ class MongoDBCache extends CacheProvider
 
         if ($this->isExpired($document)) {
             $this->doDelete($id);
+
             return false;
         }
 
@@ -108,6 +113,7 @@ class MongoDBCache extends CacheProvider
 
         if ($this->isExpired($document)) {
             $this->doDelete($id);
+
             return false;
         }
 

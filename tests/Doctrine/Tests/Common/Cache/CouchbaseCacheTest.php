@@ -40,8 +40,6 @@ class CouchbaseCacheTest extends CacheTest
 
     protected function _getCacheDriver()
     {
-        $driver = new CouchbaseCache();
-        $driver->setCouchbase($this->couchbase);
-        return $driver;
+        return new CouchbaseCache($this->couchbase);
     }
 }

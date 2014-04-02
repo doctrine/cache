@@ -36,6 +36,17 @@ class CouchbaseCache extends CacheProvider
     private $couchbase;
 
     /**
+     * @param \Couchbase                                 $bucket
+     * @param \Doctrine\Common\Cache\CacheNamespace|null $cacheNamespace
+     */
+    public function __construct(Couchbase $couchbase = null, CacheNamespace $cacheNamespace = null)
+    {
+        parent::__construct($cacheNamespace);
+
+        $this->couchbase = $couchbase;
+    }
+
+    /**
      * Sets the Couchbase instance to use.
      *
      * @param Couchbase $couchbase

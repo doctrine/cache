@@ -23,8 +23,6 @@ class RedisCacheTest extends CacheTest
 
     protected function _getCacheDriver()
     {
-        $driver = new RedisCache();
-        $driver->setRedis($this->_redis);
-        return $driver;
+        return new RedisCache($this->_redis);
     }
 }

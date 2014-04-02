@@ -24,13 +24,10 @@ class FilesystemCacheTest extends BaseFileCacheTest
         $this->assertEquals('testing this out', $cache->fetch('test_key'));
 
         // access private methods
-        $getFilename        = new \ReflectionMethod($cache, 'getFilename');
-        $getNamespacedId    = new \ReflectionMethod($cache, 'getNamespacedId');
-
+        $getFilename = new \ReflectionMethod($cache, 'getFilename');
         $getFilename->setAccessible(true);
-        $getNamespacedId->setAccessible(true);
 
-        $id         = $getNamespacedId->invoke($cache, 'test_key');
+        $id         = $cache->getCacheNamespace()->getNamespacedKey('test_key');
         $filename   = $getFilename->invoke($cache, $id);
 
         $data       = '';
