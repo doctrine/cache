@@ -29,6 +29,23 @@ class ElasticSearchCacheTest extends CacheTest
         }
     }
 
+    /**
+     * @return \Doctrine\Common\Cache\CacheProvider
+     */
+    protected function _getCacheDriver()
+    {
+        $elasticsearchCacheDriver = new ElasticSearchCache();
+        $elasticsearchCacheDriver->setElasticSearch(
+            $this->elasticsearch
+        )
+            ->setIndex('doctrinetest')
+            ->setType('unittest');
+        //have to call this method so that the index is created with
+        $elasticsearchCacheDriver->createCacheIndex();
+
+        return $elasticsearchCacheDriver;
+    }
+
     public function testSetGetIndex()
     {
         $cacheDriver = $this->_getCacheDriver();
@@ -45,34 +62,22 @@ class ElasticSearchCacheTest extends CacheTest
 
         $type = 'dummy-type';
         $cacheDriver->setType($type);
-
+        
         $this->assertEquals($type, $cacheDriver->getType());
     }
-
+    //todo I thinkg this can be removed?
     public function testSimpleSaveFetch()
     {
         $driver = $this->_getCacheDriver();
-
         $data = 'blah';
-
         $driver->save('test', $data);
-
         $this->assertEquals($data, $driver->fetch('test'));
     }
 
-    /**
-     * @return \Doctrine\Common\Cache\CacheProvider
-     */
-    protected function _getCacheDriver()
-    {
-        $elasticsearchCacheDriver = new ElasticSearchCache();
-        $elasticsearchCacheDriver->setElasticSearch(
-            $this->elasticsearch
-        )
-            ->setIndex('doctrinetest')
-            ->setType('unittest');
 
-        return $elasticsearchCacheDriver;
+    public function testGetStats()
+    {
+        return null;
     }
 
     /**
