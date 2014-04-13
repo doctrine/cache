@@ -31,6 +31,7 @@ class ElasticSearchCache extends CacheProvider
     public function setElasticSearch(ElasticSearch $elasticsearch)
     {
         $this->elasticsearch = $elasticsearch;
+
         return $this;
     }
 
@@ -52,6 +53,7 @@ class ElasticSearchCache extends CacheProvider
     public function setIndex($index)
     {
         $this->index = (string)$index;
+
         return $this;
     }
 
@@ -71,6 +73,7 @@ class ElasticSearchCache extends CacheProvider
     public function setType($type)
     {
         $this->type = (string)$type;
+
         return $this;
     }
 
@@ -82,13 +85,26 @@ class ElasticSearchCache extends CacheProvider
         return $this->type;
     }
 
-    public function createCacheIndex(){
+    /**
+     * @return array
+     */
+    public function createCacheIndex()
+    {
 
         $params['index'] = $this->getIndex();
         $params['type']  = '';
-        $params['body']['mappings'][$this->getType()]['properties']['data']
-                      = array('type'=> 'string', 'index' =>'not_analyzed');
-        $this->getElasticSearch()->create($params);
+        $params['body']  = array(
+            'mappings' => array(
+                $this->getType() => array(
+                    'properties' => array(
+                        'data' =>
+                            array('type' => 'string', 'index' => 'not_analyzed')
+                    )
+                )
+            )
+        );
+
+        return $this->getElasticSearch()->create($params);
     }
 
     /**
@@ -116,7 +132,7 @@ class ElasticSearchCache extends CacheProvider
     {
         try {
             $response = $this->getElasticSearch()->get($this->getParams($id));
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             return false;
         }
         if (!empty($response['_source']['data'])) {
@@ -173,8 +189,9 @@ class ElasticSearchCache extends CacheProvider
      */
     protected function doDelete($id)
     {
-       $response = $this->getElasticSearch()->delete($this->getParams($id));
-       return empty($response['ok']) ? false : $response['ok'];
+        $response = $this->getElasticSearch()->delete($this->getParams($id));
+
+        return empty($response['ok']) ? false : $response['ok'];
     }
 
     /**
@@ -184,11 +201,12 @@ class ElasticSearchCache extends CacheProvider
      */
     protected function doFlush()
     {
-        $response =  $this->getElasticSearch()->indices()->delete(
+        $response = $this->getElasticSearch()->indices()->delete(
             array(
                 'index' => $this->getIndex()
             )
         );
+
         return empty($response['ok']) ? false : $response['ok'];
     }
 
