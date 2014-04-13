@@ -86,7 +86,7 @@ class ElasticSearchCache extends CacheProvider
 
         $params['index'] = $this->getIndex();
         $params['type']  = '';
-        $params['body']['mappings']['unittest']['properties']['data']
+        $params['body']['mappings'][$this->getType()]['properties']['data']
                       = array('type'=> 'string', 'index' =>'not_analyzed');
         $this->getElasticSearch()->create($params);
     }
