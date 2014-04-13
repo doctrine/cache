@@ -90,7 +90,6 @@ class ElasticSearchCache extends CacheProvider
      */
     public function createCacheIndex()
     {
-
         $params['index'] = $this->getIndex();
         $params['type']  = '';
         $params['body']  = array(
@@ -98,7 +97,10 @@ class ElasticSearchCache extends CacheProvider
                 $this->getType() => array(
                     'properties' => array(
                         'data' =>
-                            array('type' => 'string', 'index' => 'not_analyzed')
+                            array(
+                                'type'  => 'string',
+                                'index' => 'not_analyzed'
+                            )
                     )
                 )
             )
@@ -136,7 +138,7 @@ class ElasticSearchCache extends CacheProvider
             return false;
         }
         if (!empty($response['_source']['data'])) {
-            return $response['_source']['data'];
+            return unserialize($response['_source']['data']);
         }
 
         return false;
@@ -171,7 +173,7 @@ class ElasticSearchCache extends CacheProvider
                 $this->getParams($id),
                 array(
                     'body' => array(
-                        'data' => $data
+                        'data' => serialize($data)
                     )
                 )
             )
