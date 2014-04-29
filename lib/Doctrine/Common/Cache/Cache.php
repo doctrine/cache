@@ -84,6 +84,20 @@ interface Cache
     function delete($id);
 
     /**
+     * Deletes all cache entries.
+     *
+     * @return boolean TRUE if the cache entries were successfully deleted, FALSE otherwise.
+     */
+    function deleteAll();
+
+    /**
+     * Flushes all cache entries.
+     *
+     * @return boolean TRUE if the cache entries were successfully flushed, FALSE otherwise.
+     */
+    function flushAll();
+
+    /**
      * Retrieves cached information from the data store.
      *
      * The server's statistics array has the following values:
