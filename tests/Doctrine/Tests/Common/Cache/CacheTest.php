@@ -40,6 +40,34 @@ abstract class CacheTest extends \Doctrine\Tests\DoctrineTestCase
         );
     }
 
+    public function testCrudMultiple()
+    {
+        $cache = $this->_getCacheDriver();
+
+        $keys    = array('key1', 'key2');
+        $values  = array($keys[0] => 'value1', $keys[1] => 'value2');
+        $entries = array(
+            array(
+                'id'   => $keys[0],
+                'data' => $values[$keys[0]],
+            ),
+            array(
+                'id'       => $keys[1],
+                'data'     => $values[$keys[1]],
+                'lifetime' => 1000,
+            ),
+        );
+
+        // Test saving, checking, and fetching multiple values.
+        $this->assertTrue($cache->saveMany($entries));
+        $this->assertTrue($cache->containsMany($keys));
+        $this->assertEquals($values, $cache->fetchMany($keys));
+
+        // Test deleting multiple values
+        $this->assertTrue($cache->deleteMany($keys));
+        $this->assertFalse($cache->containsMany($keys));
+    }
+
     public function testDeleteAll()
     {
         $cache = $this->_getCacheDriver();
