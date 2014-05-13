@@ -45,8 +45,6 @@ class ElasticSearchCache extends CacheProvider
     public function setIndex($index)
     {
         $this->index = (string)$index;
-
-        return $this;
     }
 
     /**
@@ -65,8 +63,6 @@ class ElasticSearchCache extends CacheProvider
     public function setType($type)
     {
         $this->type = (string)$type;
-
-        return $this;
     }
 
     /**
