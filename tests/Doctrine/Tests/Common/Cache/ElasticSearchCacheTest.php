@@ -42,10 +42,8 @@ class ElasticSearchCacheTest extends CacheTest
      */
     protected function _getCacheDriver()
     {
-        $elasticsearchCacheDriver = new ElasticSearchCache();
-        $elasticsearchCacheDriver->setElasticSearch(
-            $this->elasticsearch
-        )
+        $elasticsearchCacheDriver = new ElasticSearchCache($this->elasticsearch);
+        $elasticsearchCacheDriver
             ->setIndex('doctrinetest')
             ->setType('unittest');
         //have to call this method so that the index is created with
