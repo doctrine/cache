@@ -19,15 +19,11 @@ class ElasticSearchCacheTest extends CacheTest
 
     public function setUp()
     {
-        if (class_exists('\Elasticsearch\Client')) {
-            try {
-                $this->elasticsearch = new ElasticSearch();
-            } catch(Exception $ex) {
-                $this->markTestSkipped('Could not instantiate the ElasticSearch cache because of: ' . $ex);
-            }
-        } else {
-            $this->markTestSkipped('The ' . __CLASS__ .' requires the use of the Elasticsearch dependency');
+        if (!class_exists('\Elasticsearch\Client')) {
+            $this->markTestSkipped('Could not instantiate the ElasticSearch cache because of: ' . $ex);
         }
+
+        $this->elasticsearch = new ElasticSearch();
     }
 
     public function tearDown()
