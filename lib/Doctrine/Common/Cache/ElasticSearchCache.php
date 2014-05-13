@@ -3,6 +3,14 @@ namespace Doctrine\Common\Cache;
 
 use Elasticsearch\Client as ElasticSearch;
 
+/**
+ * ElasticSearch cache provider.
+ *
+ * @link   www.doctrine-project.org
+ * @since  2.3
+ * @author Eddie Jaoude <eddie@jaoudestudios.com>
+ * @author Jeremy Quinton <jeremyquinton@gmail.com>
+ */
 class ElasticSearchCache extends CacheProvider
 {
 
