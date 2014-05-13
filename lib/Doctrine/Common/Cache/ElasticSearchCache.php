@@ -7,7 +7,7 @@ use Elasticsearch\Client as ElasticSearch;
  * ElasticSearch cache provider.
  *
  * @link   www.doctrine-project.org
- * @since  2.3
+ *
  * @author Eddie Jaoude <eddie@jaoudestudios.com>
  * @author Jeremy Quinton <jeremyquinton@gmail.com>
  */
@@ -62,17 +62,19 @@ class ElasticSearchCache extends CacheProvider
      */
     public function createCacheIndex()
     {
-        $params['index'] = $this->index;
-        $params['type']  = '';
-        $params['body']  = array(
-            'mappings' => array(
-                $this->type => array(
-                    'properties' => array(
-                        'data' =>
-                            array(
-                                'type'  => 'string',
-                                'index' => 'not_analyzed'
-                            )
+        $params = array(
+            'index' => $this->index,
+            'type'  => '',
+            'body'  => array(
+                'mappings' => array(
+                    $this->type => array(
+                        'properties' => array(
+                            'data' =>
+                                array(
+                                    'type'  => 'string',
+                                    'index' => 'not_analyzed'
+                                )
+                        )
                     )
                 )
             )
