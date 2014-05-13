@@ -48,14 +48,6 @@ class ElasticSearchCache extends CacheProvider
     }
 
     /**
-     * @return string
-     */
-    public function getIndex()
-    {
-        return $this->index;
-    }
-
-    /**
      * @param string $type
      *
      * @return ElasticSearchCache
@@ -66,23 +58,15 @@ class ElasticSearchCache extends CacheProvider
     }
 
     /**
-     * @return string
-     */
-    public function getType()
-    {
-        return $this->type;
-    }
-
-    /**
      * @return array
      */
     public function createCacheIndex()
     {
-        $params['index'] = $this->getIndex();
+        $params['index'] = $this->index;
         $params['type']  = '';
         $params['body']  = array(
             'mappings' => array(
-                $this->getType() => array(
+                $this->type => array(
                     'properties' => array(
                         'data' =>
                             array(
@@ -105,8 +89,8 @@ class ElasticSearchCache extends CacheProvider
     private function getParams($id)
     {
         return array(
-            'index' => strtolower($this->getIndex()),
-            'type'  => strtolower($this->getType()),
+            'index' => strtolower($this->index),
+            'type'  => strtolower($this->type),
             'id'    => (string)md5($id)
         );
     }
@@ -193,7 +177,7 @@ class ElasticSearchCache extends CacheProvider
     {
         $response = $this->elasticsearch->indices()->delete(
             array(
-                'index' => $this->getIndex()
+                'index' => $this->index
             )
         );
 

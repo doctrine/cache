@@ -51,25 +51,6 @@ class ElasticSearchCacheTest extends CacheTest
         return $elasticsearchCacheDriver;
     }
 
-    public function testSetGetIndex()
-    {
-        $cacheDriver = $this->_getCacheDriver();
-
-        $index = 'dummy-index';
-        $cacheDriver->setIndex($index);
-
-        $this->assertEquals($index, $cacheDriver->getIndex());
-    }
-
-    public function testSetGetType()
-    {
-        $cacheDriver = $this->_getCacheDriver();
-
-        $type = 'dummy-type';
-        $cacheDriver->setType($type);
-        
-        $this->assertEquals($type, $cacheDriver->getType());
-    }
     //todo I thinkg this can be removed?
     public function testSimpleSaveFetch()
     {
