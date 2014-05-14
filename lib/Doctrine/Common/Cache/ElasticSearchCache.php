@@ -33,7 +33,7 @@ class ElasticSearchCache extends CacheProvider
 {
 
     /**
-     * @var ElasticSearch|null
+     * @var ElasticSearch
      */
     private $elasticsearch;
 
