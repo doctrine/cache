@@ -38,16 +38,14 @@ class ElasticSearchCacheTest extends CacheTest
      */
     protected function _getCacheDriver()
     {
-        $elasticsearchCacheDriver = new ElasticSearchCache($this->elasticsearch);
-        $elasticsearchCacheDriver->setIndex('doctrinetest');
-        $elasticsearchCacheDriver->setType('unittest');
-        //have to call this method so that the index is created with
+        $elasticsearchCacheDriver = new ElasticSearchCache($this->elasticsearch, 'doctrinetest', 'unittest');
+
+        // @TODO: have to call this method so that the index is created with
         $elasticsearchCacheDriver->createCacheIndex();
 
         return $elasticsearchCacheDriver;
     }
 
-    //todo I thinkg this can be removed?
     public function testSimpleSaveFetch()
     {
         $driver = $this->_getCacheDriver();

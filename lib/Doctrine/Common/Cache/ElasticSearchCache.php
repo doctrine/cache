@@ -49,30 +49,14 @@ class ElasticSearchCache extends CacheProvider
 
     /**
      * @param ElasticSearch $elasticsearch
+     * @param string        $index
+     * @param string        $type
      */
-    public function __construct(ElasticSearch $elasticsearch)
+    public function __construct(ElasticSearch $elasticsearch, $index = 'doctrine', $type = 'cache')
     {
         $this->elasticsearch = $elasticsearch;
-    }
-
-    /**
-     * @param string $index
-     *
-     * @return ElasticSearchCache
-     */
-    public function setIndex($index)
-    {
-        $this->index = (string)$index;
-    }
-
-    /**
-     * @param string $type
-     *
-     * @return ElasticSearchCache
-     */
-    public function setType($type)
-    {
-        $this->type = (string)$type;
+        $this->index         = $index;
+        $this->type          = $type;
     }
 
     /**
