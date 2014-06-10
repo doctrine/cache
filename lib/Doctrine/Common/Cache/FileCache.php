@@ -47,6 +47,15 @@ abstract class FileCache extends CacheProvider
      * @var int
      */
     protected $directoryMode = 0777;
+    
+    /**
+     * Cached objects are stored in directories.  These directory names are determined
+     * by splitting up the 32-char ID of the object into x parts.  If x=16 files will
+     * be two dirs deep (32/16=2).  If x=2 files will be eight dirs deep (32/2=16)
+     * 
+     * @var int
+     */
+    protected $directorySpreadChars = 16;
 
     /**
      * The mode that files will be created with.  Null means the file will be created
@@ -107,6 +116,22 @@ abstract class FileCache extends CacheProvider
         }
         $this->fileMode = $mode;
     }
+    
+    /**
+     * Cached objects are stored in directories.  These directory names are determined
+     * by splitting up the 32-char ID of the object into x parts.  
+     *   If x=16 files will be two dirs deep (32/16=2 ex: 1234567890123456/1234567890123456)
+     *   If x=2 files will be eight dirs deep (32/2=16 ex: 12/34/56/78/90/12/34/56/12/34/56/78/90/12/34/56)
+     * 
+     * @var int
+     */
+    public function setDirectorySpreadChars($chars)
+    {
+        if ( ! is_int($chars)) {
+            throw new \InvalidArgumentException("You must specify directory spread chars as an int");
+        }
+        $this->directorySpreadChars = $chars;
+    }
 
     /**
      * Gets the cache directory.
@@ -136,7 +161,7 @@ abstract class FileCache extends CacheProvider
     protected function getFilename($id)
     {
         $hash = hash('sha256', $id);
-        $path = implode(str_split($hash, 16), DIRECTORY_SEPARATOR);
+        $path = implode(str_split($hash, $this->directorySpreadChars), DIRECTORY_SEPARATOR);
         $path = $this->directory . DIRECTORY_SEPARATOR . $path;
         $id   = preg_replace('@[\\\/:"*?<>|]+@', '', $id);
 
