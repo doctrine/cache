@@ -27,4 +27,4 @@ after_script:
 
 matrix:
   allow_failures:
-    php: hhvm
+    - php: hhvm
