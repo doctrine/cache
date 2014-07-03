@@ -14,12 +14,11 @@ services:
     - redis-server
 
 before_script:
-    - pecl install redis
-    - pecl install riak-beta
-    - sh -c "if [ `php-config --vernum` -ge 50500 ] ; then pecl config-set preferred_state beta; printf "yes\n" | pecl install apcu ; else echo 'extension="apc.so"' >> ./tests/travis/php.ini ;fi"
+    - sh -c "if [ $TRAVIS_PHP_VERSION != 'hhvm' ]; then pecl install riak-beta; fi"
+    - sh -c "if [[ $TRAVIS_PHP_VERSION != 'hhvm' && `php-config --vernum` -ge 50500 ]] ; then pecl config-set preferred_state beta; printf "yes\n" | pecl install apcu ; else echo 'extension="apc.so"' >> ./tests/travis/php.ini ;fi"
     - composer self-update
     - composer --prefer-source --dev install
-    - phpenv config-add ./tests/travis/php.ini
+    - sh -c "if [ $TRAVIS_PHP_VERSION != 'hhvm' ]; then phpenv config-add ./tests/travis/php.ini; fi"
 
 script:
     - ./vendor/bin/phpunit -c ./tests/travis/phpunit.travis.xml -v
@@ -29,4 +28,4 @@ after_script:
 
 matrix:
   allow_failures:
-    php: hhvm
+    - php: hhvm
