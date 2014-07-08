@@ -45,7 +45,7 @@ abstract class CacheProvider implements Cache
      *
      * @var integer|null
      */
-    private $namespaceVersion = null;
+    private $namespaceVersion;
 
     /**
      * Sets the namespace to prefix all cache ids with.
