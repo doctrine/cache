@@ -100,14 +100,31 @@ class FilesystemCache extends FileCache
             $lifeTime = time() + $lifeTime;
         }
 
-        $data       = serialize($data);
-        $filename   = $this->getFilename($id);
-        $filepath   = pathinfo($filename, PATHINFO_DIRNAME);
+        $data = serialize($data);
+        $file = $this->getFilename($id);
+        $dir  = pathinfo($file, PATHINFO_DIRNAME);
 
-        if ( ! is_dir($filepath)) {
-            mkdir($filepath, 0777, true);
+        // Folder create and file save routine shamelessly copied from
+        // https://github.com/fabpot/Twig/blob/master/lib/Twig/Environment.php :: writeCacheFile
+        // Original code author: https://github.com/fabpot
+        if (!is_dir($dir)) {
+            if (false === @mkdir($dir, 0777, true) && !is_dir($dir)) {
+                return false;
+            }
+        } elseif (!is_writable($dir)) {
+            return false;
         }
 
-        return file_put_contents($filename, $lifeTime . PHP_EOL . $data) !== false;
+        $tmpFile = tempnam($dir, basename($file));
+        if (file_put_contents($tmpFile, $lifeTime . PHP_EOL . $data) !== false) {
+            // rename does not work on Win32 before 5.2.6
+            if (@rename($tmpFile, $file) || (@copy($tmpFile, $file) && unlink($tmpFile))) {
+                @chmod($file, 0666 & ~umask());
+
+                return true;
+            }
+        }
+
+        return false;
     }
 }
