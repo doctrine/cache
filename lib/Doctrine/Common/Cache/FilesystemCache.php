@@ -117,10 +117,8 @@ class FilesystemCache extends FileCache
 
         $tmpFile = tempnam($dir, basename($file));
         if (file_put_contents($tmpFile, $lifeTime . PHP_EOL . $data) !== false) {
-            // rename does not work on Win32 before 5.2.6
-            if (@rename($tmpFile, $file) || (@copy($tmpFile, $file) && unlink($tmpFile))) {
+            if (@rename($tmpFile, $file)) {
                 @chmod($file, 0666 & ~umask());
-
                 return true;
             }
         }
