@@ -147,7 +147,7 @@ class MongoDBCache extends CacheProvider
     protected function doFlush()
     {
         // Use remove() in lieu of drop() to maintain any collection indexes
-        $result = $this->collection->remove();
+        $result = $this->collection->remove(array());
 
         return isset($result['ok']) ? $result['ok'] == 1 : true;
     }
