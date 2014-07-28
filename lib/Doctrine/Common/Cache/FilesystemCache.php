@@ -105,7 +105,19 @@ class FilesystemCache extends FileCache
         $filepath   = pathinfo($filename, PATHINFO_DIRNAME);
 
         if ( ! is_dir($filepath)) {
-            mkdir($filepath, 0777, true);
+            // Working around a possible race condition.
+            // Assuming that the mkdir call fails because another process has
+            // already created the directory, we do not need to
+            // trigger an error, thus we silence and continue.
+            @mkdir($filepath, 0777, true);
+
+            if ( ! is_dir($filepath)) {
+                // If we could not create the directory due to reasons other than
+                // a race condition, we need to trigger the error for real.
+                // Just calling mkdir again should do it.
+                // If the second call unexpectedly succeeds, no harm done.
+                mkdir($filepath, 0777, true);
+            }
         }
 
         return file_put_contents($filename, $lifeTime . PHP_EOL . $data) !== false;
