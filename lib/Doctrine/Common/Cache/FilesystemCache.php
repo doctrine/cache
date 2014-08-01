@@ -104,9 +104,6 @@ class FilesystemCache extends FileCache
         $filename   = $this->getFilename($id);
         $filepath   = pathinfo($filename, PATHINFO_DIRNAME);
 
-        // Folder create and file save routine shamelessly copied from
-        // https://github.com/fabpot/Twig/blob/master/lib/Twig/Environment.php :: writeCacheFile
-        // Original code author: https://github.com/fabpot
         if (!is_dir($filepath)) {
             if (false === @mkdir($filepath, 0777, true) && !is_dir($filepath)) {
                 return false;
