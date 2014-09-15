@@ -50,7 +50,7 @@ class ArrayCache extends CacheProvider
      */
     protected function doContains($id)
     {
-        return isset($this->data[$id]) || array_key_exists($id, $this->data);
+        return array_key_exists($id, $this->data);
     }
 
     /**
