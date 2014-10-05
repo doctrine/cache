@@ -24,12 +24,7 @@ namespace Doctrine\Common\Cache;
  *
  * @link   www.doctrine-project.org
  * @since  2.0
- * @author Benjamin Eberlei <kontakt@beberlei.de>
- * @author Guilherme Blanco <guilhermeblanco@hotmail.com>
- * @author Jonathan Wage <jonwage@gmail.com>
- * @author Roman Borschel <roman@code-factory.org>
- * @author Fabio B. Silva <fabio.bat.silva@gmail.com>
- * @author Kévin Dunglas <dunglas@gmail.com>
+ * @author Adirelle <adirelle@gmail.com>
  */
 interface NamespacedCache extends Cache
 {
