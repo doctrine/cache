@@ -23,7 +23,7 @@ namespace Doctrine\Common\Cache;
  * Interface for caches with namespace.
  *
  * @link   www.doctrine-project.org
- * @since  2.0
+ * @since  1.4
  * @author Adirelle <adirelle@gmail.com>
  */
 interface NamespacedCache extends Cache
