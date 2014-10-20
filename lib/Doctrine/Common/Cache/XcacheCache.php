@@ -71,7 +71,7 @@ class XcacheCache extends CacheProvider
     {
         $this->checkAuthorization();
 
-        xcache_clear_cache(XC_TYPE_VAR, 0);
+        xcache_clear_cache(XC_TYPE_VAR);
 
         return true;
     }
