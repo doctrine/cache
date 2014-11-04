@@ -111,8 +111,10 @@ class FilesystemCache extends FileCache
         } elseif ( ! is_writable($filepath)) {
             return false;
         }
+        
+        $sanitizedFilename = preg_replace('/[^a-zA-Z0-9-_\.]/','-', basename($filename));
 
-        $tmpFile = tempnam($filepath, basename($filename));
+        $tmpFile = tempnam($filepath, $sanitizedFilename);
 
         if ((file_put_contents($tmpFile, $lifeTime . PHP_EOL . $data) !== false) && @rename($tmpFile, $filename)) {
             @chmod($filename, 0666 & ~umask());
