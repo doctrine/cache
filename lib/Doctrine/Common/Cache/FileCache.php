@@ -182,7 +182,8 @@ abstract class FileCache extends CacheProvider
             return false;
         }
 
-        $tmpFile = tempnam($filepath, basename($filename));
+        $sanitizedFilename = preg_replace('/[^a-zA-Z0-9-_\.]/','-', basename($filename));
+        $tmpFile = tempnam($filepath, $sanitizedFilename);
 
         if (file_put_contents($tmpFile, $content) !== false) {
             if (@rename($tmpFile, $filename)) {
