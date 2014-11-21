@@ -17,7 +17,8 @@
     },
     "require-dev": {
         "phpunit/phpunit":         ">=3.7",
-        "satooshi/php-coveralls":  "~0.6"
+        "satooshi/php-coveralls":  "~0.6",
+        "predis/predis":           "~0.8"
     },
     "conflict": {
         "doctrine/common": ">2.2,<2.4"
