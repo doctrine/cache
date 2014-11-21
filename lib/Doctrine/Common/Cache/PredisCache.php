@@ -53,10 +53,12 @@ class PredisCache extends CacheProvider
     protected function doSave($id, $data, $lifeTime = 0)
     {
         if ($lifeTime > 0) {
-            return $this->client->setex($id, $lifeTime, $data);
+            $response = $this->client->setex($id, $lifeTime, $data);
+        } else {
+            $response = $this->client->set($id, $data);
         }
 
-        return $this->client->set($id, $data);
+        return $response === true || $response == 'OK';
     }
 
     /**
@@ -72,7 +74,9 @@ class PredisCache extends CacheProvider
      */
     protected function doFlush()
     {
-        return $this->client->flushdb();
+        $response = $this->client->flushdb();
+
+        return $response === true || $response == 'OK';
     }
 
     /**
