@@ -59,9 +59,16 @@ class ChainCache extends CacheProvider
      */
     protected function doFetch($id)
     {
-        foreach ($this->cacheProviders as $cacheProvider) {
+        foreach ($this->cacheProviders as $key => $cacheProvider) {
             if ($cacheProvider->doContains($id)) {
-                return $cacheProvider->doFetch($id);
+                $value = $cacheProvider->doFetch($id);
+
+                // We populate all the previous cache layers (that are assumed to be faster)
+                for ($subKey = $key - 1 ; $subKey >= 0 ; $subKey--) {
+                    $this->cacheProviders[$subKey]->doSave($id, $value);
+                }
+
+                return $value;
             }
         }
 
@@ -90,7 +97,7 @@ class ChainCache extends CacheProvider
         $stored = true;
 
         foreach ($this->cacheProviders as $cacheProvider) {
-            $stored = $stored && $cacheProvider->doSave($id, $data, $lifeTime);
+            $stored = $cacheProvider->doSave($id, $data, $lifeTime) && $stored;
         }
 
         return $stored;
@@ -101,10 +108,10 @@ class ChainCache extends CacheProvider
      */
     protected function doDelete($id)
     {
-        $deleted = true;
+        $deleted = false;
 
         foreach ($this->cacheProviders as $cacheProvider) {
-            $deleted = $deleted && $cacheProvider->doDelete($id);
+            $deleted = $deleted || $cacheProvider->doDelete($id);
         }
 
         return $deleted;
@@ -118,7 +125,7 @@ class ChainCache extends CacheProvider
         $flushed = true;
 
         foreach ($this->cacheProviders as $cacheProvider) {
-            $flushed = $flushed && $cacheProvider->doFlush();
+            $flushed = $cacheProvider->doFlush() && $flushed;
         }
 
         return $flushed;
@@ -129,6 +136,13 @@ class ChainCache extends CacheProvider
      */
     protected function doGetStats()
     {
-        return null; // @TODO: maybe stats should be indexed by the cache name
+        // We return all the stats from all adapters
+        $stats = array();
+
+        foreach ($this->cacheProviders as $cacheProvider) {
+            $stats[] = $cacheProvider->doGetStats();
+        }
+
+        return $stats;
     }
 }
