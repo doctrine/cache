@@ -22,7 +22,6 @@ namespace Doctrine\Common\Cache;
 /**
  * Cache provider that allows to easily chain multiple cache providers
  *
- * @since  2.4
  * @author Michaël Gallego <mic.gallego@gmail.com>
  */
 class ChainCache extends CacheProvider
