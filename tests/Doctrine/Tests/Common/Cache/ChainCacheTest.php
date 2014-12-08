@@ -37,7 +37,7 @@ class ChainCacheTest extends CacheTest
     public function testFetchPropagateToFastestCache()
     {
         $cache1 = new ArrayCache();
-        $cache2 = new ApcCache();
+        $cache2 = new ArrayCache();
 
         $cache2->save('bar', 'value');
 
@@ -54,7 +54,7 @@ class ChainCacheTest extends CacheTest
     public function testNamespaceIsPropagatedToAllProviders()
     {
         $cache1 = new ArrayCache();
-        $cache2 = new ApcCache();
+        $cache2 = new ArrayCache();
 
         $chainCache = new ChainCache(array($cache1, $cache2));
         $chainCache->setNamespace('bar');
