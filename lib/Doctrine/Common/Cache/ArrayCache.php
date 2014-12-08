@@ -50,6 +50,7 @@ class ArrayCache extends CacheProvider
      */
     protected function doContains($id)
     {
+        // isset() is required for performance optimizations, to avoid unnecessary function calls to array_key_exists.
         return isset($this->data[$id]) || array_key_exists($id, $this->data);
     }
 
