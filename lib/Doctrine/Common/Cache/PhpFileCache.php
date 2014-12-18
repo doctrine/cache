@@ -87,12 +87,7 @@ class PhpFileCache extends FileCache
             );
         }
 
-        $filename   = $this->getFilename($id);
-        $filepath   = pathinfo($filename, PATHINFO_DIRNAME);
-
-        if ( ! is_dir($filepath)) {
-            mkdir($filepath, 0777, true);
-        }
+        $filename  = $this->getFilename($id);
 
         $value = array(
             'lifetime'  => $lifeTime,
@@ -102,6 +97,6 @@ class PhpFileCache extends FileCache
         $value  = var_export($value, true);
         $code   = sprintf('<?php return %s;', $value);
 
-        return file_put_contents($filename, $code) !== false;
+        return $this->writeFile($filename, $code);
     }
 }

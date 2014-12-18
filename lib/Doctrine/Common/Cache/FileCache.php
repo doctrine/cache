@@ -146,6 +146,58 @@ abstract class FileCache extends CacheProvider
     }
 
     /**
+     * Create path if needed.
+     *
+     * @param string $path
+     * @return bool TRUE on success or if path already exists, FALSE if path cannot be created.
+     */
+    private function createPathIfNeeded($path)
+    {
+        if ( ! is_dir($path)) {
+            if (false === @mkdir($path, 0777, true) && !is_dir($path)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Writes a string content to file in an atomic way.
+     *
+     * @param string $filename Path to the file where to write the data.
+     * @param string $content  The content to write
+     *
+     * @return bool TRUE on success, FALSE if path cannot be created, if path is not writable or an any other error.
+     */
+    protected function writeFile($filename, $content)
+    {
+        $filepath = pathinfo($filename, PATHINFO_DIRNAME);
+
+        if ( ! $this->createPathIfNeeded($filepath)) {
+            return false;
+        }
+
+        if ( ! is_writable($filepath)) {
+            return false;
+        }
+
+        $tmpFile = tempnam($filepath, basename($filename));
+
+        if (file_put_contents($tmpFile, $content) !== false) {
+            if (@rename($tmpFile, $filename)) {
+                @chmod($filename, 0666 & ~umask());
+
+                return true;
+            } else {
+                @unlink($tmpFile);
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * @return \Iterator
      */
     private function getIterator()
