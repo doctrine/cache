@@ -29,6 +29,7 @@ namespace Doctrine\Common\Cache;
  * @author Jonathan Wage <jonwage@gmail.com>
  * @author Roman Borschel <roman@code-factory.org>
  * @author Fabio B. Silva <fabio.bat.silva@gmail.com>
+ * @author Kévin Dunglas <dunglas@gmail.com>
  */
 interface Cache
 {
@@ -51,7 +52,7 @@ interface Cache
      *
      * @return mixed The cached data or FALSE, if no cache entry exists for the given id.
      */
-    function fetch($id);
+    public function fetch($id);
 
     /**
      * Tests if an entry exists in the cache.
@@ -60,7 +61,7 @@ interface Cache
      *
      * @return boolean TRUE if a cache entry exists for the given cache id, FALSE otherwise.
      */
-    function contains($id);
+    public function contains($id);
 
     /**
      * Puts data into the cache.
@@ -72,7 +73,7 @@ interface Cache
      *
      * @return boolean TRUE if the entry was successfully stored in the cache, FALSE otherwise.
      */
-    function save($id, $data, $lifeTime = 0);
+    public function save($id, $data, $lifeTime = 0);
 
     /**
      * Deletes a cache entry.
@@ -81,7 +82,7 @@ interface Cache
      *
      * @return boolean TRUE if the cache entry was successfully deleted, FALSE otherwise.
      */
-    function delete($id);
+    public function delete($id);
 
     /**
      * Retrieves cached information from the data store.
@@ -107,5 +108,5 @@ interface Cache
      *
      * @return array|null An associative array with server's statistics if available, NULL otherwise.
      */
-    function getStats();
+    public function getStats();
 }

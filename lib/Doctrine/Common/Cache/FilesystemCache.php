@@ -105,13 +105,21 @@ class FilesystemCache extends FileCache
         $filepath   = pathinfo($filename, PATHINFO_DIRNAME);
 
         if ( ! is_dir($filepath)) {
-            mkdir($filepath, $this->directoryMode, true);
+            if (false === @mkdir($filepath, $this->directoryMode, true) && !is_dir($filepath)) {
+                return false;
+            }
+        } elseif ( ! is_writable($filepath)) {
+            return false;
         }
 
-        $success = file_put_contents($filename, $lifeTime . PHP_EOL . $data) !== false;
-        if ($success && $this->fileMode !== null) {
-            chmod($filename, $this->fileMode);
+        $tmpFile = tempnam($filepath, basename($filename));
+
+        if ((file_put_contents($tmpFile, $lifeTime . PHP_EOL . $data) !== false) && @rename($tmpFile, $filename)) {
+            @chmod($filename, $this->fileMode);
+
+            return true;
         }
-        return $success;
+
+        return false;
     }
 }
