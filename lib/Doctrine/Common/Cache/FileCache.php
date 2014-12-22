@@ -42,6 +42,37 @@ abstract class FileCache extends CacheProvider
     protected $extension;
 
     /**
+     * The mode that directories will be created with.
+     *
+     * @var int
+     */
+    protected $directoryMode = 0777;
+    
+    /**
+     * Cached objects are stored in directories.  These directory names are determined
+     * by splitting up the 32-char ID of the object into x parts.  If x=16 files will
+     * be two dirs deep (32/16=2).  If x=2 files will be eight dirs deep (32/2=16)
+     * 
+     * @var int
+     */
+    protected $directorySpreadChars = 16;
+
+    /**
+     * The mode that files will be created with.  Null means the file will be created
+     * with the current umask.
+     *
+     * @var int|null
+     */
+    protected $fileMode;
+
+    /**
+     * The hash algorithm that is used to generate filenames
+     * 
+     * @var string
+     */
+    protected $hasher = 'sha256';
+
+    /**
      * Constructor.
      *
      * @param string      $directory The cache directory.
@@ -51,7 +82,7 @@ abstract class FileCache extends CacheProvider
      */
     public function __construct($directory, $extension = null)
     {
-        if ( ! is_dir($directory) && ! @mkdir($directory, 0777, true)) {
+        if ( ! is_dir($directory) && ! @mkdir($directory, $this->directoryMode, true)) {
             throw new \InvalidArgumentException(sprintf(
                 'The directory "%s" does not exist and could not be created.',
                 $directory
@@ -67,6 +98,57 @@ abstract class FileCache extends CacheProvider
 
         $this->directory = realpath($directory);
         $this->extension = $extension ?: $this->extension;
+        $this->fileMode = 0666 & ~umask();
+    }
+
+    /**
+     * Sets the mode that new directories will be created with.
+     * @param int $mode Mode, normally in octal (ex: 0755)
+     */
+    public function setDirectoryMode($mode)
+    {
+        if ( ! is_int($mode)) {
+            throw new \InvalidArgumentException("You must specify permissions modes as an int");
+        }
+        $this->directoryMode = $mode;
+    }
+
+    /**
+     * Sets the mode that new files will be created with.
+     * @param int $mode Mode, normally in octal (ex: 0644)
+     */
+    public function setFileMode($mode)
+    {
+        if ( ! is_int($mode)) {
+            throw new \InvalidArgumentException("You must specify permissions modes as an int");
+        }
+        $this->fileMode = $mode;
+    }
+
+    /**
+     * Sets the hashing algorithm that is used to generate filenames.
+     * 
+     * @param string $haserh
+     */
+    public function setHasher($hasher)
+    {
+        $this->hasher = $hasher;
+    }
+
+    /**
+     * Cached objects are stored in directories.  These directory names are determined
+     * by splitting up the 32-char ID of the object into x parts.  
+     *   If x=16 files will be two dirs deep (32/16=2 ex: 1234567890123456/1234567890123456)
+     *   If x=2 files will be eight dirs deep (32/2=16 ex: 12/34/56/78/90/12/34/56/12/34/56/78/90/12/34/56)
+     * 
+     * @var int
+     */
+    public function setDirectorySpreadChars($chars)
+    {
+        if ( ! is_int($chars)) {
+            throw new \InvalidArgumentException("You must specify directory spread chars as an int");
+        }
+        $this->directorySpreadChars = $chars;
     }
 
     /**
@@ -96,8 +178,8 @@ abstract class FileCache extends CacheProvider
      */
     protected function getFilename($id)
     {
-        $hash = hash('sha256', $id);
-        $path = implode(str_split($hash, 16), DIRECTORY_SEPARATOR);
+        $hash = hash($this->hasher, $id);
+        $path = implode(str_split($hash, $this->directorySpreadChars), DIRECTORY_SEPARATOR);
         $path = $this->directory . DIRECTORY_SEPARATOR . $path;
         $id   = preg_replace('@[\\\/:"*?<>|]+@', '', $id);
 
