@@ -66,6 +66,13 @@ abstract class FileCache extends CacheProvider
     protected $fileMode;
 
     /**
+     * The hash algorithm that is used to generate filenames
+     * 
+     * @var string
+     */
+    protected $hasher = 'sha256';
+
+    /**
      * Constructor.
      *
      * @param string      $directory The cache directory.
@@ -117,7 +124,17 @@ abstract class FileCache extends CacheProvider
         }
         $this->fileMode = $mode;
     }
-    
+
+    /**
+     * Sets the hashing algorithm that is used to generate filenames.
+     * 
+     * @param string $haserh
+     */
+    public function setHasher($hasher)
+    {
+        $this->hasher = $hasher;
+    }
+
     /**
      * Cached objects are stored in directories.  These directory names are determined
      * by splitting up the 32-char ID of the object into x parts.  
@@ -161,7 +178,7 @@ abstract class FileCache extends CacheProvider
      */
     protected function getFilename($id)
     {
-        $hash = hash('sha256', $id);
+        $hash = hash($this->hasher, $id);
         $path = implode(str_split($hash, $this->directorySpreadChars), DIRECTORY_SEPARATOR);
         $path = $this->directory . DIRECTORY_SEPARATOR . $path;
         $id   = preg_replace('@[\\\/:"*?<>|]+@', '', $id);

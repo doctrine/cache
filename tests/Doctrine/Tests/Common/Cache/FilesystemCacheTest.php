@@ -68,6 +68,79 @@ class FilesystemCacheTest extends BaseFileCacheTest
         $cache->setDirectoryMode('0775');
     }
 
+    public function testSetDirectorySpreadChars()
+    {
+        $cache = $this->_getCacheDriver();
+        $cache->setDirectorySpreadChars(3);
+
+        // Test save
+        $cache->save('test_key', 'testing this out', 10);
+
+        // access private methods
+        $getFilename        = new \ReflectionMethod($cache, 'getFilename');
+        $getNamespacedId    = new \ReflectionMethod($cache, 'getNamespacedId');
+
+        $getFilename->setAccessible(true);
+        $getNamespacedId->setAccessible(true);
+
+        $id         = $getNamespacedId->invoke($cache, 'test_key');
+        $filename   = $getFilename->invoke($cache, $id);
+
+        $path = trim(str_replace($this->directory, '', $filename), DIRECTORY_SEPARATOR);
+        $parts = explode(DIRECTORY_SEPARATOR, $path);
+        array_pop($parts);
+
+        $this->assertCount(22, $parts);
+    }
+
+    public function testSetHasher()
+    {
+        $cache = $this->_getCacheDriver();
+        $cache->setDirectorySpreadChars(2);
+
+        // Test save
+        $cache->save('test_key', 'testing this out', 10);
+
+        // access private methods
+        $getFilename        = new \ReflectionMethod($cache, 'getFilename');
+        $getNamespacedId    = new \ReflectionMethod($cache, 'getNamespacedId');
+
+        $getFilename->setAccessible(true);
+        $getNamespacedId->setAccessible(true);
+
+        $id         = $getNamespacedId->invoke($cache, 'test_key');
+        $filename   = $getFilename->invoke($cache, $id);
+
+        $path = trim(str_replace($this->directory, '', $filename), DIRECTORY_SEPARATOR);
+        $parts = explode(DIRECTORY_SEPARATOR, $path);
+        array_pop($parts);
+
+        // 2-char spread and sha256 hash produce 32 dirs deep
+        $this->assertCount(32, $parts);
+
+        $cache->setHasher('md5');
+
+        // Test save
+        $cache->save('test_key', 'testing this out', 10);
+
+        // access private methods
+        $getFilename        = new \ReflectionMethod($cache, 'getFilename');
+        $getNamespacedId    = new \ReflectionMethod($cache, 'getNamespacedId');
+
+        $getFilename->setAccessible(true);
+        $getNamespacedId->setAccessible(true);
+
+        $id         = $getNamespacedId->invoke($cache, 'test_key');
+        $filename   = $getFilename->invoke($cache, $id);
+
+        $path = trim(str_replace($this->directory, '', $filename), DIRECTORY_SEPARATOR);
+        $parts = explode(DIRECTORY_SEPARATOR, $path);
+        array_pop($parts);
+
+        // 2-char spread and md5 hash produce 32 dirs deep
+        $this->assertCount(16, $parts);
+    }
+
     /**
      * @expectedException \InvalidArgumentException
      */
