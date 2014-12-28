@@ -64,6 +64,10 @@ class PhpFileCache extends FileCache
         if ( ! is_file($filename)) {
             return false;
         }
+        
+        if ( ! is_readable($filename)) {
+            return false;
+        }
 
         $value = include $filename;
 
