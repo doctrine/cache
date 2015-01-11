@@ -86,7 +86,10 @@ class XcacheCache extends CacheProvider
     protected function checkAuthorization()
     {
         if (ini_get('xcache.admin.enable_auth')) {
-            throw new \BadMethodCallException('To use all features of \Doctrine\Common\Cache\XcacheCache, you must set "xcache.admin.enable_auth" to "Off" in your php.ini.');
+            throw new \BadMethodCallException(
+                'To use all features of \Doctrine\Common\Cache\XcacheCache, '
+                . 'you must set "xcache.admin.enable_auth" to "Off" in your php.ini.'
+            );
         }
     }
 
