@@ -51,14 +51,14 @@ abstract class FileCache extends CacheProvider
      */
     public function __construct($directory, $extension = null)
     {
-        if ( ! is_dir($directory) && ! @mkdir($directory, 0777, true)) {
+        if (! is_dir($directory) && ! @mkdir($directory, 0777, true)) {
             throw new \InvalidArgumentException(sprintf(
                 'The directory "%s" does not exist and could not be created.',
                 $directory
             ));
         }
 
-        if ( ! is_writable($directory)) {
+        if (! is_writable($directory)) {
             throw new \InvalidArgumentException(sprintf(
                 'The directory "%s" is not writable.',
                 $directory

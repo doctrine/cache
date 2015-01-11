@@ -60,7 +60,7 @@ class RiakCache extends CacheProvider
             $response = $this->bucket->get($id);
 
             // No objects found
-            if ( ! $response->hasObject()) {
+            if (! $response->hasObject()) {
                 return false;
             }
 
@@ -102,7 +102,7 @@ class RiakCache extends CacheProvider
             $response = $this->bucket->get($id, $input);
 
             // No objects found
-            if ( ! $response->hasObject()) {
+            if (! $response->hasObject()) {
                 return false;
             }
 

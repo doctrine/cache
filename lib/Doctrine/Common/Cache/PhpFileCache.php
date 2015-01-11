@@ -41,7 +41,7 @@ class PhpFileCache extends FileCache
     {
         $filename = $this->getFilename($id);
 
-        if ( ! is_file($filename)) {
+        if (! is_file($filename)) {
             return false;
         }
 
@@ -61,7 +61,7 @@ class PhpFileCache extends FileCache
     {
         $filename = $this->getFilename($id);
 
-        if ( ! is_file($filename)) {
+        if (! is_file($filename)) {
             return false;
         }
 
@@ -90,7 +90,7 @@ class PhpFileCache extends FileCache
         $filename   = $this->getFilename($id);
         $filepath   = pathinfo($filename, PATHINFO_DIRNAME);
 
-        if ( ! is_dir($filepath)) {
+        if (! is_dir($filepath)) {
             mkdir($filepath, 0777, true);
         }
 
