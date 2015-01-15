@@ -42,6 +42,19 @@ abstract class FileCache extends CacheProvider
     protected $extension;
 
     /**
+     * @var string[] regular expressions for replacing disallowed characters in file name
+     */
+    private $disallowedCharacterPatterns = array(
+        '/\-/', // replaced to disambiguate original `-` and `-` derived from replacements
+        '/[^a-zA-Z0-9\-_\[\]]/'
+    );
+
+    /**
+     * @var string[] replacements for disallowed file characters
+     */
+    private $replacementCharacters = array('__', '-');
+
+    /**
      * Constructor.
      *
      * @param string      $directory The cache directory.
@@ -100,7 +113,7 @@ abstract class FileCache extends CacheProvider
             . DIRECTORY_SEPARATOR
             . implode(str_split(hash('sha256', $id), 16), DIRECTORY_SEPARATOR)
             . DIRECTORY_SEPARATOR
-            . preg_replace(array('/\-/', '/[^a-zA-Z0-9\-_\[\]]/'), array('__', '-'), $id)
+            . preg_replace($this->disallowedCharacterPatterns, $this->replacementCharacters, $id)
             . $this->extension;
     }
 
