@@ -215,9 +215,9 @@ abstract class FileCache extends CacheProvider
      */
     private function getIterator()
     {
-        $pattern = '/^.+\\' . $this->extension . '$/i';
-        $iterator = new \RecursiveDirectoryIterator($this->directory);
-        $iterator = new \RecursiveIteratorIterator($iterator);
-        return new \RegexIterator($iterator, $pattern);
+        return new \RegexIterator(
+            new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($this->directory)),
+            '/^.+\\' . $this->extension . '$/i'
+        );
     }
 }
