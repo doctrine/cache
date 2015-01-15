@@ -83,14 +83,11 @@ abstract class CacheProvider implements Cache, MultiGetCache
      */
     public function fetchMultiple(array $keys)
     {
-        if (!count($keys)) {
+        if (! $keys) {
             return array();
         }
 
-        $queryKeys = array();
-        foreach ($keys as $index => $id) {
-            $queryKeys[$index] = $this->getNamespacedId($id);
-        }
+        $queryKeys = array_map(array($this, 'getNamespacedId'), $keys);
 
         $items = $this->doFetchMultiple($queryKeys);
 
