@@ -96,12 +96,12 @@ abstract class FileCache extends CacheProvider
      */
     protected function getFilename($id)
     {
-        $hash = hash('sha256', $id);
-        $path = implode(str_split($hash, 16), DIRECTORY_SEPARATOR);
-        $path = $this->directory . DIRECTORY_SEPARATOR . $path;
-        $id   = preg_replace('@[\\\/:"*?<>|]+@', '', $id);
-
-        return $path . DIRECTORY_SEPARATOR . $id . $this->extension;
+        return $this->directory
+            . DIRECTORY_SEPARATOR
+            . implode(str_split(hash('sha256', $id), 16), DIRECTORY_SEPARATOR)
+            . DIRECTORY_SEPARATOR
+            . preg_replace(array('/\-/', '/[^a-zA-Z0-9\-_\[\]]/'), array('__', '-'), $id)
+            . $this->extension;
     }
 
     /**
@@ -182,8 +182,7 @@ abstract class FileCache extends CacheProvider
             return false;
         }
 
-        $sanitizedFilename = preg_replace('/[^a-zA-Z0-9-_\.]/','-', basename($filename));
-        $tmpFile = tempnam($filepath, $sanitizedFilename);
+        $tmpFile = tempnam($filepath, 'swap');
 
         if (file_put_contents($tmpFile, $content) !== false) {
             if (@rename($tmpFile, $filename)) {
