@@ -37,9 +37,9 @@ abstract class FileCache extends CacheProvider
     /**
      * The cache file extension.
      *
-     * @var string|null
+     * @var string
      */
-    protected $extension;
+    protected $extension = '';
 
     /**
      * @var string[] regular expressions for replacing disallowed characters in file name
@@ -79,7 +79,7 @@ abstract class FileCache extends CacheProvider
         }
 
         $this->directory = realpath($directory);
-        $this->extension = $extension ?: $this->extension;
+        $this->extension = (string) $extension ?: $this->extension;
     }
 
     /**
