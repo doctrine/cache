@@ -25,16 +25,19 @@ class FileCacheTest extends \Doctrine\Tests\DoctrineTestCase
     {
          return array(
             //The characters :\/<>"*?| are not valid in Windows filenames.
-            array('key:1', 'key1'),
-            array('key\2', 'key2'),
-            array('key/3', 'key3'),
-            array('key<4', 'key4'),
-            array('key>5', 'key5'),
-            array('key"6', 'key6'),
-            array('key*7', 'key7'),
-            array('key?8', 'key8'),
-            array('key|9', 'key9'),
-            array('key[0]','key[0]'),
+            array('key:1', 'key-1'),
+            array('key\2', 'key-2'),
+            array('key/3', 'key-3'),
+            array('key<4', 'key-4'),
+            array('key>5', 'key-5'),
+            array('key"6', 'key-6'),
+            array('key*7', 'key-7'),
+            array('key?8', 'key-8'),
+            array('key|9', 'key-9'),
+            array('key[10]', 'key[10]'),
+            array('keyä11', 'key--11'),
+            array('../key12', '---key12'),
+            array('key-13', 'key__13'),
         );
     }
 
@@ -56,15 +59,19 @@ class FileCacheTest extends \Doctrine\Tests\DoctrineTestCase
 
     public function testFilenameCollision()
     {
-        $data['key:0']  = 'key0';
-        $data['key\0']  = 'key0';
-        $data['key/0']  = 'key0';
-        $data['key<0']  = 'key0';
-        $data['key>0']  = 'key0';
-        $data['key"0']  = 'key0';
-        $data['key*0']  = 'key0';
-        $data['key?0']  = 'key0';
-        $data['key|0']  = 'key0';
+        $data = array(
+            'key:0' => 'key-0',
+            'key\0' => 'key-0',
+            'key/0' => 'key-0',
+            'key<0' => 'key-0',
+            'key>0' => 'key-0',
+            'key"0' => 'key-0',
+            'key*0' => 'key-0',
+            'key?0' => 'key-0',
+            'key|0' => 'key-0',
+            'key-0' => 'key__0',
+            'keyä0' => 'key--0',
+        );
 
         $paths  = array();
         $cache  = $this->driver;
@@ -100,8 +107,8 @@ class FileCacheTest extends \Doctrine\Tests\DoctrineTestCase
         $filename   = pathinfo($path, PATHINFO_FILENAME);
         $dirname    = pathinfo($path, PATHINFO_DIRNAME);
 
-        $this->assertEquals('item-key', $filename);
+        $this->assertEquals('item__key', $filename);
         $this->assertEquals(DIRECTORY_SEPARATOR . $expectedDir, $dirname);
-        $this->assertEquals(DIRECTORY_SEPARATOR . $expectedDir . DIRECTORY_SEPARATOR . $key, $path);
+        $this->assertEquals(DIRECTORY_SEPARATOR . $expectedDir . DIRECTORY_SEPARATOR . 'item__key', $path);
     }
 }
