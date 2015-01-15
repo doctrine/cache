@@ -26,7 +26,7 @@ namespace Doctrine\Common\Cache;
  * @since  1.4
  * @author Adirelle <adirelle@gmail.com>
  */
-interface FlushableCache extends Cache
+interface FlushableCache
 {
     /**
      * Flushes all cache entries.
