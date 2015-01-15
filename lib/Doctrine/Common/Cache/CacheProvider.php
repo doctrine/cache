@@ -29,7 +29,7 @@ namespace Doctrine\Common\Cache;
  * @author Roman Borschel <roman@code-factory.org>
  * @author Fabio B. Silva <fabio.bat.silva@gmail.com>
  */
-abstract class CacheProvider implements Cache, MultiGetCache
+abstract class CacheProvider implements Cache, FlushableCache, ClearableCache, MultiGetCache
 {
     const DOCTRINE_NAMESPACE_CACHEKEY = 'DoctrineNamespaceCacheKey[%s]';
 
@@ -132,9 +132,7 @@ abstract class CacheProvider implements Cache, MultiGetCache
     }
 
     /**
-     * Flushes all cache entries.
-     *
-     * @return boolean TRUE if the cache entries were successfully flushed, FALSE otherwise.
+     * {@inheritDoc}
      */
     public function flushAll()
     {
@@ -142,9 +140,7 @@ abstract class CacheProvider implements Cache, MultiGetCache
     }
 
     /**
-     * Deletes all cache entries.
-     *
-     * @return boolean TRUE if the cache entries were successfully deleted, FALSE otherwise.
+     * {@inheritDoc}
      */
     public function deleteAll()
     {
