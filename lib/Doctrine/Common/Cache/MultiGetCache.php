@@ -26,7 +26,7 @@ namespace Doctrine\Common\Cache;
  * @since  1.4
  * @author Asmir Mustafic <goetas@gmail.com>
  */
-interface CacheMultiGet
+interface MultiGetCache
 {
     /**
      * Returns an associative array of values for keys is found in cache.
