@@ -46,7 +46,7 @@ abstract class FileCache extends CacheProvider
      */
     private $disallowedCharacterPatterns = array(
         '/\-/', // replaced to disambiguate original `-` and `-` derived from replacements
-        '/[^a-zA-Z0-9\-_\[\]]/'
+        '/[^a-zA-Z0-9\-_\[\]]/' // also excludes non-ascii chars (not supported, depending on FS)
     );
 
     /**
