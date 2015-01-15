@@ -137,4 +137,24 @@ class FileCacheTest extends \Doctrine\Tests\DoctrineTestCase
         $this->assertSame(0, $stats1[Cache::STATS_MEMORY_USAGE]);
         $this->assertGreaterThan(0, $stats2[Cache::STATS_MEMORY_USAGE]);
     }
+
+    /**
+     * @group DCOM-266
+     */
+    public function testFileExtensionSlashCorrectlyEscaped()
+    {
+        $driver = $this->getMock(
+            'Doctrine\Common\Cache\FileCache',
+            array('doFetch', 'doContains', 'doSave'),
+            array(__DIR__ . '/../', '/' . basename(__FILE__))
+        );
+
+        $doGetStats = new \ReflectionMethod($driver, 'doGetStats');
+
+        $doGetStats->setAccessible(true);
+
+        $stats = $doGetStats->invoke($driver);
+
+        $this->assertGreaterThan(0, $stats[Cache::STATS_MEMORY_USAGE]);
+    }
 }
