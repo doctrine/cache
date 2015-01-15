@@ -31,7 +31,7 @@ interface MultiGetCache
     /**
      * Returns an associative array of values for keys is found in cache.
      *
-     * @param array $keys Array of keys to retrieve from cache
+     * @param string[] $keys Array of keys to retrieve from cache
      * @return mixed[] Array of retrieved values, indexed by the specified keys.
      *                 Values that couldn't be retrieved are not contained in this array.
      */
