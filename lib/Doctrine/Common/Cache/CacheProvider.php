@@ -29,7 +29,7 @@ namespace Doctrine\Common\Cache;
  * @author Roman Borschel <roman@code-factory.org>
  * @author Fabio B. Silva <fabio.bat.silva@gmail.com>
  */
-abstract class CacheProvider implements Cache
+abstract class CacheProvider implements Cache, CacheMultiple
 {
     const DOCTRINE_NAMESPACE_CACHEKEY = 'DoctrineNamespaceCacheKey[%s]';
 
@@ -111,9 +111,63 @@ abstract class CacheProvider implements Cache
     }
 
     /**
-     * Flushes all cache entries.
-     *
-     * @return boolean TRUE if the cache entries were successfully flushed, FALSE otherwise.
+     * {@inheritdoc}
+     */
+    public function fetchMany(array $ids)
+    {
+        $result = array();
+        foreach ($ids as $id) {
+            $result[$id] = $this->fetch($id);
+        }
+
+        return $result;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function containsMany(array $ids)
+    {
+        $success = true;
+        foreach ($ids as $id) {
+            $result  = $this->contains($id);
+            $success = $success ? $result : $success;
+        }
+
+        return $success;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function saveMany(array $entries)
+    {
+        $success = true;
+        foreach ($entries as $entry) {
+            $lifetime = isset($entry['lifetime']) ? $entry['lifetime'] : 0;
+            $result   = $this->save($entry['id'], $entry['data'], $lifetime);
+            $success  = $success ? $result : $success;
+        }
+
+        return $success;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function deleteMany(array $ids)
+    {
+        $success = true;
+        foreach ($ids as $id) {
+            $result  = $this->delete($id);
+            $success = $success ? $result : $success;
+        }
+
+        return $success;
+    }
+
+    /**
+     * {@inheritdoc}
      */
     public function flushAll()
     {
@@ -121,9 +175,7 @@ abstract class CacheProvider implements Cache
     }
 
     /**
-     * Deletes all cache entries.
-     *
-     * @return boolean TRUE if the cache entries were successfully deleted, FALSE otherwise.
+     * {@inheritdoc}
      */
     public function deleteAll()
     {
