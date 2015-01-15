@@ -125,8 +125,15 @@ class SQLite3Cache extends CacheProvider
     protected function doDelete($id)
     {
         list($idField) = $this->getFields();
-        $statement = $this->sqlite->prepare("DELETE FROM {$this->table} WHERE {$idField} = :id");
+
+        $statement = $this->sqlite->prepare(sprintf(
+            'DELETE FROM %s WHERE %s = :id',
+            $this->table,
+            $idField
+        ));
+
         $statement->bindValue(':id', $id);
+
         return $statement->execute() instanceof SQLite3Result;
     }
 
@@ -135,7 +142,10 @@ class SQLite3Cache extends CacheProvider
      */
     protected function doFlush()
     {
-        return $this->sqlite->exec("DELETE FROM {$this->table}");
+        return $this->sqlite->exec(sprintf(
+            'DELETE FROM %s',
+            $this->table
+        ));
     }
 
     /**
