@@ -47,7 +47,7 @@ class SQLite3Cache extends CacheProvider
     const EXPIRATION_FIELD = 'e';
 
     /**
-     * @var SQLite
+     * @var SQLite3
      */
     private $sqlite;
 
