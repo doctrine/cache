@@ -217,7 +217,7 @@ abstract class FileCache extends CacheProvider
     {
         return new \RegexIterator(
             new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($this->directory)),
-            '/^.+' . preg_quote($this->extension) . '$/i'
+            '/^.+' . preg_quote($this->extension, '/') . '$/i'
         );
     }
 }
