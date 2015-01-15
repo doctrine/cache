@@ -48,7 +48,11 @@ abstract class CacheProvider implements Cache, FlushableCache, ClearableCache, M
     private $namespaceVersion;
 
     /**
-     * {@inheritDoc}
+     * Sets the namespace to prefix all cache ids with.
+     *
+     * @param string $namespace
+     *
+     * @return void
      */
     public function setNamespace($namespace)
     {
@@ -57,7 +61,9 @@ abstract class CacheProvider implements Cache, FlushableCache, ClearableCache, M
     }
 
     /**
-     * {@inheritDoc}
+     * Retrieves the namespace that prefixes all cache ids.
+     *
+     * @return string
      */
     public function getNamespace()
     {
