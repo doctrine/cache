@@ -126,6 +126,9 @@ class RedisCache extends CacheProvider
      */
     protected function getSerializerValue()
     {
+        if (defined('HHVM_VERSION')) {
+            return Redis::SERIALIZER_PHP;
+        }
         return defined('Redis::SERIALIZER_IGBINARY') ? Redis::SERIALIZER_IGBINARY : Redis::SERIALIZER_PHP;
     }
 }
