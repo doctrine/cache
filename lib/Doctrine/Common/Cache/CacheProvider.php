@@ -83,23 +83,20 @@ abstract class CacheProvider implements Cache, MultiGetCache
      */
     public function fetchMultiple(array $keys)
     {
-        if (! $keys) {
-            return array();
-        }
+        // note: the array_combine() is in place to keep an association between our $keys and the $namespacedKeys
+        $namespacedKeys = array_combine($keys, array_map(array($this, 'getNamespacedId'), $keys));
+        $items          = $this->doFetchMultiple($namespacedKeys);
+        $foundItems     = array();
 
-        $queryKeys = array_map(array($this, 'getNamespacedId'), $keys);
-
-        $items = $this->doFetchMultiple($queryKeys);
-
-        foreach ($keys as $index => $key) {
-            $queryKey = $queryKeys[$index];
-            if (isset($items[$queryKey])) {
-                $items[$key] = $items[$queryKey];
-                unset ($items[$queryKey]);
+        // no internal array function supports this sort of mapping: needs to be iterative
+        // this filters and combines keys in one pass
+        foreach ($namespacedKeys as $requestedKey => $namespacedKey) {
+            if (isset($items[$namespacedKey])) {
+                $foundItems[$requestedKey] = $items[$namespacedKey];
             }
         }
 
-        return $items;
+        return $foundItems;
     }
 
     /**
