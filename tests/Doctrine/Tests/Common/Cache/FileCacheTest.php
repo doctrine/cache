@@ -2,6 +2,8 @@
 
 namespace Doctrine\Tests\Common\Cache;
 
+use Doctrine\Common\Cache\Cache;
+
 /**
  * @group DCOM-101
  */
@@ -110,5 +112,29 @@ class FileCacheTest extends \Doctrine\Tests\DoctrineTestCase
         $this->assertEquals('item__key', $filename);
         $this->assertEquals(DIRECTORY_SEPARATOR . $expectedDir, $dirname);
         $this->assertEquals(DIRECTORY_SEPARATOR . $expectedDir . DIRECTORY_SEPARATOR . 'item__key', $path);
+    }
+
+    public function testFileExtensionCorrectlyEscaped()
+    {
+        $driver1 = $this->getMock(
+            'Doctrine\Common\Cache\FileCache',
+            array('doFetch', 'doContains', 'doSave'),
+            array(__DIR__, '.*')
+        );
+        $driver2 = $this->getMock(
+            'Doctrine\Common\Cache\FileCache',
+            array('doFetch', 'doContains', 'doSave'),
+            array(__DIR__, '.php')
+        );
+
+        $doGetStats = new \ReflectionMethod($driver1, 'doGetStats');
+
+        $doGetStats->setAccessible(true);
+
+        $stats1 = $doGetStats->invoke($driver1);
+        $stats2 = $doGetStats->invoke($driver2);
+
+        $this->assertSame(0, $stats1[Cache::STATS_MEMORY_USAGE]);
+        $this->assertGreaterThan(0, $stats2[Cache::STATS_MEMORY_USAGE]);
     }
 }
