@@ -202,9 +202,9 @@ abstract class FileCache extends CacheProvider
                 @chmod($filename, 0666 & ~umask());
 
                 return true;
-            } else {
-                @unlink($tmpFile);
             }
+
+            @unlink($tmpFile);
         }
 
         return false;
