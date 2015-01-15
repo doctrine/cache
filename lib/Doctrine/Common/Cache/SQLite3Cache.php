@@ -142,10 +142,7 @@ class SQLite3Cache extends CacheProvider
      */
     protected function doFlush()
     {
-        return $this->sqlite->exec(sprintf(
-            'DELETE FROM %s',
-            $this->table
-        ));
+        return $this->sqlite->exec(sprintf('DELETE FROM %s', $this->table));
     }
 
     /**
@@ -172,19 +169,26 @@ class SQLite3Cache extends CacheProvider
             $key = array_search(static::DATA_FIELD, $fields);
             unset($fields[$key]);
         }
-        $fields = implode(',', $fields);
 
-        $statement = $this->sqlite->prepare("SELECT {$fields} FROM {$this->table} WHERE {$idField} = :id LIMIT 1");
+        $statement = $this->sqlite->prepare(sprintf(
+            'SELECT %s FROM %s WHERE %s = :id LIMIT 1',
+            implode(',', $fields),
+            $this->table,
+            $idField
+        ));
+
         $statement->bindValue(':id', $id, SQLITE3_TEXT);
+
         $item = $statement->execute()->fetchArray();
 
         if ($item === false) {
-            return;
+            return null;
         }
 
         if ($this->isExpired($item)) {
             $this->doDelete($id);
-            return;
+
+            return null;
         }
 
         return $item;
