@@ -29,7 +29,7 @@ namespace Doctrine\Common\Cache;
  * @author Roman Borschel <roman@code-factory.org>
  * @author Fabio B. Silva <fabio.bat.silva@gmail.com>
  */
-abstract class CacheProvider implements Cache
+abstract class CacheProvider implements Cache, FlushableCache, NamespacedCache, ClearableCache
 {
     const DOCTRINE_NAMESPACE_CACHEKEY = 'DoctrineNamespaceCacheKey[%s]';
 
@@ -48,11 +48,7 @@ abstract class CacheProvider implements Cache
     private $namespaceVersion;
 
     /**
-     * Sets the namespace to prefix all cache ids with.
-     *
-     * @param string $namespace
-     *
-     * @return void
+     * {@inheritDoc}
      */
     public function setNamespace($namespace)
     {
@@ -61,9 +57,7 @@ abstract class CacheProvider implements Cache
     }
 
     /**
-     * Retrieves the namespace that prefixes all cache ids.
-     *
-     * @return string
+     * {@inheritDoc}
      */
     public function getNamespace()
     {
@@ -111,9 +105,7 @@ abstract class CacheProvider implements Cache
     }
 
     /**
-     * Flushes all cache entries.
-     *
-     * @return boolean TRUE if the cache entries were successfully flushed, FALSE otherwise.
+     * {@inheritDoc}
      */
     public function flushAll()
     {
@@ -121,9 +113,7 @@ abstract class CacheProvider implements Cache
     }
 
     /**
-     * Deletes all cache entries.
-     *
-     * @return boolean TRUE if the cache entries were successfully deleted, FALSE otherwise.
+     * {@inheritDoc}
      */
     public function deleteAll()
     {
