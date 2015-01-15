@@ -39,7 +39,7 @@ abstract class FileCache extends CacheProvider
      *
      * @var string
      */
-    protected $extension = '';
+    private $extension;
 
     /**
      * @var string[] regular expressions for replacing disallowed characters in file name
@@ -57,12 +57,12 @@ abstract class FileCache extends CacheProvider
     /**
      * Constructor.
      *
-     * @param string      $directory The cache directory.
-     * @param string|null $extension The cache file extension.
+     * @param string $directory The cache directory.
+     * @param string $extension The cache file extension.
      *
      * @throws \InvalidArgumentException
      */
-    public function __construct($directory, $extension = null)
+    public function __construct($directory, $extension = '')
     {
         if ( ! is_dir($directory) && ! @mkdir($directory, 0777, true)) {
             throw new \InvalidArgumentException(sprintf(
@@ -79,7 +79,7 @@ abstract class FileCache extends CacheProvider
         }
 
         $this->directory = realpath($directory);
-        $this->extension = (string) $extension ?: $this->extension;
+        $this->extension = (string) $extension;
     }
 
     /**
