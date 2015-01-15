@@ -106,11 +106,16 @@ class SQLite3Cache extends CacheProvider
      */
     protected function doSave($id, $data, $lifeTime = 0)
     {
-        $fields = implode(',', $this->getFields());
-        $statement = $this->sqlite->prepare("INSERT OR REPLACE INTO {$this->table} ({$fields}) VALUES (:id, :data, :expire)");
+        $statement = $this->sqlite->prepare(sprintf(
+            'INSERT OR REPLACE INTO %s (%s) VALUES (:id, :data, :expire)',
+            $this->table,
+            implode(',', $this->getFields())
+        ));
+
         $statement->bindValue(':id', $id);
         $statement->bindValue(':data', serialize($data));
         $statement->bindValue(':expire', $lifeTime > 0 ? time() + $lifeTime : null);
+
         return $statement->execute() instanceof SQLite3Result;
     }
 
