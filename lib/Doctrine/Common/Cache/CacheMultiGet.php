@@ -20,26 +20,20 @@
 namespace Doctrine\Common\Cache;
 
 /**
- * Interface for cache drivers that allows to get many itmes at once.
+ * Interface for cache drivers that allows to get many items at once.
  *
  * @link   www.doctrine-project.org
- * @since  2.5
- * @author Benjamin Eberlei <kontakt@beberlei.de>
- * @author Guilherme Blanco <guilhermeblanco@hotmail.com>
- * @author Jonathan Wage <jonwage@gmail.com>
- * @author Roman Borschel <roman@code-factory.org>
- * @author Fabio B. Silva <fabio.bat.silva@gmail.com>
+ * @since  1.4
  * @author Asmir Mustafic <goetas@gmail.com>
  */
 interface CacheMultiGet extends Cache
 {
-
     /**
-     * Returns an assocaitive array of values for keys is found in cache.
+     * Returns an associative array of values for keys is found in cache.
      *
-     * @param array $keys Array of keys to retrieve from chache
-     * @return array Array of values at the specified keys.
+     * @param array $keys Array of keys to retrieve from cache
+     * @return mixed[] Array of retrieved values, indexed by the specified keys.
+     *                 Values that couldn't be retrieved are not contained in this array.
      */
     function fetchMultiple(array $keys);
-
 }
