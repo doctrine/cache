@@ -97,10 +97,11 @@ class FileCacheTest extends \Doctrine\Tests\DoctrineTestCase
         $cache          = $this->driver;
         $method         = new \ReflectionMethod($cache, 'getFilename');
         $key            = 'item-key';
-        $expectedDir[]  = '84e0e2e893febb73';
-        $expectedDir[]  = '7a0fee0c89d53f4b';
-        $expectedDir[]  = 'b7fcb44c57cdf3d3';
-        $expectedDir[]  = '2ce7363f5d597760';
+        $expectedDir    = array(
+            '84', 'e0', 'e2', 'e8', '93', 'fe', 'bb', '73', '7a', '0f', 'ee',
+            '0c', '89', 'd5', '3f', '4b', 'b7', 'fc', 'b4', '4c', '57', 'cd',
+            'f3', 'd3', '2c', 'e7', '36', '3f', '5d', '59', '77', '60'
+        );
         $expectedDir    = implode(DIRECTORY_SEPARATOR, $expectedDir);
 
         $method->setAccessible(true);
