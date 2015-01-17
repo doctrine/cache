@@ -46,8 +46,7 @@ class PredisCache extends CacheProvider
     {
         $fetchedItems = call_user_func_array(array($this->client, 'mget'), $keys);
 
-        return array_combine($keys, $fetchedItems);
-
+        return array_filter(array_combine($keys, $fetchedItems));
     }
     /**
      * {@inheritdoc}
