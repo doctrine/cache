@@ -42,6 +42,15 @@ class PredisCache extends CacheProvider
     /**
      * {@inheritdoc}
      */
+    protected function doFetchMultiple(array $keys)
+    {
+        $fetchedItems = call_user_func_array(array($this->client, 'mget'), $keys);
+
+        return array_filter(array_combine($keys, $fetchedItems));
+    }
+    /**
+     * {@inheritdoc}
+     */
     protected function doContains($id)
     {
         return $this->client->exists($id);
