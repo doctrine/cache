@@ -113,7 +113,7 @@ class SQLite3Cache extends CacheProvider
         ));
 
         $statement->bindValue(':id', $id);
-        $statement->bindValue(':data', serialize($data));
+        $statement->bindValue(':data', serialize($data), SQLITE3_BLOB);
         $statement->bindValue(':expire', $lifeTime > 0 ? time() + $lifeTime : null);
 
         return $statement->execute() instanceof SQLite3Result;
