@@ -68,7 +68,7 @@ abstract class FileCache extends CacheProvider
      * 
      * @var int
      */
-    protected $directorySpreadChars = 16;
+    protected $directorySpreadChars = 2;
 
     /**
      * The mode that files will be created with.  Null means the file will be created
