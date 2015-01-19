@@ -18,7 +18,7 @@
     "require-dev": {
         "phpunit/phpunit":         ">=3.7",
         "satooshi/php-coveralls":  "~0.6",
-        "predis/predis":           "~0.8"
+        "predis/predis":           "~1.0"
     },
     "conflict": {
         "doctrine/common": ">2.2,<2.4"
@@ -28,7 +28,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "1.4.x-dev"
+            "dev-master": "1.5.x-dev"
         }
     }
 }

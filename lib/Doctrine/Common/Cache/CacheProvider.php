@@ -29,7 +29,7 @@ namespace Doctrine\Common\Cache;
  * @author Roman Borschel <roman@code-factory.org>
  * @author Fabio B. Silva <fabio.bat.silva@gmail.com>
  */
-abstract class CacheProvider implements Cache
+abstract class CacheProvider implements Cache, FlushableCache, ClearableCache, MultiGetCache
 {
     const DOCTRINE_NAMESPACE_CACHEKEY = 'DoctrineNamespaceCacheKey[%s]';
 
@@ -81,6 +81,27 @@ abstract class CacheProvider implements Cache
     /**
      * {@inheritdoc}
      */
+    public function fetchMultiple(array $keys)
+    {
+        // note: the array_combine() is in place to keep an association between our $keys and the $namespacedKeys
+        $namespacedKeys = array_combine($keys, array_map(array($this, 'getNamespacedId'), $keys));
+        $items          = $this->doFetchMultiple($namespacedKeys);
+        $foundItems     = array();
+
+        // no internal array function supports this sort of mapping: needs to be iterative
+        // this filters and combines keys in one pass
+        foreach ($namespacedKeys as $requestedKey => $namespacedKey) {
+            if (isset($items[$namespacedKey])) {
+                $foundItems[$requestedKey] = $items[$namespacedKey];
+            }
+        }
+
+        return $foundItems;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function contains($id)
     {
         return $this->doContains($this->getNamespacedId($id));
@@ -111,9 +132,7 @@ abstract class CacheProvider implements Cache
     }
 
     /**
-     * Flushes all cache entries.
-     *
-     * @return boolean TRUE if the cache entries were successfully flushed, FALSE otherwise.
+     * {@inheritDoc}
      */
     public function flushAll()
     {
@@ -121,9 +140,7 @@ abstract class CacheProvider implements Cache
     }
 
     /**
-     * Deletes all cache entries.
-     *
-     * @return boolean TRUE if the cache entries were successfully deleted, FALSE otherwise.
+     * {@inheritDoc}
      */
     public function deleteAll()
     {
@@ -182,6 +199,25 @@ abstract class CacheProvider implements Cache
         $this->namespaceVersion = $namespaceVersion;
 
         return $this->namespaceVersion;
+    }
+
+    /**
+     * Default implementation of doFetchMultiple. Each driver that supports multi-get should owerwrite it.
+     *
+     * @param array $keys Array of keys to retrieve from cache
+     * @return array Array of values retrieved for the given keys.
+     */
+    protected function doFetchMultiple(array $keys)
+    {
+        $returnValues = array();
+
+        foreach ($keys as $index => $key) {
+            if (false !== ($item = $this->doFetch($key))) {
+                $returnValues[$key] = $item;
+            }
+        }
+
+        return $returnValues;
     }
 
     /**

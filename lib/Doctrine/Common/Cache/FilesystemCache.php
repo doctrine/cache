@@ -32,7 +32,10 @@ class FilesystemCache extends FileCache
     /**
      * {@inheritdoc}
      */
-    protected $extension = self::EXTENSION;
+    public function __construct($directory, $extension = self::EXTENSION)
+    {
+        parent::__construct($directory, $extension);
+    }
 
     /**
      * {@inheritdoc}
@@ -99,7 +102,7 @@ class FilesystemCache extends FileCache
         if ($lifeTime > 0) {
             $lifeTime = time() + $lifeTime;
         }
-
+        
         $data       = serialize($data);
         $filename   = $this->getFilename($id);
         $filepath   = pathinfo($filename, PATHINFO_DIRNAME);
@@ -120,6 +123,6 @@ class FilesystemCache extends FileCache
             return true;
         }
 
-        return false;
+        return $this->writeFile($filename, $lifeTime . PHP_EOL . $data);
     }
 }

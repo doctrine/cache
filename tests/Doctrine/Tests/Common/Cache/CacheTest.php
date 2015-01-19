@@ -29,6 +29,57 @@ abstract class CacheTest extends \Doctrine\Tests\DoctrineTestCase
         $this->assertFalse($cache->contains('key'));
     }
 
+    public function testFetchMulti()
+    {
+        $cache = $this->_getCacheDriver();
+
+        // Test saving some values, checking if it exists, and fetching it back with multiGet
+        $this->assertTrue($cache->save('key1', 'value1'));
+        $this->assertTrue($cache->save('key2', 'value2'));
+
+        $this->assertEquals(
+            array('key1' => 'value1', 'key2' => 'value2'),
+            $cache->fetchMultiple(array('key1', 'key2'))
+        );
+        $this->assertEquals(
+            array('key1' => 'value1', 'key2' => 'value2'),
+            $cache->fetchMultiple(array('key1', 'key3', 'key2'))
+        );
+        $this->assertEquals(
+            array('key1' => 'value1', 'key2' => 'value2'),
+            $cache->fetchMultiple(array('key1', 'key2', 'key3'))
+        );
+    }
+
+    public function testFetchMultiWillFilterNonRequestedKeys()
+    {
+        /* @var $cache \Doctrine\Common\Cache\CacheProvider|\PHPUnit_Framework_MockObject_MockObject */
+        $cache = $this->getMockForAbstractClass(
+            'Doctrine\Common\Cache\CacheProvider',
+            array(),
+            '',
+            true,
+            true,
+            true,
+            array('doFetchMultiple')
+        );
+
+        $cache
+            ->expects($this->once())
+            ->method('doFetchMultiple')
+            ->will($this->returnValue(array(
+                '[foo][]' => 'bar',
+                '[bar][]' => 'baz',
+                '[baz][]' => 'tab',
+            )));
+
+        $this->assertEquals(
+            array('foo' => 'bar', 'bar' => 'baz'),
+            $cache->fetchMultiple(array('foo', 'bar'))
+        );
+    }
+
+
     public function provideCrudValues()
     {
         return array(
