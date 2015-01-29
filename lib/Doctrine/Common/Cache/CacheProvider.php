@@ -262,7 +262,7 @@ abstract class CacheProvider implements Cache, FlushableCache, ClearableCache, M
     /**
      * Flushes all cache entries.
      *
-     * @return boolean TRUE if the cache entries was successfully flushed, FALSE otherwise.
+     * @return boolean TRUE if the cache entries were successfully flushed, FALSE otherwise.
      */
     abstract protected function doFlush();
 
