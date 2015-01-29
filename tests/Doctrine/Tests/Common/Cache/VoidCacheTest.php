@@ -4,6 +4,9 @@ namespace Doctrine\Tests\Common\Cache;
 
 use Doctrine\Common\Cache\VoidCache;
 
+/**
+ * @covers \Doctrine\Common\Cache\VoidCache
+ */
 class VoidCacheTest extends \PHPUnit_Framework_TestCase
 {
     public function testShouldAlwaysReturnFalseOnContains()
