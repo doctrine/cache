@@ -20,7 +20,7 @@
 namespace Doctrine\Common\Cache;
 
 /**
- * Void cache driver.
+ * Void cache driver. The cache could be of use in tests where you don`t need to cache anything.
  *
  * @link   www.doctrine-project.org
  * @since  1.5
