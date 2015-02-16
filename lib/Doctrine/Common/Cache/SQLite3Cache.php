@@ -179,7 +179,7 @@ class SQLite3Cache extends CacheProvider
 
         $statement->bindValue(':id', $id, SQLITE3_TEXT);
 
-        $item = $statement->execute()->fetchArray();
+        $item = $statement->execute()->fetchArray(SQLITE3_ASSOC);
 
         if ($item === false) {
             return null;
