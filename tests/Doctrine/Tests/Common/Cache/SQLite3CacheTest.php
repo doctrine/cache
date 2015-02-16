@@ -22,12 +22,35 @@ class SQLite3Test extends CacheTest
 
     protected function tearDown()
     {
+        $this->sqlite = null;  // DB must be closed before
         unlink($this->file);
     }
 
     public function testGetStats()
     {
         $this->assertNull($this->_getCacheDriver()->getStats());
+    }
+
+    public function testFetchSingle()
+    {
+        $id = uniqid('sqlite3_id_');
+
+        $data = $this->_getCacheDriver();
+
+        $this->_getCacheDriver()->save($id, $data, 30);
+
+        try {
+            $actual = $this->_getCacheDriver()->fetch($id);
+
+        } catch (\PHPUnit_Framework_Error $e) {
+            $this->fail('Unexpected exception has been raised. ' . $e->getMessage());
+        }
+
+        $this->assertEquals(
+            $data,
+            $actual,
+            'data saved and retrieved does not match.'
+        );
     }
 
     protected function _getCacheDriver()
