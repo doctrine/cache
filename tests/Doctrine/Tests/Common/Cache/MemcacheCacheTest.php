@@ -51,4 +51,34 @@ class MemcacheCacheTest extends CacheTest
         $driver->setMemcache($this->memcache);
         return $driver;
     }
+    
+    /**
+     * The following values get converted to FALSE if you cast them to a boolean.
+     * @see http://php.net/manual/en/types.comparisons.php
+     */
+    public function falseCastedValuesProvider()
+    {
+        return array(
+            array(false),
+            array(null),
+            array(array()),
+            array('0'),
+            array(0),
+            array(0.0),
+            array('')
+        );
+    }
+    
+    /**
+     * Check to see that, even if the user saves a value in memcache that can be interpreted as false,
+     * memcache will still recognize that it's there.
+     * @dataProvider falseCastedValuesProvider
+     */
+    public function testFalseCastedValues($value)
+    {
+        $cache = $this->_getCacheDriver();
+        
+        $this->assertTrue($cache->save('key', $value));
+        $this->assertTrue($cache->contains('key'));
+    }
 }
