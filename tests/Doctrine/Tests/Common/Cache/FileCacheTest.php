@@ -94,15 +94,10 @@ class FileCacheTest extends \Doctrine\Tests\DoctrineTestCase
 
     public function testFilenameShouldCreateThePathWithFourSubDirectories()
     {
-        $cache          = $this->driver;
-        $method         = new \ReflectionMethod($cache, 'getFilename');
-        $key            = 'item-key';
-        $expectedDir    = array(
-            '84', 'e0', 'e2', 'e8', '93', 'fe', 'bb', '73', '7a', '0f', 'ee',
-            '0c', '89', 'd5', '3f', '4b', 'b7', 'fc', 'b4', '4c', '57', 'cd',
-            'f3', 'd3', '2c', 'e7', '36', '3f', '5d', '59', '77', '60'
-        );
-        $expectedDir    = implode(DIRECTORY_SEPARATOR, $expectedDir);
+        $cache       = $this->driver;
+        $method      = new \ReflectionMethod($cache, 'getFilename');
+        $key         = 'item-key';
+        $expectedDir = implode(DIRECTORY_SEPARATOR, array('84', 'e0', 'e2', 'e8'));
 
         $method->setAccessible(true);
 
