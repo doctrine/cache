@@ -42,13 +42,11 @@ class PhpFileCache extends FileCache
      */
     protected function doFetch($id)
     {
-        $filename = $this->getFilename($id);
+        $value = @include $this->getFilename($id);
 
-        if ( ! is_file($filename)) {
+        if (! isset($value['lifetime'])) {
             return false;
         }
-
-        $value = include $filename;
 
         if ($value['lifetime'] !== 0 && $value['lifetime'] < time()) {
             return false;
@@ -62,17 +60,11 @@ class PhpFileCache extends FileCache
      */
     protected function doContains($id)
     {
-        $filename = $this->getFilename($id);
+        $value = @include $this->getFilename($id);
 
-        if ( ! is_file($filename)) {
+        if (! isset($value['lifetime'])) {
             return false;
         }
-        
-        if ( ! is_readable($filename)) {
-            return false;
-        }
-
-        $value = include $filename;
 
         return $value['lifetime'] === 0 || $value['lifetime'] > time();
     }
