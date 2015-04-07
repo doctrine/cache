@@ -42,6 +42,7 @@ class PhpFileCache extends FileCache
      */
     protected function doFetch($id)
     {
+        // note: error suppression is still faster than `file_exists`, `is_file` and `is_readable`
         $value = @include $this->getFilename($id);
 
         if (! isset($value['lifetime'])) {
@@ -60,6 +61,7 @@ class PhpFileCache extends FileCache
      */
     protected function doContains($id)
     {
+        // note: error suppression is still faster than `file_exists`, `is_file` and `is_readable`
         $value = @include $this->getFilename($id);
 
         if (! isset($value['lifetime'])) {
