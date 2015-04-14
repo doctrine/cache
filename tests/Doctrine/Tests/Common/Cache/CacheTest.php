@@ -275,6 +275,38 @@ abstract class CacheTest extends \Doctrine\Tests\DoctrineTestCase
     }
 
     /**
+     * Check to see that, even if the user saves a value that can be interpreted as false,
+     * the cache adapter will still recognize its existence there.
+     *
+     * @dataProvider falseCastedValuesProvider
+     */
+    public function testFalseCastedValues($value)
+    {
+        $cache = $this->_getCacheDriver();
+
+        $this->assertTrue($cache->save('key', $value));
+        $this->assertTrue($cache->contains('key'));
+        $this->assertEquals($value, $cache->fetch('key'));
+    }
+
+    /**
+     * The following values get converted to FALSE if you cast them to a boolean.
+     * @see http://php.net/manual/en/types.comparisons.php
+     */
+    public function falseCastedValuesProvider()
+    {
+        return array(
+            array(false),
+            array(null),
+            array(array()),
+            array('0'),
+            array(0),
+            array(0.0),
+            array('')
+        );
+    }
+
+    /**
      * Return whether multiple cache providers share the same storage.
      *
      * This is used for skipping certain tests for shared storage behavior.
