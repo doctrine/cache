@@ -53,4 +53,18 @@ class MemcachedCacheTest extends CacheTest
         $driver->setMemcached($this->memcached);
         return $driver;
     }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @dataProvider falseCastedValuesProvider
+     */
+    public function testFalseCastedValues($value)
+    {
+        if (false === $value) {
+            $this->markTestIncomplete('Memcached currently doesn\'t support saving `false` values. ');
+        }
+
+        parent::testFalseCastedValues($value);
+    }
 }
