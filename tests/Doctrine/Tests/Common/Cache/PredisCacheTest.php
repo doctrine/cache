@@ -31,6 +31,8 @@ class PredisCacheTest extends CacheTest
 
     /**
      * {@inheritDoc}
+     *
+     * @dataProvider falseCastedValuesProvider
      */
     public function testFalseCastedValues($value)
     {
