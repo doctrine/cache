@@ -225,7 +225,7 @@ abstract class CacheProvider implements Cache, FlushableCache, ClearableCache, M
      *
      * @param string $id The id of the cache entry to fetch.
      *
-     * @return string|boolean The cached data or FALSE, if no cache entry exists for the given id.
+     * @return mixed|boolean The cached data or FALSE, if no cache entry exists for the given id.
      */
     abstract protected function doFetch($id);
 
