@@ -313,6 +313,7 @@ abstract class CacheTest extends \Doctrine\Tests\DoctrineTestCase
     public function testCachedObject()
     {
         $cache = $this->_getCacheDriver();
+        $cache->deleteAll();
         $obj = new \stdClass();
         $obj->foo = "bar";
         $obj2 = new \stdClass();
@@ -330,6 +331,27 @@ abstract class CacheTest extends \Doctrine\Tests\DoctrineTestCase
         $this->assertEquals("foo", $fetched->obj2->bar);
     }
 
+    /**
+     * Check to see that objects fetched via fetchMultiple are properly unserialized
+     */
+    public function testFetchMultipleObjects()
+    {
+        $cache = $this->_getCacheDriver();
+        $cache->deleteAll();
+        $obj1 = new \stdClass();
+        $obj1->foo = "bar";
+        $cache->save("obj1", $obj1);
+        $obj2 = new \stdClass();
+        $obj2->bar = "baz";
+        $cache->save("obj2", $obj2);
+
+        $fetched = $cache->fetchMultiple(array("obj1", "obj2"));
+        $this->assertInstanceOf("stdClass", $fetched["obj1"]);
+        $this->assertInstanceOf("stdClass", $fetched["obj2"]);
+        $this->assertEquals("bar", $fetched["obj1"]->foo);
+        $this->assertEquals("baz", $fetched["obj2"]->bar);
+    }
+    
     /**
      * Return whether multiple cache providers share the same storage.
      *
