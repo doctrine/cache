@@ -33,6 +33,8 @@ abstract class CacheTest extends \Doctrine\Tests\DoctrineTestCase
     {
         $cache = $this->_getCacheDriver();
 
+        $cache->deleteAll();
+
         // Test saving some values, checking if it exists, and fetching it back with multiGet
         $this->assertTrue($cache->save('key1', 'value1'));
         $this->assertTrue($cache->save('key2', 'value2'));
