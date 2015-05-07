@@ -85,6 +85,16 @@ class PhpFileCacheTest extends BaseFileCacheTest
         $this->assertGreaterThan(0, $stats[Cache::STATS_MEMORY_AVAILABLE]);
     }
 
+    public function testCachedObject()
+    {
+        $this->markTestSkipped("PhpFileCache cannot handle objects that don't implement __set_state.");
+    }
+
+    public function testFetchMultipleObjects()
+    {
+        $this->markTestSkipped("PhpFileCache cannot handle objects that don't implement __set_state.");
+    }
+
     protected function _getCacheDriver()
     {
         return new PhpFileCache($this->directory);
