@@ -134,6 +134,7 @@ class RedisCache extends CacheProvider
      */
     protected function getSerializerValue()
     {
+        // Only PHP Serialization is supported in HHVM
         if (defined('HHVM_VERSION')) {
             return Redis::SERIALIZER_PHP;
         }
