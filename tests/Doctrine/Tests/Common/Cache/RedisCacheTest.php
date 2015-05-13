@@ -3,6 +3,7 @@
 namespace Doctrine\Tests\Common\Cache;
 
 use Doctrine\Common\Cache\RedisCache;
+use Doctrine\Common\Cache\Cache;
 
 class RedisCacheTest extends CacheTest
 {
@@ -19,6 +20,15 @@ class RedisCacheTest extends CacheTest
         } else {
             $this->markTestSkipped('The ' . __CLASS__ .' requires the use of redis');
         }
+    }
+
+    public function testHitMissesStatsAreProvided()
+    {
+        $cache = $this->_getCacheDriver();
+        $stats = $cache->getStats();
+
+        $this->assertNotNull($stats[Cache::STATS_HITS]);
+        $this->assertNotNull($stats[Cache::STATS_MISSES]);
     }
 
     protected function _getCacheDriver()

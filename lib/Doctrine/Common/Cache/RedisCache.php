@@ -117,8 +117,8 @@ class RedisCache extends CacheProvider
     {
         $info = $this->redis->info();
         return array(
-            Cache::STATS_HITS   => false,
-            Cache::STATS_MISSES => false,
+            Cache::STATS_HITS   => $info['keyspace_hits'],
+            Cache::STATS_MISSES => $info['keyspace_misses'],
             Cache::STATS_UPTIME => $info['uptime_in_seconds'],
             Cache::STATS_MEMORY_USAGE      => $info['used_memory'],
             Cache::STATS_MEMORY_AVAILABLE  => false
