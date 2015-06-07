@@ -66,7 +66,11 @@ class SessionCache extends CacheProvider
      */
     protected function doContains($id)
     {
-        return isset($_SESSION[$id]);
+        if (!isset($_SESSION)) {
+            return false;
+        }
+
+        return isset($_SESSION[$id]) || array_key_exists($id, $_SESSION);
     }
 
     /**
@@ -74,6 +78,10 @@ class SessionCache extends CacheProvider
      */
     protected function doSave($id, $data, $lifeTime = 0)
     {
+        if (!isset($_SESSION)) {
+            return false;
+        }
+
         $_SESSION[$id] = serialize($data);
         return true;
     }
@@ -83,6 +91,10 @@ class SessionCache extends CacheProvider
      */
     protected function doDelete($id)
     {
+        if (!isset($_SESSION)) {
+            return false;
+        }
+
         unset($_SESSION[$id]);
         return true;
     }
