@@ -48,6 +48,11 @@ abstract class CacheProvider implements Cache, FlushableCache, ClearableCache, M
     private $namespaceVersion;
 
     /**
+     * @var integer|bool
+     */
+    private $maxLifeTime = false;
+
+    /**
      * Sets the namespace to prefix all cache ids with.
      *
      * @param string $namespace
@@ -68,6 +73,35 @@ abstract class CacheProvider implements Cache, FlushableCache, ClearableCache, M
     public function getNamespace()
     {
         return $this->namespace;
+    }
+
+    /**
+     * @param integer|bool $maxLifeTime
+     */
+    public function setMaxLifeTime($maxLifeTime)
+    {
+        $this->maxLifeTime = $maxLifeTime;
+    }
+
+    /**
+     * @return integer|bool
+     */
+    public function getMaxLifeTime()
+    {
+        return $this->maxLifeTime;
+    }
+
+    /**
+     * @param integer $lifeTime
+     * @return integer
+     */
+    protected function computeMaxLifeTime($lifeTime)
+    {
+        if(0 === (int)$lifeTime || (int)$lifeTime > $this->getMaxLifeTime()) {
+            $lifeTime = $this->getMaxLifeTime();
+        }
+
+        return $lifeTime;
     }
 
     /**
@@ -116,6 +150,10 @@ abstract class CacheProvider implements Cache, FlushableCache, ClearableCache, M
      */
     public function save($id, $data, $lifeTime = 0)
     {
+        if(false !== $this->getMaxLifeTime()) {
+            $lifeTime = $this->computeMaxLifeTime($lifeTime);
+        }
+
         return $this->doSave($this->getNamespacedId($id), $data, $lifeTime);
     }
 
