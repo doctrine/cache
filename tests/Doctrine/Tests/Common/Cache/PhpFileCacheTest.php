@@ -65,12 +65,17 @@ class PhpFileCacheTest extends BaseFileCacheTest
         $this->assertTrue($cache->contains('test_set_state'));
     }
 
-    public function testNotImplementsSetState()
+    public function testRedundantReferences()
     {
         $cache = $this->_getCacheDriver();
 
-        $this->setExpectedException('InvalidArgumentException');
-        $cache->save('test_not_set_state', new NotSetStateClass(array(1,2,3)));
+        $obj1 = new SetStateClass(null);
+
+        $obj2 = new SetStateClass($obj1);
+
+        $obj1->setValue($obj2);
+
+        $cache->save('test_redundant_references', $obj1);
     }
 
     public function testGetStats()
@@ -110,6 +115,10 @@ class NotSetStateClass
         $this->value = $value;
     }
 
+    public function setValue($value)
+    {
+        $this->value = $value;
+    }
     public function getValue()
     {
         return $this->value;
