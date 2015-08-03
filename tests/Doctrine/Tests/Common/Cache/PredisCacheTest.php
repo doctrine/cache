@@ -13,6 +13,10 @@ class PredisCacheTest extends CacheTest
 
     public function setUp()
     {
+        if (!class_exists('Predis\Client')) {
+            $this->markTestSkipped('Predis\Client is missing. Make sure to "composer install" to have all dev dependencies.');
+        }
+
         $this->client = new Client();
 
         try {
