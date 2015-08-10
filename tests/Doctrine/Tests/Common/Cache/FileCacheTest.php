@@ -3,6 +3,7 @@
 namespace Doctrine\Tests\Common\Cache;
 
 use Doctrine\Common\Cache\Cache;
+use Symfony\Component\Filesystem\Filesystem;
 
 /**
  * @group DCOM-101
@@ -21,6 +22,12 @@ class FileCacheTest extends \Doctrine\Tests\DoctrineTestCase
             array('doFetch', 'doContains', 'doSave'),
             array(), '', false
         );
+    }
+
+    public function tearDown()
+    {
+        $filesystem = new Filesystem;
+        $filesystem->remove($this->getCacheDir());
     }
 
     public function getProviderFileName()
@@ -120,12 +127,17 @@ class FileCacheTest extends \Doctrine\Tests\DoctrineTestCase
         $driver1 = $this->getMock(
             'Doctrine\Common\Cache\FileCache',
             array('doFetch', 'doContains', 'doSave'),
-            array(__DIR__, '.*')
+            array($this->getCacheDir(), '.*')
         );
         $driver2 = $this->getMock(
             'Doctrine\Common\Cache\FileCache',
             array('doFetch', 'doContains', 'doSave'),
-            array(__DIR__, '.php')
+            array($this->getCacheDir(), '.php')
+        );
+
+        file_put_contents(
+            $driver1->getDirectory() . DIRECTORY_SEPARATOR . 'a.php',
+            str_repeat('x', 1024)
         );
 
         $doGetStats = new \ReflectionMethod($driver1, 'doGetStats');
@@ -147,7 +159,12 @@ class FileCacheTest extends \Doctrine\Tests\DoctrineTestCase
         $driver = $this->getMock(
             'Doctrine\Common\Cache\FileCache',
             array('doFetch', 'doContains', 'doSave'),
-            array(__DIR__ . '/../', '/' . basename(__FILE__))
+            array($this->getCacheDir(), '/a.php')
+        );
+
+        file_put_contents(
+            $driver->getDirectory() . DIRECTORY_SEPARATOR . 'a.php',
+            str_repeat('x', 1024)
         );
 
         $doGetStats = new \ReflectionMethod($driver, 'doGetStats');
@@ -157,5 +174,41 @@ class FileCacheTest extends \Doctrine\Tests\DoctrineTestCase
         $stats = $doGetStats->invoke($driver);
 
         $this->assertGreaterThan(0, $stats[Cache::STATS_MEMORY_USAGE]);
+    }
+
+    public function testSeparateCachesAreCreatedForEachUser()
+    {
+        if (!function_exists('posix_geteuid')) {
+            $this->markTestSkipped(
+                'User-specific caches are only used on POSIX systems.'
+            );
+        }
+
+        $driver = $this->getMock(
+            'Doctrine\Common\Cache\FileCache',
+            array('doFetch', 'doContains', 'doSave'),
+            array($this->getCacheDir(), '.php')
+        );
+        $myUserData = posix_getpwuid(posix_geteuid());
+        $myUserName = $myUserData['name'];
+
+        $this->assertContains($myUserName, $driver->getDirectory());
+        $this->assertSame(posix_geteuid(), fileowner($driver->getDirectory()));
+    }
+
+    private function getCacheDir()
+    {
+        static $dir;
+
+        if (empty($dir)) {
+            $dir = implode(DIRECTORY_SEPARATOR, array(
+                dirname(dirname(dirname(dirname(__DIR__)))),
+                'fixtures',
+                'cache',
+                md5(gethostname())
+            ));
+        }
+
+        return $dir;
     }
 }
