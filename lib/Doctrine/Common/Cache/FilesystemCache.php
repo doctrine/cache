@@ -32,9 +32,9 @@ class FilesystemCache extends FileCache
     /**
      * {@inheritdoc}
      */
-    public function __construct($directory, $extension = self::EXTENSION)
+    public function __construct($directory, $extension = self::EXTENSION, $umask = 0002)
     {
-        parent::__construct($directory, $extension);
+        parent::__construct($directory, $extension, $umask);
     }
 
     /**
