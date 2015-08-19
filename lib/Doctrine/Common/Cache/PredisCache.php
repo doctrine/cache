@@ -2,7 +2,7 @@
 
 namespace Doctrine\Common\Cache;
 
-use Predis\Client;
+use Predis\ClientInterface;
 
 /**
  * Predis cache provider.
@@ -12,16 +12,16 @@ use Predis\Client;
 class PredisCache extends CacheProvider
 {
     /**
-     * @var Client
+     * @var ClientInterface
      */
     private $client;
 
     /**
-     * @param Client $client
+     * @param ClientInterface $client
      *
      * @return void
      */
-    public function __construct(Client $client)
+    public function __construct(ClientInterface $client)
     {
         $this->client = $client;
     }
