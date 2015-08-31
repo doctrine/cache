@@ -64,21 +64,7 @@ abstract class FileCache extends CacheProvider
      */
     public function __construct($directory, $extension = '')
     {
-        if ( ! $this->createPathIfNeeded($directory)) {
-            throw new \InvalidArgumentException(sprintf(
-                'The directory "%s" does not exist and could not be created.',
-                $directory
-            ));
-        }
-
-        if ( ! is_writable($directory)) {
-            throw new \InvalidArgumentException(sprintf(
-                'The directory "%s" is not writable.',
-                $directory
-            ));
-        }
-
-        $this->directory = realpath($directory);
+        $this->setDirectory($directory);
         $this->extension = (string) $extension;
     }
 
@@ -158,16 +144,51 @@ abstract class FileCache extends CacheProvider
         );
     }
 
+    private function setDirectory($directory)
+    {
+        if ( ! $this->createPathIfNeeded($directory, 0777)) {
+            throw new \InvalidArgumentException(sprintf(
+                'The directory "%s" does not exist and could not be created.',
+                $directory
+            ));
+        }
+
+        if (function_exists('posix_geteuid')) {
+            $userData = posix_getpwuid(posix_geteuid());
+            $directory .= DIRECTORY_SEPARATOR
+                . $userData['name'];
+
+            if ( ! $this->createPathIfNeeded($directory)
+                || fileowner($directory) !== posix_geteuid()
+            ) {
+                throw new \InvalidArgumentException(sprintf(
+                    'The directory "%s" could not be created or belongs to another user.',
+                    $directory
+                ));
+            }
+        }
+
+        if ( ! is_writable($directory)) {
+            throw new \InvalidArgumentException(sprintf(
+                'The directory "%s" is not writable.',
+                $directory
+            ));
+        }
+
+        $this->directory = realpath($directory);
+    }
+
     /**
      * Create path if needed.
      *
      * @param string $path
+     * @param int $permissions
      * @return bool TRUE on success or if path already exists, FALSE if path cannot be created.
      */
-    private function createPathIfNeeded($path)
+    private function createPathIfNeeded($path, $permissions = 0700)
     {
         if ( ! is_dir($path)) {
-            if (false === @mkdir($path, 0777, true) && !is_dir($path)) {
+            if (false === @mkdir($path, $permissions, true) && !is_dir($path)) {
                 return false;
             }
         }
