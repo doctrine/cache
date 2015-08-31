@@ -91,7 +91,7 @@ class PhpFileCache extends FileCache
         $filepath   = pathinfo($filename, PATHINFO_DIRNAME);
 
         if ( ! is_dir($filepath)) {
-            mkdir($filepath, 0777, true);
+            mkdir($filepath, 0777 & ~$this->umask, true);
         }
 
         $value = array(
@@ -102,6 +102,8 @@ class PhpFileCache extends FileCache
         $value  = var_export($value, true);
         $code   = sprintf('<?php return %s;', $value);
 
-        return file_put_contents($filename, $code) !== false;
+        $ret = (file_put_contents($filename, $code) !== false);
+        chmod($filename, 0664);
+        return $ret;
     }
 }

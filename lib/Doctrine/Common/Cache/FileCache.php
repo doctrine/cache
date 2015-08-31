@@ -42,16 +42,31 @@ abstract class FileCache extends CacheProvider
     protected $extension;
 
     /**
+     * @var int
+     */
+    protected $umask;
+
+    /**
      * Constructor.
      *
      * @param string      $directory The cache directory.
      * @param string|null $extension The cache file extension.
+     * @param int         $umask
      *
      * @throws \InvalidArgumentException
      */
-    public function __construct($directory, $extension = null)
+    public function __construct($directory, $extension = null, $umask = 0002)
     {
-        if ( ! is_dir($directory) && ! @mkdir($directory, 0777, true)) {
+        if (!is_int($umask)) {
+            throw new \InvalidArgumentException(sprintf(
+                "Umask is required to be integer, was: %s",
+                gettype($umask)
+            ));
+        }
+
+        $this->umask = $umask;
+
+        if ( ! is_dir($directory) && ! @mkdir($directory, 0777 & ~$umask, true)) {
             throw new \InvalidArgumentException(sprintf(
                 'The directory "%s" does not exist and could not be created.',
                 $directory

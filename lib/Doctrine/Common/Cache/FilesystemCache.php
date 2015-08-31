@@ -105,7 +105,7 @@ class FilesystemCache extends FileCache
         $filepath   = pathinfo($filename, PATHINFO_DIRNAME);
 
         if ( ! is_dir($filepath)) {
-            if (false === @mkdir($filepath, 0777, true) && !is_dir($filepath)) {
+            if (false === @mkdir($filepath, 0775, true) && !is_dir($filepath)) {
                 return false;
             }
         } elseif ( ! is_writable($filepath)) {
@@ -115,7 +115,7 @@ class FilesystemCache extends FileCache
         $tmpFile = tempnam($filepath, basename($filename));
 
         if ((file_put_contents($tmpFile, $lifeTime . PHP_EOL . $data) !== false) && @rename($tmpFile, $filename)) {
-            @chmod($filename, 0666 & ~umask());
+            @chmod($filename, 0664 & ~umask());
 
             return true;
         }
