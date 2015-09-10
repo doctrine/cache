@@ -86,6 +86,7 @@ abstract class CacheProvider implements Cache, FlushableCache, ClearableCache, M
         if (empty($keys)) {
             return array();
         }
+        
         // note: the array_combine() is in place to keep an association between our $keys and the $namespacedKeys
         $namespacedKeys = array_combine($keys, array_map(array($this, 'getNamespacedId'), $keys));
         $items          = $this->doFetchMultiple($namespacedKeys);
