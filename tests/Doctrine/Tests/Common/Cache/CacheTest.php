@@ -80,7 +80,15 @@ abstract class CacheTest extends \Doctrine\Tests\DoctrineTestCase
             $cache->fetchMultiple(array('foo', 'bar'))
         );
     }
-
+    
+    public function testFetchMultiWithEmptyKeysArray()
+    {
+        $cache = $this->_getCacheDriver();
+        
+        $this->assertEmpty(
+            $cache->fetchMultiple(array())
+        );
+    }
 
     public function provideCrudValues()
     {
