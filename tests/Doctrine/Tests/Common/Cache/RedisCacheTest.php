@@ -30,6 +30,16 @@ class RedisCacheTest extends CacheTest
         $this->assertNotNull($stats[Cache::STATS_HITS]);
         $this->assertNotNull($stats[Cache::STATS_MISSES]);
     }
+    
+    public function testFetchMultiWithEmptyKeysArray()
+    {
+        $cache = $this->_getCacheDriver();
+        
+        $this->assertEquals(
+            array(),
+            $cache->fetchMultiple(array())
+        );
+    }
 
     protected function _getCacheDriver()
     {
