@@ -35,8 +35,7 @@ class RedisCacheTest extends CacheTest
     {
         $cache = $this->_getCacheDriver();
         
-        $this->assertEquals(
-            array(),
+        $this->assertEmpty(
             $cache->fetchMultiple(array())
         );
     }
