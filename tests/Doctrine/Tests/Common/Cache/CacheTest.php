@@ -70,9 +70,9 @@ abstract class CacheTest extends \Doctrine\Tests\DoctrineTestCase
             ->expects($this->once())
             ->method('doFetchMultiple')
             ->will($this->returnValue(array(
-                '[foo][]' => 'bar',
-                '[bar][]' => 'baz',
-                '[baz][]' => 'tab',
+                '[foo][1]' => 'bar',
+                '[bar][1]' => 'baz',
+                '[baz][1]' => 'tab',
             )));
 
         $this->assertEquals(
