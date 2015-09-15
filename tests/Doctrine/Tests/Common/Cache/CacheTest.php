@@ -53,34 +53,6 @@ abstract class CacheTest extends \Doctrine\Tests\DoctrineTestCase
         );
     }
 
-    public function testFetchMultiWillFilterNonRequestedKeys()
-    {
-        /* @var $cache \Doctrine\Common\Cache\CacheProvider|\PHPUnit_Framework_MockObject_MockObject */
-        $cache = $this->getMockForAbstractClass(
-            'Doctrine\Common\Cache\CacheProvider',
-            array(),
-            '',
-            true,
-            true,
-            true,
-            array('doFetchMultiple')
-        );
-
-        $cache
-            ->expects($this->once())
-            ->method('doFetchMultiple')
-            ->will($this->returnValue(array(
-                '[foo][1]' => 'bar',
-                '[bar][1]' => 'baz',
-                '[baz][1]' => 'tab',
-            )));
-
-        $this->assertEquals(
-            array('foo' => 'bar', 'bar' => 'baz'),
-            $cache->fetchMultiple(array('foo', 'bar'))
-        );
-    }
-    
     public function testFetchMultiWithEmptyKeysArray()
     {
         $cache = $this->_getCacheDriver();
@@ -361,7 +333,7 @@ abstract class CacheTest extends \Doctrine\Tests\DoctrineTestCase
         $this->assertEquals("bar", $fetched["obj1"]->foo);
         $this->assertEquals("baz", $fetched["obj2"]->bar);
     }
-    
+
     /**
      * Return whether multiple cache providers share the same storage.
      *
