@@ -147,7 +147,7 @@ class FileCacheTest extends \Doctrine\Tests\DoctrineTestCase
         $driver = $this->getMock(
             'Doctrine\Common\Cache\FileCache',
             array('doFetch', 'doContains', 'doSave'),
-            array(__DIR__ . '/../', '/' . basename(__FILE__))
+            array(__DIR__ . '/../', DIRECTORY_SEPARATOR . basename(__FILE__))
         );
 
         $doGetStats = new \ReflectionMethod($driver, 'doGetStats');
