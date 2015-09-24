@@ -42,19 +42,6 @@ abstract class FileCache extends CacheProvider
     private $extension;
 
     /**
-     * @var string[] regular expressions for replacing disallowed characters in file name
-     */
-    private $disallowedCharacterPatterns = array(
-        '/\-/', // replaced to disambiguate original `-` and `-` derived from replacements
-        '/[^a-zA-Z0-9\-_\[\]]/' // also excludes non-ascii chars (not supported, depending on FS)
-    );
-
-    /**
-     * @var string[] replacements for disallowed file characters
-     */
-    private $replacementCharacters = array('__', '-');
-
-    /**
      * @var int
      */
     private $umask;
@@ -110,7 +97,7 @@ abstract class FileCache extends CacheProvider
     /**
      * Gets the cache file extension.
      *
-     * @return string|null
+     * @return string
      */
     public function getExtension()
     {
@@ -126,9 +113,9 @@ abstract class FileCache extends CacheProvider
     {
         return $this->directory
             . DIRECTORY_SEPARATOR
-            . implode(str_split(hash('sha256', $id), 2), DIRECTORY_SEPARATOR)
+            . substr(hash('sha256', $id), 0, 2)
             . DIRECTORY_SEPARATOR
-            . preg_replace($this->disallowedCharacterPatterns, $this->replacementCharacters, $id)
+            . rawurlencode($id)
             . $this->extension;
     }
 

@@ -27,19 +27,19 @@ class FileCacheTest extends \Doctrine\Tests\DoctrineTestCase
     {
          return array(
             //The characters :\/<>"*?| are not valid in Windows filenames.
-            array('key:1', 'key-1'),
-            array('key\2', 'key-2'),
-            array('key/3', 'key-3'),
-            array('key<4', 'key-4'),
-            array('key>5', 'key-5'),
-            array('key"6', 'key-6'),
-            array('key*7', 'key-7'),
-            array('key?8', 'key-8'),
-            array('key|9', 'key-9'),
-            array('key[10]', 'key[10]'),
-            array('keyä11', 'key--11'),
-            array('../key12', '---key12'),
-            array('key-13', 'key__13'),
+            array('key:1', 'key%3A1'),
+            array('key\2', 'key%5C2'),
+            array('key/3', 'key%2F3'),
+            array('key<4', 'key%3C4'),
+            array('key>5', 'key%3E5'),
+            array('key"6', 'key%226'),
+            array('key*7', 'key%2A7'),
+            array('key?8', 'key%3F8'),
+            array('key|9', 'key%7C9'),
+            array('key[10]', 'key%5B10%5D'),
+            array('keyä11', 'key%C3%A411'),
+            array('../key12', '..%2Fkey12'),
+            array('key-13', 'key-13'),
         );
     }
 
@@ -54,7 +54,7 @@ class FileCacheTest extends \Doctrine\Tests\DoctrineTestCase
         $method->setAccessible(true);
 
         $value  = $method->invoke($cache, $key);
-        $actual = pathinfo($value, PATHINFO_FILENAME);
+        $actual = pathinfo($value, PATHINFO_BASENAME);
 
         $this->assertEquals($expected, $actual);
     }
@@ -62,17 +62,18 @@ class FileCacheTest extends \Doctrine\Tests\DoctrineTestCase
     public function testFilenameCollision()
     {
         $data = array(
-            'key:0' => 'key-0',
-            'key\0' => 'key-0',
-            'key/0' => 'key-0',
-            'key<0' => 'key-0',
-            'key>0' => 'key-0',
-            'key"0' => 'key-0',
-            'key*0' => 'key-0',
-            'key?0' => 'key-0',
-            'key|0' => 'key-0',
-            'key-0' => 'key__0',
-            'keyä0' => 'key--0',
+            'key:0',
+            'key\0',
+            'key/0',
+            'key<0',
+            'key>0',
+            'key"0',
+            'key*0',
+            'key?0',
+            'key|0',
+            'key-0',
+            'keyä0',
+            'key'."\0".'0',
         );
 
         $paths  = array();
@@ -83,36 +84,29 @@ class FileCacheTest extends \Doctrine\Tests\DoctrineTestCase
 
         foreach ($data as $key => $expected) {
             $path   = $method->invoke($cache, $key);
-            $actual = pathinfo($path, PATHINFO_FILENAME);
 
             $this->assertNotContains($path, $paths);
-            $this->assertEquals($expected, $actual);
 
             $paths[] = $path;
         }
     }
 
-    public function testFilenameShouldCreateThePathWithFourSubDirectories()
+    public function testFilenameShouldCreateThePathWithOneSubDirectory()
     {
         $cache          = $this->driver;
         $method         = new \ReflectionMethod($cache, 'getFilename');
         $key            = 'item-key';
         $expectedDir    = array(
-            '84', 'e0', 'e2', 'e8', '93', 'fe', 'bb', '73', '7a', '0f', 'ee',
-            '0c', '89', 'd5', '3f', '4b', 'b7', 'fc', 'b4', '4c', '57', 'cd',
-            'f3', 'd3', '2c', 'e7', '36', '3f', '5d', '59', '77', '60'
+            '84',
         );
         $expectedDir    = implode(DIRECTORY_SEPARATOR, $expectedDir);
 
         $method->setAccessible(true);
 
         $path       = $method->invoke($cache, $key);
-        $filename   = pathinfo($path, PATHINFO_FILENAME);
         $dirname    = pathinfo($path, PATHINFO_DIRNAME);
 
-        $this->assertEquals('item__key', $filename);
         $this->assertEquals(DIRECTORY_SEPARATOR . $expectedDir, $dirname);
-        $this->assertEquals(DIRECTORY_SEPARATOR . $expectedDir . DIRECTORY_SEPARATOR . 'item__key', $path);
     }
 
     public function testFileExtensionCorrectlyEscaped()
