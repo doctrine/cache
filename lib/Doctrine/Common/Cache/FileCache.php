@@ -24,6 +24,7 @@ namespace Doctrine\Common\Cache;
  *
  * @since  2.3
  * @author Fabio B. Silva <fabio.bat.silva@gmail.com>
+ * @author Tobias Schultze <http://tobion.de>
  */
 abstract class FileCache extends CacheProvider
 {
@@ -115,7 +116,7 @@ abstract class FileCache extends CacheProvider
             . DIRECTORY_SEPARATOR
             . substr(hash('sha256', $id), 0, 2)
             . DIRECTORY_SEPARATOR
-            . rawurlencode($id)
+            . str_replace('.', '%2E', rawurlencode($id))
             . $this->extension;
     }
 

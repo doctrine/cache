@@ -25,7 +25,7 @@ class FileCacheTest extends \Doctrine\Tests\DoctrineTestCase
 
     public function getProviderFileName()
     {
-         return array(
+        return array(
             //The characters :\/<>"*?| are not valid in Windows filenames.
             array('key:1', 'key%3A1'),
             array('key\2', 'key%5C2'),
@@ -38,7 +38,9 @@ class FileCacheTest extends \Doctrine\Tests\DoctrineTestCase
             array('key|9', 'key%7C9'),
             array('key[10]', 'key%5B10%5D'),
             array('keyä11', 'key%C3%A411'),
-            array('../key12', '..%2Fkey12'),
+            array('../key12', '%2E%2E%2Fkey12'),
+            array('.', '%2E'),
+            array('..', '%2E%2E'),
             array('key-13', 'key-13'),
         );
     }
@@ -82,7 +84,7 @@ class FileCacheTest extends \Doctrine\Tests\DoctrineTestCase
 
         $method->setAccessible(true);
 
-        foreach ($data as $key => $expected) {
+        foreach ($data as $key) {
             $path   = $method->invoke($cache, $key);
 
             $this->assertNotContains($path, $paths);
