@@ -74,6 +74,14 @@ abstract class CacheTest extends \Doctrine\Tests\DoctrineTestCase
         );
     }
 
+    public function testDeleteIsSuccessfulWhenKeyDoesNotExist()
+    {
+        $cache = $this->_getCacheDriver();
+
+        $this->assertFalse($cache->contains('key'));
+        $this->assertTrue($cache->delete('key'));
+    }
+
     public function testDeleteAll()
     {
         $cache = $this->_getCacheDriver();
@@ -155,7 +163,7 @@ abstract class CacheTest extends \Doctrine\Tests\DoctrineTestCase
          */
         $this->assertTrue($cache2->save('key2', 2));
 
-        /* Both providers have the same namespace version and can see entires
+        /* Both providers have the same namespace version and can see entries
          * set by each other.
          */
         $this->assertTrue($cache1->contains('key1'));

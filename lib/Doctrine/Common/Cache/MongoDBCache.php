@@ -170,8 +170,8 @@ class MongoDBCache extends CacheProvider
         return array(
             Cache::STATS_HITS => null,
             Cache::STATS_MISSES => null,
-            Cache::STATS_UPTIME => (isset($serverStatus['uptime']) ? (integer) $serverStatus['uptime'] : null),
-            Cache::STATS_MEMORY_USAGE => (isset($collStats['size']) ? (integer) $collStats['size'] : null),
+            Cache::STATS_UPTIME => (isset($serverStatus['uptime']) ? (int) $serverStatus['uptime'] : null),
+            Cache::STATS_MEMORY_USAGE => (isset($collStats['size']) ? (int) $collStats['size'] : null),
             Cache::STATS_MEMORY_AVAILABLE  => null,
         );
     }

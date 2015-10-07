@@ -45,7 +45,7 @@ class FilesystemCacheTest extends BaseFileCacheTest
             $data .= $line;
         }
 
-        $this->assertNotEquals(0, $lifetime, "previous lifetime could not be loaded");
+        $this->assertNotEquals(0, $lifetime, 'previous lifetime could not be loaded');
 
         // update lifetime
         $lifetime = $lifetime - 20;

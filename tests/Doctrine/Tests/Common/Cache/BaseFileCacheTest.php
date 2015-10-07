@@ -31,6 +31,8 @@ abstract class BaseFileCacheTest extends CacheTest
                 @rmdir($file->getRealPath());
             }
         }
+
+        @rmdir($this->directory);
     }
 
     protected function isSharedStorage()

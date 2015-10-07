@@ -137,7 +137,9 @@ abstract class FileCache extends CacheProvider
      */
     protected function doDelete($id)
     {
-        return @unlink($this->getFilename($id));
+        $filename = $this->getFilename($id);
+
+        return @unlink($filename) || !file_exists($filename);
     }
 
     /**
