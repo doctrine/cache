@@ -29,6 +29,21 @@ abstract class CacheTest extends \Doctrine\Tests\DoctrineTestCase
         $this->assertFalse($cache->contains('key'));
     }
 
+    public function testCacheKeyIsCaseSensitive()
+    {
+        $cache = $this->_getCacheDriver();
+
+        $this->assertTrue($cache->save('key', 'value'));
+        $this->assertTrue($cache->contains('key'));
+        $this->assertSame('value', $cache->fetch('key'));
+
+        $this->assertFalse($cache->contains('KEY'));
+        $this->assertFalse($cache->fetch('KEY'));
+
+        $cache->delete('KEY');
+        $this->assertTrue($cache->contains('key', 'Deleting cache item with different case must not affect other cache item'));
+    }
+
     public function testFetchMulti()
     {
         $cache = $this->_getCacheDriver();

@@ -112,11 +112,26 @@ abstract class FileCache extends CacheProvider
      */
     protected function getFilename($id)
     {
+        if ('\\' === DIRECTORY_SEPARATOR) {
+            // On Windows we also need to percent-encode uppercase characters as its filesystem is case-insensitive.
+            // The regex is non-greedy because we need to encode each character individually.
+            $filename = preg_replace_callback('/[^a-z0-9~_\-]+?/', function ($matches) {
+                return '%' . bin2hex($matches[0]);
+            }, $id);
+        } else {
+            // Using percent-encoding we ensure that
+            // - the filename is unique based on the cache key, i.e. no collisions are possible
+            // - only valid characters inside the filename (no NULL byte, no / and also not the other chars that are disallowed on Windows)
+            // - the filename still resembles the cache key, i.e. valid chars stay as-is (good for debugging)
+            // Additionally, we encode the dot to prevent "." or ".." as filename.
+            $filename = str_replace('.', '%2E', rawurlencode($id));
+        }
+
         return $this->directory
             . DIRECTORY_SEPARATOR
             . substr(hash('sha256', $id), 0, 2)
             . DIRECTORY_SEPARATOR
-            . str_replace('.', '%2E', rawurlencode($id))
+            . $filename
             . $this->extension;
     }
 

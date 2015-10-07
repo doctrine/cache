@@ -58,7 +58,8 @@ class FileCacheTest extends \Doctrine\Tests\DoctrineTestCase
         $value  = $method->invoke($cache, $key);
         $actual = pathinfo($value, PATHINFO_BASENAME);
 
-        $this->assertEquals($expected, $actual);
+        // On Windows, the hex percent-encoding has lowercase letters (rawurlencode vs bin2hex).
+        $this->assertSame('\\' === DIRECTORY_SEPARATOR ? strtolower($expected) : $expected, $actual);
     }
 
     public function testFilenameCollision()
