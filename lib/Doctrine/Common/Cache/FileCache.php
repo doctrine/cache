@@ -153,7 +153,7 @@ abstract class FileCache extends CacheProvider
                 // if the directory is empty. If several caches share the same directory but with different file extensions,
                 // the other ones are not removed.
                 @rmdir($name);
-            } elseif ('' === $this->extension || strrpos($name, $this->extension) === (strlen($name) - strlen($this->extension))) {
+            } elseif ($this->isFilenameEndingWithExtension($name)) {
                 // If an extension is set, only remove files which end with the given extension.
                 // If no extension is set, we have no other choice than removing everything.
                 @unlink($name);
@@ -170,7 +170,7 @@ abstract class FileCache extends CacheProvider
     {
         $usage = 0;
         foreach ($this->getIterator() as $name => $file) {
-            if (!$file->isDir() && ('' === $this->extension || strrpos($name, $this->extension) === (strlen($name) - strlen($this->extension)))) {
+            if (!$file->isDir() && $this->isFilenameEndingWithExtension($name)) {
                 $usage += $file->getSize();
             }
         }
@@ -243,5 +243,15 @@ abstract class FileCache extends CacheProvider
     private function getIterator()
     {
         return new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($this->directory, \FilesystemIterator::SKIP_DOTS), \RecursiveIteratorIterator::CHILD_FIRST);
+    }
+
+    /**
+     * @param string $name The filename
+     *
+     * @return bool
+     */
+    private function isFilenameEndingWithExtension($name)
+    {
+        return '' === $this->extension || strrpos($name, $this->extension) === (strlen($name) - strlen($this->extension));
     }
 }
