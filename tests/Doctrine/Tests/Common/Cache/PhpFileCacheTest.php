@@ -10,6 +10,24 @@ use Doctrine\Common\Cache\PhpFileCache;
  */
 class PhpFileCacheTest extends BaseFileCacheTest
 {
+    /**
+     * {@inheritDoc}
+     *
+     * @dataProvider falseCastedValuesProvider
+    */
+    public function testFalseCastedValues($value)
+    {
+        if (0.0 === $value) {
+            $cache = $this->_getCacheDriver();
+
+            $this->assertTrue($cache->save('key', $value));
+            $this->assertTrue($cache->contains('key'));
+            $this->assertSame(0, $cache->fetch('key'), 'var_export exports float(0) as int(0) so we assert against 0 as integer');
+        } else {
+            parent::testFalseCastedValues($value);
+        }
+    }
+
     public function testLifetime()
     {
         $cache = $this->_getCacheDriver();
