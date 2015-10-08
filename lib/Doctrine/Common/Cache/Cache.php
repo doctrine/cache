@@ -66,10 +66,13 @@ interface Cache
     /**
      * Puts data into the cache.
      *
+     * If a cache entry with the given id already exists, its data will be replaced.
+     *
      * @param string $id       The cache id.
      * @param mixed  $data     The cache entry/data.
-     * @param int    $lifeTime The cache lifetime.
-     *                         If != 0, sets a specific lifetime for this cache entry (0 => infinite lifeTime).
+     * @param int    $lifeTime The lifetime in number of seconds for this cache entry.
+     *                         If zero (the default), the entry never expires (although it may be deleted from the cache
+     *                         to make place for other entries).
      *
      * @return boolean TRUE if the entry was successfully stored in the cache, FALSE otherwise.
      */
@@ -81,6 +84,7 @@ interface Cache
      * @param string $id The cache id.
      *
      * @return boolean TRUE if the cache entry was successfully deleted, FALSE otherwise.
+     *                 Deleting a non-existing entry is considered successful.
      */
     public function delete($id);
 

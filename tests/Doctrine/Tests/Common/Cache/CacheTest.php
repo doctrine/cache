@@ -27,6 +27,7 @@ abstract class CacheTest extends \Doctrine\Tests\DoctrineTestCase
         // Test deleting a value
         $this->assertTrue($cache->delete('key'));
         $this->assertFalse($cache->contains('key'));
+        $this->assertFalse($cache->fetch('key'));
     }
 
     public function testFetchMulti()
@@ -276,7 +277,7 @@ abstract class CacheTest extends \Doctrine\Tests\DoctrineTestCase
 
         $this->assertTrue($cache->save('key', $value));
         $this->assertTrue($cache->contains('key'));
-        $this->assertEquals($value, $cache->fetch('key'));
+        $this->assertSame($value, $cache->fetch('key'));
     }
 
     /**
