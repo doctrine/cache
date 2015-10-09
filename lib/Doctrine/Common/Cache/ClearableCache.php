@@ -28,6 +28,8 @@ namespace Doctrine\Common\Cache;
  * @link   www.doctrine-project.org
  * @since  1.4
  * @author Adirelle <adirelle@gmail.com>
+ *
+ * @deprecated Use NamespacedCacheDecorator instead which makes sure that flushAll() only removes cache entries in the current namespace
  */
 interface ClearableCache
 {

@@ -26,9 +26,13 @@ namespace Doctrine\Common\Cache;
  * or for multiple applications. Introducing namespaces for non-shared caches like ArrayCache and FileCache with its own directory
  * or extension makes no sense.
  *
+ * Decorating a cache with this namespace logic will also make sure that deleting all cache entries using `flushAll()` will
+ * only remove the cache entries of the given namespace and not everything. This way one application/library can delete
+ * all of its cache without interfering with the shared cache of another app/library.
+ *
  * @author Tobias Schultze <http://tobion.de>
  */
-class NamespacedCacheDecorator implements Cache, FlushableCache, ClearableCache, MultiGetCache
+class NamespacedCacheDecorator implements Cache, FlushableCache, MultiGetCache
 {
     /**
      * @internal
@@ -50,7 +54,7 @@ class NamespacedCacheDecorator implements Cache, FlushableCache, ClearableCache,
     private $namespaceVersionKey;
 
     /**
-     * @var Cache|FlushableCache|ClearableCache|MultiGetCache
+     * @var Cache|FlushableCache|MultiGetCache
      */
     private $cache;
 
@@ -145,14 +149,6 @@ class NamespacedCacheDecorator implements Cache, FlushableCache, ClearableCache,
      * {@inheritDoc}
      */
     public function flushAll()
-    {
-        return $this->cache->flushAll();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function deleteAll()
     {
         $namespaceVersion = $this->getNamespaceVersion() + 1;
 
