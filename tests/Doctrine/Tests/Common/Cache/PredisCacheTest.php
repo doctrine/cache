@@ -46,9 +46,9 @@ class PredisCacheTest extends CacheTest
     /**
      * {@inheritDoc}
      *
-     * @dataProvider falseCastedValuesProvider
+     * @dataProvider provideDataToCache
      */
-    public function testFalseCastedValues($value)
+    public function testSetContainsFetchDelete($value)
     {
         if (array() === $value) {
             $this->markTestIncomplete(
@@ -57,6 +57,23 @@ class PredisCacheTest extends CacheTest
             );
         }
 
-        parent::testFalseCastedValues($value);
+        parent::testSetContainsFetchDelete($value);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @dataProvider provideDataToCache
+     */
+    public function testUpdateExistingEntry($value)
+    {
+        if (array() === $value) {
+            $this->markTestIncomplete(
+                'Predis currently doesn\'t support saving empty array values. '
+                . 'See https://github.com/nrk/predis/issues/241'
+            );
+        }
+
+        parent::testUpdateExistingEntry($value);
     }
 }
