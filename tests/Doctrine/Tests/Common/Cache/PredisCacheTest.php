@@ -11,7 +11,7 @@ class PredisCacheTest extends CacheTest
 {
     private $client;
 
-    public function setUp()
+    protected function setUp()
     {
         if (!class_exists('Predis\Client')) {
             $this->markTestSkipped('Predis\Client is missing. Make sure to "composer install" to have all dev dependencies.');
@@ -22,7 +22,7 @@ class PredisCacheTest extends CacheTest
         try {
             $this->client->connect();
         } catch (ConnectionException $e) {
-            $this->markTestSkipped('The ' . __CLASS__ .' requires the use of redis');
+            $this->markTestSkipped('Cannot connect to Redis because of: ' . $e);
         }
     }
 
