@@ -9,14 +9,14 @@ abstract class BaseFileCacheTest extends CacheTest
 {
     protected $directory;
 
-    public function setUp()
+    protected function setUp()
     {
         do {
             $this->directory = sys_get_temp_dir() . '/doctrine_cache_'. uniqid();
         } while (file_exists($this->directory));
     }
 
-    public function tearDown()
+    protected function tearDown()
     {
         if ( ! is_dir($this->directory)) {
             return;

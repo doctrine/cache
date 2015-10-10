@@ -5,27 +5,26 @@ namespace Doctrine\Tests\Common\Cache;
 use Doctrine\Common\Cache\MemcachedCache;
 use Memcached;
 
+/**
+ * @requires extension memcached
+ */
 class MemcachedCacheTest extends CacheTest
 {
     private $memcached;
 
-    public function setUp()
+    protected function setUp()
     {
-        if ( ! extension_loaded('memcached')) {
-            $this->markTestSkipped('The ' . __CLASS__ .' requires the use of memcached');
-        }
-
         $this->memcached = new Memcached();
         $this->memcached->setOption(Memcached::OPT_COMPRESSION, false);
         $this->memcached->addServer('127.0.0.1', 11211);
 
         if (@fsockopen('127.0.0.1', 11211) === false) {
             unset($this->memcached);
-            $this->markTestSkipped('The ' . __CLASS__ .' cannot connect to memcache');
+            $this->markTestSkipped('Cannot connect to Memcached.');
         }
     }
 
-    public function tearDown()
+    protected function tearDown()
     {
         if ($this->memcached instanceof Memcached) {
             $this->memcached->flush();
