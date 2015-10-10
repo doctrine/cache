@@ -180,7 +180,8 @@ class MongoDBCache extends CacheProvider
      * Check if the document is expired.
      *
      * @param array $document
-     * @return boolean
+     *
+     * @return bool
      */
     private function isExpired(array $document)
     {

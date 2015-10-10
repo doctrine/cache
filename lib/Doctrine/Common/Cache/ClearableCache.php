@@ -34,7 +34,7 @@ interface ClearableCache
     /**
      * Deletes all cache entries in the current cache namespace.
      *
-     * @return boolean TRUE if the cache entries were successfully deleted, FALSE otherwise.
+     * @return bool TRUE if the cache entries were successfully deleted, FALSE otherwise.
      */
     public function deleteAll();
 }

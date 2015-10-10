@@ -53,7 +53,7 @@ class ApcCache extends CacheProvider
      */
     protected function doSave($id, $data, $lifeTime = 0)
     {
-        return (bool) apc_store($id, $data, (int) $lifeTime);
+        return apc_store($id, $data, $lifeTime);
     }
 
     /**
