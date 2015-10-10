@@ -9,19 +9,6 @@ abstract class BaseFileCacheTest extends CacheTest
 {
     protected $directory;
 
-    public function testFlushAllRemovesBalancingDirectories()
-    {
-        $cache = $this->_getCacheDriver();
-
-        $this->assertTrue($cache->save('key1', 1));
-        $this->assertTrue($cache->save('key2', 2));
-        $this->assertTrue($cache->flushAll());
-
-        $iterator = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($this->directory, \FilesystemIterator::SKIP_DOTS), \RecursiveIteratorIterator::CHILD_FIRST);
-
-        $this->assertCount(0, $iterator);
-    }
-
     protected function setUp()
     {
         do {
@@ -46,6 +33,19 @@ abstract class BaseFileCacheTest extends CacheTest
         }
 
         @rmdir($this->directory);
+    }
+
+    public function testFlushAllRemovesBalancingDirectories()
+    {
+        $cache = $this->_getCacheDriver();
+
+        $this->assertTrue($cache->save('key1', 1));
+        $this->assertTrue($cache->save('key2', 2));
+        $this->assertTrue($cache->flushAll());
+
+        $iterator = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($this->directory, \FilesystemIterator::SKIP_DOTS), \RecursiveIteratorIterator::CHILD_FIRST);
+
+        $this->assertCount(0, $iterator);
     }
 
     protected function isSharedStorage()

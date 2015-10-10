@@ -5,25 +5,24 @@ namespace Doctrine\Tests\Common\Cache;
 use Doctrine\Common\Cache\MemcacheCache;
 use Memcache;
 
+/**
+ * @requires extension memcache
+ */
 class MemcacheCacheTest extends CacheTest
 {
     private $memcache;
 
-    public function setUp()
+    protected function setUp()
     {
-        if ( ! extension_loaded('memcache')) {
-            $this->markTestSkipped('The ' . __CLASS__ .' requires the use of memcache');
-        }
-
         $this->memcache = new Memcache();
 
         if (@$this->memcache->connect('localhost', 11211) === false) {
             unset($this->memcache);
-            $this->markTestSkipped('The ' . __CLASS__ .' cannot connect to memcache');
+            $this->markTestSkipped('Cannot connect to Memcache.');
         }
     }
 
-    public function tearDown()
+    protected function tearDown()
     {
         if ($this->memcache instanceof Memcache) {
             $this->memcache->flush();
