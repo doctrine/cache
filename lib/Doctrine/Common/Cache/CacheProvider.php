@@ -225,7 +225,7 @@ abstract class CacheProvider implements Cache, FlushableCache, ClearableCache, M
      *
      * @param string $id The id of the cache entry to fetch.
      *
-     * @return mixed|boolean The cached data or FALSE, if no cache entry exists for the given id.
+     * @return mixed|false The cached data or FALSE, if no cache entry exists for the given id.
      */
     abstract protected function doFetch($id);
 
@@ -234,7 +234,7 @@ abstract class CacheProvider implements Cache, FlushableCache, ClearableCache, M
      *
      * @param string $id The cache id of the entry to check for.
      *
-     * @return boolean TRUE if a cache entry exists for the given cache id, FALSE otherwise.
+     * @return bool TRUE if a cache entry exists for the given cache id, FALSE otherwise.
      */
     abstract protected function doContains($id);
 
@@ -246,7 +246,7 @@ abstract class CacheProvider implements Cache, FlushableCache, ClearableCache, M
      * @param int    $lifeTime The lifetime. If != 0, sets a specific lifetime for this
      *                           cache entry (0 => infinite lifeTime).
      *
-     * @return boolean TRUE if the entry was successfully stored in the cache, FALSE otherwise.
+     * @return bool TRUE if the entry was successfully stored in the cache, FALSE otherwise.
      */
     abstract protected function doSave($id, $data, $lifeTime = 0);
 
@@ -255,14 +255,14 @@ abstract class CacheProvider implements Cache, FlushableCache, ClearableCache, M
      *
      * @param string $id The cache id.
      *
-     * @return boolean TRUE if the cache entry was successfully deleted, FALSE otherwise.
+     * @return bool TRUE if the cache entry was successfully deleted, FALSE otherwise.
      */
     abstract protected function doDelete($id);
 
     /**
      * Flushes all cache entries.
      *
-     * @return boolean TRUE if the cache entries were successfully flushed, FALSE otherwise.
+     * @return bool TRUE if the cache entries were successfully flushed, FALSE otherwise.
      */
     abstract protected function doFlush();
 
