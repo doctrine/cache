@@ -100,6 +100,77 @@ abstract class CacheTest extends \Doctrine\Tests\DoctrineTestCase
         $this->assertFalse($cache->contains('key2'));
     }
 
+    /**
+     * @dataProvider provideCacheIds
+     */
+    public function testCanHandleSpecialCacheIds($id)
+    {
+        $cache = $this->_getCacheDriver();
+
+        $this->assertTrue($cache->save($id, 'value'));
+        $this->assertTrue($cache->contains($id));
+        $this->assertEquals('value', $cache->fetch($id));
+
+        $this->assertTrue($cache->delete($id));
+        $this->assertFalse($cache->contains($id));
+        $this->assertFalse($cache->fetch($id));
+    }
+
+    public function testNoCacheIdCollisions()
+    {
+        $cache = $this->_getCacheDriver();
+
+        $ids = $this->provideCacheIds();
+
+        // fill cache with each id having a different value
+        foreach ($ids as $index => $id) {
+            $cache->save($id[0], $index);
+        }
+
+        // then check value of each cache id
+        foreach ($ids as $index => $id) {
+            $this->assertSame($index, $cache->fetch($id[0]), 'Cache id "'.$id[0].'" must have its own value to ensure it does not collide with another one.');
+        }
+    }
+
+    /**
+     * Returns cache ids with special characters that should still work.
+     *
+     * For example, the characters :\/<>"*?| are not valid in Windows filenames. So they must be encoded properly.
+     * Each cache id should be considered different from the others.
+     *
+     * @return array
+     */
+    public function provideCacheIds()
+    {
+        return array(
+            array(':'),
+            array('\\'),
+            array('/'),
+            array('<'),
+            array('>'),
+            array('"'),
+            array('*'),
+            array('?'),
+            array('|'),
+            array('['),
+            array(']'),
+            array('ä'),
+            array('a'),
+            array('é'),
+            array('e'),
+            array('.'), // directory traversal
+            array('..'), // directory traversal
+            array('-'),
+            array('_'),
+            array('$'),
+            array('%'),
+            array(' '),
+            array("\0"),
+            array(''),
+        );
+    }
+
     public function testDeleteAllAndNamespaceVersioningBetweenCaches()
     {
         if ( ! $this->isSharedStorage()) {
