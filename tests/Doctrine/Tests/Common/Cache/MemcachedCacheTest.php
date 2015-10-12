@@ -35,12 +35,12 @@ class MemcachedCacheTest extends CacheTest
     /**
      * {@inheritdoc}
      *
-     * Memcached does not support " " and null byte as key so we remove them from the tests.
+     * Memcached does not support " ", null byte and very long keys so we remove them from the tests.
      */
     public function provideCacheIds()
     {
         $ids = parent::provideCacheIds();
-        unset($ids[21], $ids[22]);
+        unset($ids[21], $ids[22], $ids[24]);
 
         return $ids;
     }

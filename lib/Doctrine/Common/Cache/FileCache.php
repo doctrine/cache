@@ -115,7 +115,7 @@ abstract class FileCache extends CacheProvider
         $hash = hash('sha256', $id);
 
         // This ensures that the filename is unique and that there are no invalid chars in it.
-        if (strlen($id) > ((255 - strlen($this->extension)) / 2)) {
+        if ('' === $id || strlen($id) > ((255 - strlen($this->extension)) / 2)) {
             // Most filesystems have a limit of 255 chars for each path component. So if the id in hex representation
             // plus the extension would surpass the limit, we use the hash instead. The prefix prevents collisions
             // between the hash and bin2hex.
