@@ -129,7 +129,11 @@ abstract class CacheTest extends \Doctrine\Tests\DoctrineTestCase
 
         // then check value of each cache id
         foreach ($ids as $index => $id) {
-            $this->assertSame($index, $cache->fetch($id[0]), 'Cache id "'.$id[0].'" must have its own value to ensure it does not collide with another one.');
+            $value = $cache->fetch($id[0]);
+            $this->assertNotFalse($value, sprintf('Failed to retrieve data for cache id "%s".', $id[0]));
+            if ($index !== $value) {
+                $this->fail(sprintf('Cache id "%s" collides with id "%s".', $id[0], $ids[$value][0]));
+            }
         }
     }
 
@@ -168,6 +172,7 @@ abstract class CacheTest extends \Doctrine\Tests\DoctrineTestCase
             array(' '),
             array("\0"),
             array(''),
+            array(str_repeat('a', 300)), // long key
         );
     }
 
