@@ -24,7 +24,7 @@
         "doctrine/common": ">2.2,<2.4"
     },
     "autoload": {
-        "psr-0": { "Doctrine\\Common\\Cache\\": "lib/" }
+        "psr-4": { "Doctrine\\Common\\Cache\\": "lib/Doctrine/Common/Cache" }
     },
     "extra": {
         "branch-alias": {
