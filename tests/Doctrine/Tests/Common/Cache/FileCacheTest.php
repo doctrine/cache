@@ -104,8 +104,8 @@ class FileCacheTest extends \Doctrine\Tests\DoctrineTestCase
     {
         $driver = $this->getMockBuilder('Doctrine\Common\Cache\FileCache')
             ->enableOriginalConstructor()
-            ->setConstructorArgs(['', '', 0002])
-            ->setMethods(['createPathIfNeeded'])
+            ->setConstructorArgs(array('', '', 0002))
+            ->setMethods(array('createPathIfNeeded'))
             ->getMockForAbstractClass();
 
         $driver->method('createPathIfNeeded')->willReturn(false);
