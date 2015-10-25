@@ -158,4 +158,64 @@ class FileCacheTest extends \Doctrine\Tests\DoctrineTestCase
 
         $this->assertGreaterThan(0, $stats[Cache::STATS_MEMORY_USAGE]);
     }
+
+    /**
+     * @expectedException InvalidArgumentException
+     */
+    public function testNonIntUmaskThrowsInvalidArgumentException()
+    {
+        $this->getMock(
+            'Doctrine\Common\Cache\FileCache',
+            array(),
+            array('', '', 'invalid')
+        );
+    }
+
+    /**
+     * @expectedException InvalidArgumentException
+     */
+    public function testNonWritableDirectoryThrowsInvalidArgumentExceptionOnCreate()
+    {
+        $driver = $this->getMockBuilder('Doctrine\Common\Cache\FileCache')
+            ->enableOriginalConstructor()
+            ->setConstructorArgs(array('', '', 0002))
+            ->setMethods(array('createPathIfNeeded'))
+            ->getMockForAbstractClass();
+
+        $driver->method('createPathIfNeeded')->willReturn(false);
+    }
+
+    public function testGetDirectoryReturnsRealpathDirectoryString()
+    {
+        $directory = __DIR__ . '/../';
+        $driver = $this->getMock(
+            'Doctrine\Common\Cache\FileCache',
+            array('doFetch', 'doContains', 'doSave'),
+            array($directory)
+        );
+
+        $doGetDirectory = new \ReflectionMethod($driver, 'getDirectory');
+
+        $actualDirectory = $doGetDirectory->invoke($driver);
+        $expectedDirectory = realpath($directory);
+
+        $this->assertEquals($expectedDirectory, $actualDirectory);
+    }
+
+    public function testGetExtensionReturnsExtensionString()
+    {
+        $directory = __DIR__ . '/../';
+        $extension = DIRECTORY_SEPARATOR . basename(__FILE__);
+        $driver = $this->getMock(
+            'Doctrine\Common\Cache\FileCache',
+            array('doFetch', 'doContains', 'doSave'),
+            array($directory, $extension)
+        );
+
+        $doGetExtension = new \ReflectionMethod($driver, 'getExtension');
+
+        $actualExtension = $doGetExtension->invoke($driver);
+
+        $this->assertEquals($extension, $actualExtension);
+    }
 }

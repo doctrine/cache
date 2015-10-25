@@ -45,6 +45,21 @@ class SQLite3Test extends CacheTest
         $this->assertEquals($data, $this->_getCacheDriver()->fetch($id));
     }
 
+    public function testFetchSingleExpired()
+    {
+        $id   = uniqid('sqlite3_id_');
+        $data = "\0"; // produces null bytes in serialized format
+
+        $this->_getCacheDriver()->save($id, $data, 1);
+
+        usleep(2000000);
+
+        $this->assertFalse($this->_getCacheDriver()->fetch($id));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     protected function _getCacheDriver()
     {
         return new SQLite3Cache($this->sqlite, 'test_table');
