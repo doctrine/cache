@@ -59,20 +59,6 @@ class MemcachedCacheTest extends CacheTest
         $this->assertTrue($cache->contains('key'), 'Memcache provider should support TTL > 30 days');
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * @dataProvider falseCastedValuesProvider
-     */
-    public function testFalseCastedValues($value)
-    {
-        if (false === $value) {
-            $this->markTestIncomplete('Memcached currently doesn\'t support saving `false` values. ');
-        }
-
-        parent::testFalseCastedValues($value);
-    }
-
     public function testGetMemcachedReturnsInstanceOfMemcached()
     {
         $this->assertInstanceOf('Memcached', $this->_getCacheDriver()->getMemcached());
