@@ -85,11 +85,10 @@ class FileCacheTest extends \Doctrine\Tests\DoctrineTestCase
         $this->assertGreaterThan(0, $stats[Cache::STATS_MEMORY_USAGE]);
     }
 
-    /**
-     * @expectedException InvalidArgumentException
-     */
     public function testNonIntUmaskThrowsInvalidArgumentException()
     {
+        $this->setExpectedException('InvalidArgumentException');
+
         $this->getMock(
             'Doctrine\Common\Cache\FileCache',
             array(),
