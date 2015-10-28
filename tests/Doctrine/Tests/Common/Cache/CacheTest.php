@@ -8,25 +8,44 @@ use ArrayObject;
 abstract class CacheTest extends \Doctrine\Tests\DoctrineTestCase
 {
     /**
-     * @dataProvider provideCrudValues
+     * @dataProvider provideDataToCache
      */
-    public function testBasicCrudOperations($value)
+    public function testSetContainsFetchDelete($value)
     {
         $cache = $this->_getCacheDriver();
 
         // Test saving a value, checking if it exists, and fetching it back
-        $this->assertTrue($cache->save('key', 'value'));
+        $this->assertTrue($cache->save('key', $value));
         $this->assertTrue($cache->contains('key'));
-        $this->assertEquals('value', $cache->fetch('key'));
-
-        // Test updating the value of a cache entry
-        $this->assertTrue($cache->save('key', 'value-changed'));
-        $this->assertTrue($cache->contains('key'));
-        $this->assertEquals('value-changed', $cache->fetch('key'));
+        if (is_object($value)) {
+            $this->assertEquals($value, $cache->fetch('key'), 'Objects retrieved from the cache must be equal but not necessarily the same reference');
+        } else {
+            $this->assertSame($value, $cache->fetch('key'), 'Scalar and array data retrieved from the cache must be the same as the original, e.g. same type');
+        }
 
         // Test deleting a value
         $this->assertTrue($cache->delete('key'));
         $this->assertFalse($cache->contains('key'));
+        $this->assertFalse($cache->fetch('key'));
+    }
+
+    /**
+     * @dataProvider provideDataToCache
+     */
+    public function testUpdateExistingEntry($value)
+    {
+        $cache = $this->_getCacheDriver();
+
+        $this->assertTrue($cache->save('key', 'old-value'));
+        $this->assertTrue($cache->contains('key'));
+
+        $this->assertTrue($cache->save('key', $value));
+        $this->assertTrue($cache->contains('key'));
+        if (is_object($value)) {
+            $this->assertEquals($value, $cache->fetch('key'), 'Objects retrieved from the cache must be equal but not necessarily the same reference');
+        } else {
+            $this->assertSame($value, $cache->fetch('key'), 'Scalar and array data retrieved from the cache must be the same as the original, e.g. same type');
+        }
     }
 
     public function testFetchMulti()
@@ -53,45 +72,41 @@ abstract class CacheTest extends \Doctrine\Tests\DoctrineTestCase
         );
     }
 
-    public function testFetchMultiWillFilterNonRequestedKeys()
+    public function testFetchMultiWithEmptyKeysArray()
     {
-        /* @var $cache \Doctrine\Common\Cache\CacheProvider|\PHPUnit_Framework_MockObject_MockObject */
-        $cache = $this->getMockForAbstractClass(
-            'Doctrine\Common\Cache\CacheProvider',
-            array(),
-            '',
-            true,
-            true,
-            true,
-            array('doFetchMultiple')
-        );
-
-        $cache
-            ->expects($this->once())
-            ->method('doFetchMultiple')
-            ->will($this->returnValue(array(
-                '[foo][]' => 'bar',
-                '[bar][]' => 'baz',
-                '[baz][]' => 'tab',
-            )));
-
-        $this->assertEquals(
-            array('foo' => 'bar', 'bar' => 'baz'),
-            $cache->fetchMultiple(array('foo', 'bar'))
+        $cache = $this->_getCacheDriver();
+        
+        $this->assertEmpty(
+            $cache->fetchMultiple(array())
         );
     }
 
-
-    public function provideCrudValues()
+    public function provideDataToCache()
     {
         return array(
-            'array' => array(array('one', 2, 3.0)),
+            'array' => array(array('one', 2, 3.01)),
             'string' => array('value'),
             'integer' => array(1),
             'float' => array(1.5),
             'object' => array(new ArrayObject()),
+            'true' => array(true),
+            // the following are considered FALSE in boolean context, but caches should still recognize their existence
             'null' => array(null),
+            'false' => array(false),
+            'array_empty' => array(array()),
+            'string_zero' => array('0'),
+            'integer_zero' => array(0),
+            'float_zero' => array(0.0),
+            'string_empty' => array('')
         );
+    }
+
+    public function testDeleteIsSuccessfulWhenKeyDoesNotExist()
+    {
+        $cache = $this->_getCacheDriver();
+
+        $this->assertFalse($cache->contains('key'));
+        $this->assertTrue($cache->delete('key'));
     }
 
     public function testDeleteAll()
@@ -175,7 +190,7 @@ abstract class CacheTest extends \Doctrine\Tests\DoctrineTestCase
          */
         $this->assertTrue($cache2->save('key2', 2));
 
-        /* Both providers have the same namespace version and can see entires
+        /* Both providers have the same namespace version and can see entries
          * set by each other.
          */
         $this->assertTrue($cache1->contains('key1'));
@@ -277,38 +292,6 @@ abstract class CacheTest extends \Doctrine\Tests\DoctrineTestCase
     }
 
     /**
-     * Check to see that, even if the user saves a value that can be interpreted as false,
-     * the cache adapter will still recognize its existence there.
-     *
-     * @dataProvider falseCastedValuesProvider
-     */
-    public function testFalseCastedValues($value)
-    {
-        $cache = $this->_getCacheDriver();
-
-        $this->assertTrue($cache->save('key', $value));
-        $this->assertTrue($cache->contains('key'));
-        $this->assertEquals($value, $cache->fetch('key'));
-    }
-
-    /**
-     * The following values get converted to FALSE if you cast them to a boolean.
-     * @see http://php.net/manual/en/types.comparisons.php
-     */
-    public function falseCastedValuesProvider()
-    {
-        return array(
-            array(false),
-            array(null),
-            array(array()),
-            array('0'),
-            array(0),
-            array(0.0),
-            array('')
-        );
-    }
-
-    /**
      * Check to see that objects are correctly serialized and unserialized by the cache
      * provider.
      */
@@ -353,7 +336,7 @@ abstract class CacheTest extends \Doctrine\Tests\DoctrineTestCase
         $this->assertEquals("bar", $fetched["obj1"]->foo);
         $this->assertEquals("baz", $fetched["obj2"]->bar);
     }
-    
+
     /**
      * Return whether multiple cache providers share the same storage.
      *

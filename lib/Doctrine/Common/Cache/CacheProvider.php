@@ -83,6 +83,10 @@ abstract class CacheProvider implements Cache, FlushableCache, ClearableCache, M
      */
     public function fetchMultiple(array $keys)
     {
+        if (empty($keys)) {
+            return array();
+        }
+        
         // note: the array_combine() is in place to keep an association between our $keys and the $namespacedKeys
         $namespacedKeys = array_combine($keys, array_map(array($this, 'getNamespacedId'), $keys));
         $items          = $this->doFetchMultiple($namespacedKeys);
@@ -147,9 +151,13 @@ abstract class CacheProvider implements Cache, FlushableCache, ClearableCache, M
         $namespaceCacheKey = $this->getNamespaceCacheKey();
         $namespaceVersion  = $this->getNamespaceVersion() + 1;
 
-        $this->namespaceVersion = $namespaceVersion;
+        if ($this->doSave($namespaceCacheKey, $namespaceVersion)) {
+            $this->namespaceVersion = $namespaceVersion;
 
-        return $this->doSave($namespaceCacheKey, $namespaceVersion);
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -188,15 +196,7 @@ abstract class CacheProvider implements Cache, FlushableCache, ClearableCache, M
         }
 
         $namespaceCacheKey = $this->getNamespaceCacheKey();
-        $namespaceVersion = $this->doFetch($namespaceCacheKey);
-
-        if (false === $namespaceVersion) {
-            $namespaceVersion = 1;
-
-            $this->doSave($namespaceCacheKey, $namespaceVersion);
-        }
-
-        $this->namespaceVersion = $namespaceVersion;
+        $this->namespaceVersion = $this->doFetch($namespaceCacheKey) ?: 1;
 
         return $this->namespaceVersion;
     }

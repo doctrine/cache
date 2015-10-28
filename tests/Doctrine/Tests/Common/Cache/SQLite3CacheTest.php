@@ -15,6 +15,10 @@ class SQLite3Test extends CacheTest
 
     protected function setUp()
     {
+        if ( ! extension_loaded('sqlite3')) {
+            $this->markTestSkipped('The ' . __CLASS__ .' requires the use of SQLite3');
+        }
+
         $this->file = tempnam(null, 'doctrine-cache-test-');
         unlink($this->file);
         $this->sqlite = new SQLite3($this->file);
