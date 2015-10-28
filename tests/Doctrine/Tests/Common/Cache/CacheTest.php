@@ -433,7 +433,7 @@ abstract class CacheTest extends \Doctrine\Tests\DoctrineTestCase
      *
      * This is used for skipping certain tests for shared storage behavior.
      *
-     * @return boolean
+     * @return bool
      */
     protected function isSharedStorage()
     {

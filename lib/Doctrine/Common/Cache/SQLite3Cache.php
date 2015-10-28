@@ -98,7 +98,7 @@ class SQLite3Cache extends CacheProvider
      */
     protected function doContains($id)
     {
-        return (boolean) $this->findById($id, false);
+        return null !== $this->findById($id, false);
     }
 
     /**
@@ -157,7 +157,7 @@ class SQLite3Cache extends CacheProvider
      * Find a single row by ID.
      *
      * @param mixed $id
-     * @param boolean $includeData
+     * @param bool $includeData
      *
      * @return array|null
      */
@@ -208,7 +208,8 @@ class SQLite3Cache extends CacheProvider
      * Check if the item is expired.
      *
      * @param array $item
-     * @return boolean
+     *
+     * @return bool
      */
     private function isExpired(array $item)
     {
