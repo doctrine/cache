@@ -57,6 +57,14 @@ class MemcacheCacheTest extends CacheTest
         $this->assertTrue($cache->contains('key'), 'Memcache provider should support TTL > 30 days');
     }
 
+    public function testGetMemcacheReturnsInstanceOfMemcache()
+    {
+        $this->assertInstanceOf('Memcache', $this->_getCacheDriver()->getMemcache());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     protected function _getCacheDriver()
     {
         $driver = new MemcacheCache();

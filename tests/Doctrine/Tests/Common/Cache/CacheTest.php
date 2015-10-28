@@ -428,6 +428,14 @@ abstract class CacheTest extends \Doctrine\Tests\DoctrineTestCase
         $this->assertEquals("baz", $fetched["obj2"]->bar);
     }
 
+    public function testSaveReturnsTrueWithAndWithoutTTlSet()
+    {
+        $cache = $this->_getCacheDriver();
+        $cache->deleteAll();
+        $this->assertTrue($cache->save('without_ttl', 'without_ttl'));
+        $this->assertTrue($cache->save('with_ttl', 'with_ttl', 3600));
+    }
+
     /**
      * Return whether multiple cache providers share the same storage.
      *

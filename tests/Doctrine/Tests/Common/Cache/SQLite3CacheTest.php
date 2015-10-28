@@ -42,6 +42,9 @@ class SQLite3Test extends CacheTest
         $this->assertEquals($data, $this->_getCacheDriver()->fetch($id));
     }
 
+    /**
+     * {@inheritDoc}
+     */
     protected function _getCacheDriver()
     {
         return new SQLite3Cache($this->sqlite, 'test_table');

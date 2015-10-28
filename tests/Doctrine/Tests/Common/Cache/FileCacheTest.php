@@ -84,4 +84,49 @@ class FileCacheTest extends \Doctrine\Tests\DoctrineTestCase
 
         $this->assertGreaterThan(0, $stats[Cache::STATS_MEMORY_USAGE]);
     }
+
+    public function testNonIntUmaskThrowsInvalidArgumentException()
+    {
+        $this->setExpectedException('InvalidArgumentException');
+
+        $this->getMock(
+            'Doctrine\Common\Cache\FileCache',
+            array(),
+            array('', '', 'invalid')
+        );
+    }
+
+    public function testGetDirectoryReturnsRealpathDirectoryString()
+    {
+        $directory = __DIR__ . '/../';
+        $driver = $this->getMock(
+            'Doctrine\Common\Cache\FileCache',
+            array('doFetch', 'doContains', 'doSave'),
+            array($directory)
+        );
+
+        $doGetDirectory = new \ReflectionMethod($driver, 'getDirectory');
+
+        $actualDirectory = $doGetDirectory->invoke($driver);
+        $expectedDirectory = realpath($directory);
+
+        $this->assertEquals($expectedDirectory, $actualDirectory);
+    }
+
+    public function testGetExtensionReturnsExtensionString()
+    {
+        $directory = __DIR__ . '/../';
+        $extension = DIRECTORY_SEPARATOR . basename(__FILE__);
+        $driver = $this->getMock(
+            'Doctrine\Common\Cache\FileCache',
+            array('doFetch', 'doContains', 'doSave'),
+            array($directory, $extension)
+        );
+
+        $doGetExtension = new \ReflectionMethod($driver, 'getExtension');
+
+        $actualExtension = $doGetExtension->invoke($driver);
+
+        $this->assertEquals($extension, $actualExtension);
+    }
 }

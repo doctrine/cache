@@ -30,6 +30,14 @@ class RedisCacheTest extends CacheTest
         $this->assertNotNull($stats[Cache::STATS_MISSES]);
     }
 
+    public function testGetRedisReturnsInstanceOfRedis()
+    {
+        $this->assertInstanceOf('Redis', $this->_getCacheDriver()->getRedis());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     protected function _getCacheDriver()
     {
         $driver = new RedisCache();
