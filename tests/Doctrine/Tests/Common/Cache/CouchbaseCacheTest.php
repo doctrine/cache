@@ -5,24 +5,23 @@ namespace Doctrine\Tests\Common\Cache;
 use Couchbase;
 use Doctrine\Common\Cache\CouchbaseCache;
 
+/**
+ * @requires extension couchbase
+ */
 class CouchbaseCacheTest extends CacheTest
 {
     private $couchbase;
 
-    public function setUp()
+    protected function setUp()
     {
-        if (extension_loaded('couchbase')) {
-            try {
-                $this->couchbase = new Couchbase('127.0.0.1', 'Administrator', 'password', 'default');
-            } catch(Exception $ex) {
-                 $this->markTestSkipped('Could not instantiate the Couchbase cache because of: ' . $ex);   
-            }
-        } else {
-            $this->markTestSkipped('The ' . __CLASS__ .' requires the use of the couchbase extension');
+        try {
+            $this->couchbase = new Couchbase('127.0.0.1', 'Administrator', 'password', 'default');
+        } catch(Exception $ex) {
+             $this->markTestSkipped('Could not instantiate the Couchbase cache because of: ' . $ex);
         }
     }
 
-    public function testNoExpire() 
+    public function testNoExpire()
     {
         $cache = $this->_getCacheDriver();
         $cache->save('noexpire', 'value', 0);

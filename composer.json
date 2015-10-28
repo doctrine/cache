@@ -26,6 +26,9 @@
     "autoload": {
         "psr-4": { "Doctrine\\Common\\Cache\\": "lib/Doctrine/Common/Cache" }
     },
+    "autoload-dev": {
+        "psr-4": { "Doctrine\\Tests\\": "tests/Doctrine/Tests" }
+    },
     "extra": {
         "branch-alias": {
             "dev-master": "1.5.x-dev"
