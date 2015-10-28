@@ -9,14 +9,27 @@ abstract class BaseFileCacheTest extends CacheTest
 {
     protected $directory;
 
-    public function setUp()
+    public function testFlushAllRemovesBalancingDirectories()
+    {
+        $cache = $this->_getCacheDriver();
+
+        $this->assertTrue($cache->save('key1', 1));
+        $this->assertTrue($cache->save('key2', 2));
+        $this->assertTrue($cache->flushAll());
+
+        $iterator = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($this->directory, \FilesystemIterator::SKIP_DOTS), \RecursiveIteratorIterator::CHILD_FIRST);
+
+        $this->assertCount(0, $iterator);
+    }
+
+    protected function setUp()
     {
         do {
             $this->directory = sys_get_temp_dir() . '/doctrine_cache_'. uniqid();
         } while (file_exists($this->directory));
     }
 
-    public function tearDown()
+    protected function tearDown()
     {
         if ( ! is_dir($this->directory)) {
             return;
@@ -31,6 +44,8 @@ abstract class BaseFileCacheTest extends CacheTest
                 @rmdir($file->getRealPath());
             }
         }
+
+        @rmdir($this->directory);
     }
 
     protected function isSharedStorage()

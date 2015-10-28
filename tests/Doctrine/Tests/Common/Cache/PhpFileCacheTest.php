@@ -10,6 +10,57 @@ use Doctrine\Common\Cache\PhpFileCache;
  */
 class PhpFileCacheTest extends BaseFileCacheTest
 {
+    /**
+     * {@inheritDoc}
+     *
+     * @dataProvider provideDataToCache
+     */
+    public function testSetContainsFetchDelete($value)
+    {
+        if (is_object($value) && ! method_exists($value, '__set_state')) {
+            $this->markTestSkipped('PhpFileCache only allows objects that implement __set_state() and fully support var_export()');
+        }
+
+        if (0.0 === $value) {
+            $cache = $this->_getCacheDriver();
+
+            $this->assertTrue($cache->save('key', $value));
+            $this->assertTrue($cache->contains('key'));
+            $this->assertSame(0, $cache->fetch('key'), 'var_export exports float(0) as int(0) so we assert against 0 as integer');
+
+            $this->assertTrue($cache->delete('key'));
+            $this->assertFalse($cache->contains('key'));
+            $this->assertFalse($cache->fetch('key'));
+        } else {
+            parent::testSetContainsFetchDelete($value);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @dataProvider provideDataToCache
+     */
+    public function testUpdateExistingEntry($value)
+    {
+        if (is_object($value) && ! method_exists($value, '__set_state')) {
+            $this->markTestSkipped('PhpFileCache only allows objects that implement __set_state() and fully support var_export()');
+        }
+
+        if (0.0 === $value) {
+            $cache = $this->_getCacheDriver();
+
+            $this->assertTrue($cache->save('key', 'old-value'));
+            $this->assertTrue($cache->contains('key'));
+
+            $this->assertTrue($cache->save('key', $value));
+            $this->assertTrue($cache->contains('key'));
+            $this->assertSame(0, $cache->fetch('key'), 'var_export exports float(0) as int(0) so we assert against 0 as integer');
+        } else {
+            parent::testUpdateExistingEntry($value);
+        }
+    }
+
     public function testLifetime()
     {
         $cache = $this->_getCacheDriver();

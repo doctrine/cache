@@ -61,7 +61,8 @@ class ApcCache extends CacheProvider
      */
     protected function doDelete($id)
     {
-        return apc_delete($id);
+        // apc_delete returns false if the id does not exist
+        return apc_delete($id) || ! apc_exists($id);
     }
 
     /**

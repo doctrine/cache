@@ -41,7 +41,7 @@ class MongoDBCache extends CacheProvider
      * cache entry should expire.
      *
      * With MongoDB 2.2+, entries can be automatically deleted by MongoDB by
-     * indexing this field wit the "expireAfterSeconds" option equal to zero.
+     * indexing this field with the "expireAfterSeconds" option equal to zero.
      * This will direct MongoDB to regularly query for and delete any entries
      * whose date is older than the current time. Entries without a date value
      * in this field will be ignored.
@@ -138,7 +138,7 @@ class MongoDBCache extends CacheProvider
     {
         $result = $this->collection->remove(array('_id' => $id));
 
-        return isset($result['n']) ? $result['n'] == 1 : true;
+        return isset($result['ok']) ? $result['ok'] == 1 : true;
     }
 
     /**
@@ -170,8 +170,8 @@ class MongoDBCache extends CacheProvider
         return array(
             Cache::STATS_HITS => null,
             Cache::STATS_MISSES => null,
-            Cache::STATS_UPTIME => (isset($serverStatus['uptime']) ? (integer) $serverStatus['uptime'] : null),
-            Cache::STATS_MEMORY_USAGE => (isset($collStats['size']) ? (integer) $collStats['size'] : null),
+            Cache::STATS_UPTIME => (isset($serverStatus['uptime']) ? (int) $serverStatus['uptime'] : null),
+            Cache::STATS_MEMORY_USAGE => (isset($collStats['size']) ? (int) $collStats['size'] : null),
             Cache::STATS_MEMORY_AVAILABLE  => null,
         );
     }

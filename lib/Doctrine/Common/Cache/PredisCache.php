@@ -48,6 +48,7 @@ class PredisCache extends CacheProvider
 
         return array_filter(array_combine($keys, array_map('unserialize', $fetchedItems)));
     }
+
     /**
      * {@inheritdoc}
      */
@@ -76,7 +77,7 @@ class PredisCache extends CacheProvider
      */
     protected function doDelete($id)
     {
-        return $this->client->del($id) > 0;
+        return $this->client->del($id) >= 0;
     }
 
     /**
