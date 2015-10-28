@@ -32,11 +32,7 @@ class RedisCacheTest extends CacheTest
 
     public function testGetRedisReturnsInstanceOfRedis()
     {
-        $expectedClass = '\Redis';
-        $cache = $this->_getCacheDriver();
-        $instance = $cache->getRedis();
-
-        $this->assertInstanceOf($expectedClass, $instance);
+        $this->assertInstanceOf('Redis', $this->_getCacheDriver()->getRedis());
     }
 
     /**
