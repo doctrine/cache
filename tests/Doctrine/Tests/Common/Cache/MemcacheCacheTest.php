@@ -30,6 +30,19 @@ class MemcacheCacheTest extends CacheTest
         }
     }
 
+    /**
+     * {@inheritdoc}
+     *
+     * Memcache does not support " " and null byte as key so we remove them from the tests.
+     */
+    public function provideCacheIds()
+    {
+        $ids = parent::provideCacheIds();
+        unset($ids[21], $ids[22]);
+
+        return $ids;
+    }
+
     public function testNoExpire()
     {
         $cache = $this->_getCacheDriver();

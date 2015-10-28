@@ -48,6 +48,21 @@ abstract class CacheTest extends \Doctrine\Tests\DoctrineTestCase
         }
     }
 
+    public function testCacheKeyIsCaseSensitive()
+    {
+        $cache = $this->_getCacheDriver();
+
+        $this->assertTrue($cache->save('key', 'value'));
+        $this->assertTrue($cache->contains('key'));
+        $this->assertSame('value', $cache->fetch('key'));
+
+        $this->assertFalse($cache->contains('KEY'));
+        $this->assertFalse($cache->fetch('KEY'));
+
+        $cache->delete('KEY');
+        $this->assertTrue($cache->contains('key', 'Deleting cache item with different case must not affect other cache item'));
+    }
+
     public function testFetchMulti()
     {
         $cache = $this->_getCacheDriver();
@@ -118,6 +133,82 @@ abstract class CacheTest extends \Doctrine\Tests\DoctrineTestCase
         $this->assertTrue($cache->deleteAll());
         $this->assertFalse($cache->contains('key1'));
         $this->assertFalse($cache->contains('key2'));
+    }
+
+    /**
+     * @dataProvider provideCacheIds
+     */
+    public function testCanHandleSpecialCacheIds($id)
+    {
+        $cache = $this->_getCacheDriver();
+
+        $this->assertTrue($cache->save($id, 'value'));
+        $this->assertTrue($cache->contains($id));
+        $this->assertEquals('value', $cache->fetch($id));
+
+        $this->assertTrue($cache->delete($id));
+        $this->assertFalse($cache->contains($id));
+        $this->assertFalse($cache->fetch($id));
+    }
+
+    public function testNoCacheIdCollisions()
+    {
+        $cache = $this->_getCacheDriver();
+
+        $ids = $this->provideCacheIds();
+
+        // fill cache with each id having a different value
+        foreach ($ids as $index => $id) {
+            $cache->save($id[0], $index);
+        }
+
+        // then check value of each cache id
+        foreach ($ids as $index => $id) {
+            $value = $cache->fetch($id[0]);
+            $this->assertNotFalse($value, sprintf('Failed to retrieve data for cache id "%s".', $id[0]));
+            if ($index !== $value) {
+                $this->fail(sprintf('Cache id "%s" collides with id "%s".', $id[0], $ids[$value][0]));
+            }
+        }
+    }
+
+    /**
+     * Returns cache ids with special characters that should still work.
+     *
+     * For example, the characters :\/<>"*?| are not valid in Windows filenames. So they must be encoded properly.
+     * Each cache id should be considered different from the others.
+     *
+     * @return array
+     */
+    public function provideCacheIds()
+    {
+        return array(
+            array(':'),
+            array('\\'),
+            array('/'),
+            array('<'),
+            array('>'),
+            array('"'),
+            array('*'),
+            array('?'),
+            array('|'),
+            array('['),
+            array(']'),
+            array('ä'),
+            array('a'),
+            array('é'),
+            array('e'),
+            array('.'), // directory traversal
+            array('..'), // directory traversal
+            array('-'),
+            array('_'),
+            array('$'),
+            array('%'),
+            array(' '),
+            array("\0"),
+            array(''),
+            array(str_repeat('a', 300)), // long key
+        );
     }
 
     public function testDeleteAllAndNamespaceVersioningBetweenCaches()
