@@ -170,7 +170,7 @@ abstract class FileCache extends CacheProvider
     {
         $usage = 0;
         foreach ($this->getIterator() as $name => $file) {
-            if (!$file->isDir() && $this->isFilenameEndingWithExtension($name)) {
+            if (! $file->isDir() && $this->isFilenameEndingWithExtension($name)) {
                 $usage += $file->getSize();
             }
         }
