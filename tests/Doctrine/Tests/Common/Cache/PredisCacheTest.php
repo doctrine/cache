@@ -59,4 +59,12 @@ class PredisCacheTest extends CacheTest
 
         parent::testFalseCastedValues($value);
     }
+
+    public function testAllowsGenericPredisClient()
+    {
+        /* @var $predisClient \Predis\ClientInterface */
+        $predisClient = $this->getMock('Predis\\ClientInterface');
+
+        $this->assertInstanceOf('Doctrine\\Common\\Cache\\PredisCache', new PredisCache($predisClient));
+    }
 }
