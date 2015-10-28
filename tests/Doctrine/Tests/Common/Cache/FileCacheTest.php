@@ -96,20 +96,6 @@ class FileCacheTest extends \Doctrine\Tests\DoctrineTestCase
         );
     }
 
-    /**
-     * @expectedException InvalidArgumentException
-     */
-    public function testNonWritableDirectoryThrowsInvalidArgumentExceptionOnCreate()
-    {
-        $driver = $this->getMockBuilder('Doctrine\Common\Cache\FileCache')
-            ->enableOriginalConstructor()
-            ->setConstructorArgs(array('', '', 0002))
-            ->setMethods(array('createPathIfNeeded'))
-            ->getMockForAbstractClass();
-
-        $driver->method('createPathIfNeeded')->willReturn(false);
-    }
-
     public function testGetDirectoryReturnsRealpathDirectoryString()
     {
         $directory = __DIR__ . '/../';
