@@ -255,6 +255,7 @@ abstract class FileCache extends CacheProvider
      */
     private function isFilenameEndingWithExtension($name)
     {
-        return '' === $this->extension || strrpos($name, $this->extension) === (strlen($name) - strlen($this->extension));
+        return '' === $this->extension
+            || strrpos($name, $this->extension) === (strlen($name) - strlen($this->extension));
     }
 }
