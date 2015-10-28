@@ -59,11 +59,7 @@ class MemcacheCacheTest extends CacheTest
 
     public function testGetMemcacheReturnsInstanceOfMemcache()
     {
-        $expectedClass = '\Memcache';
-        $cache = $this->_getCacheDriver();
-        $instance = $cache->getMemcache();
-
-        $this->assertInstanceOf($expectedClass, $instance);
+        $this->assertInstanceOf('Memcache', $this->_getCacheDriver()->getMemcache());
     }
 
     /**
