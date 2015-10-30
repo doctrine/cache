@@ -45,17 +45,8 @@ class PredisCache extends CacheProvider
     protected function doFetchMultiple(array $keys)
     {
         $fetchedItems = call_user_func_array(array($this->client, 'mget'), $keys);
-        $foundItems = array();
-        $resultCounter = 0;
-
-        foreach ($keys AS $key) {
-            if ($fetchedItems[$resultCounter] !== null) {
-                $foundItems[$key] = unserialize($fetchedItems[$resultCounter]);
-            }
-            $resultCounter++;
-        }
-
-        return $foundItems;
+        
+        return array_map('unserialize', array_filter(array_combine($keys, $fetchedItems)));
     }
 
     /**
