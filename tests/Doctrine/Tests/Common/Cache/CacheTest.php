@@ -96,8 +96,7 @@ abstract class CacheTest extends \Doctrine\Tests\DoctrineTestCase
             'integer_zero' => 0,
             'string_empty' => ''
         );
-        foreach ($values AS $key => $value)
-        {
+        foreach ($values AS $key => $value) {
             $cache->save($key, $value);
         }
 
