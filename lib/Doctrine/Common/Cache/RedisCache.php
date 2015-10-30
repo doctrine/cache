@@ -71,7 +71,18 @@ class RedisCache extends CacheProvider
      */
     protected function doFetchMultiple(array $keys)
     {
-        return array_filter(array_combine($keys, $this->redis->mget($keys)));
+        $fetchedItems = $this->redis->mget($keys);
+        $foundItems = array();
+        $resultCounter = 0;
+
+        foreach ($keys AS $key) {
+            if ($fetchedItems[$resultCounter] !== false) {
+                $foundItems[$key] = $fetchedItems[$resultCounter];
+            }
+            $resultCounter++;
+        }
+
+        return $foundItems;
     }
 
     /**
