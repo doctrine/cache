@@ -81,19 +81,29 @@ abstract class CacheTest extends \Doctrine\Tests\DoctrineTestCase
         );
     }
 
-    public function testFetchMultiWithNull()
+    public function testFetchMultiWithFalsey()
     {
         $cache = $this->_getCacheDriver();
 
         $cache->deleteAll();
 
-        // Test saving some values, checking if it exists, and fetching it back with multiGet
-        $this->assertTrue($cache->save('key1', 'value1'));
-        $this->assertTrue($cache->save('keyNull', null));
+        $values = array(
+            'string' => 'str',
+            'integer' => 1,
+            'boolean' => true,
+            'null' => null,
+            'array_empty' => array(),
+            'integer_zero' => 0,
+            'string_empty' => ''
+        );
+        foreach ($values AS $key => $value)
+        {
+            $cache->save($key, $value);
+        }
 
         $this->assertEquals(
-            array('key1' => 'value1', 'keyNull' => null),
-            $cache->fetchMultiple(array('key1', 'keyNull'))
+            $values,
+            $cache->fetchMultiple(array_keys($values))
         );
     }
 
