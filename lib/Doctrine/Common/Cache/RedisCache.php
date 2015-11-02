@@ -74,7 +74,7 @@ class RedisCache extends CacheProvider
         $fetchedItems = $this->redis->mget($keys);
 
         return array_filter(
-            array_combine($keys, $fetchedItems), 
+            array_combine($keys, $fetchedItems),
             function ($value) {
                 return $value !== false;
             }
