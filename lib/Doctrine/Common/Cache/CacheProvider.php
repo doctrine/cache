@@ -211,8 +211,8 @@ abstract class CacheProvider implements Cache, FlushableCache, ClearableCache, M
     {
         $returnValues = array();
 
-        foreach ($keys as $index => $key) {
-            if (false !== ($item = $this->doFetch($key))) {
+        foreach ($keys as $key) {
+            if (false !== ($item = $this->doFetch($key)) || $this->doContains($key)) {
                 $returnValues[$key] = $item;
             }
         }

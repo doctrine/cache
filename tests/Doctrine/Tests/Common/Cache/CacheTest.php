@@ -90,7 +90,7 @@ abstract class CacheTest extends \Doctrine\Tests\DoctrineTestCase
     public function testFetchMultiWithEmptyKeysArray()
     {
         $cache = $this->_getCacheDriver();
-        
+
         $this->assertEmpty(
             $cache->fetchMultiple(array())
         );
@@ -102,17 +102,10 @@ abstract class CacheTest extends \Doctrine\Tests\DoctrineTestCase
 
         $cache->deleteAll();
 
-        $values = array(
-            'string' => 'str',
-            'integer' => 1,
-            'boolean' => true,
-            'null' => null,
-            'array_empty' => array(),
-            'integer_zero' => 0,
-            'string_empty' => ''
-        );
-        foreach ($values AS $key => $value) {
-            $cache->save($key, $value);
+        $values = $this->provideDataToCache();
+        foreach ($values as $key => $value) {
+            $cache->save($key, $value[0]);
+            $values[$key] = $value[0];
         }
 
         $this->assertEquals(
