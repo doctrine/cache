@@ -119,7 +119,7 @@ abstract class FileCache extends CacheProvider
             // Most filesystems have a limit of 255 chars for each path component. So if the id in hex representation
             // plus the extension would surpass the limit, we use the hash instead. The prefix prevents collisions
             // between the hash and bin2hex.
-            $filename = '_' . $hash;
+            $filename = '_' . substr($hash, 0, (254 - strlen($this->extension)));
         } else {
             $filename = bin2hex($id);
         }
