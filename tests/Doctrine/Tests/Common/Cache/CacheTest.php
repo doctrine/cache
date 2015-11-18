@@ -119,6 +119,8 @@ abstract class CacheTest extends \Doctrine\Tests\DoctrineTestCase
         return array(
             'array' => array(array('one', 2, 3.01)),
             'string' => array('value'),
+            'string_invalid_utf8' => array("\xc3\x28"),
+            'string_null_byte' => array('with'."\0".'null char'),
             'integer' => array(1),
             'float' => array(1.5),
             'object' => array(new ArrayObject(array('one', 2, 3.01))),
@@ -131,7 +133,7 @@ abstract class CacheTest extends \Doctrine\Tests\DoctrineTestCase
             'string_zero' => array('0'),
             'integer_zero' => array(0),
             'float_zero' => array(0.0),
-            'string_empty' => array('')
+            'string_empty' => array(''),
         );
     }
 
@@ -139,6 +141,7 @@ abstract class CacheTest extends \Doctrine\Tests\DoctrineTestCase
     {
         $cache = $this->_getCacheDriver();
 
+        $cache->delete('key');
         $this->assertFalse($cache->contains('key'));
         $this->assertTrue($cache->delete('key'));
     }

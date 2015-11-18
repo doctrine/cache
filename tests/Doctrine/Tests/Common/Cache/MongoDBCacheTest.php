@@ -34,17 +34,6 @@ class MongoDBCacheTest extends CacheTest
         }
     }
 
-    public function testSaveWithNonUtf8String()
-    {
-        // Invalid 2-octet sequence
-        $data = "\xc3\x28";
-
-        $cache = $this->_getCacheDriver();
-
-        $this->assertTrue($cache->save('key', $data));
-        $this->assertEquals($data, $cache->fetch('key'));
-    }
-
     public function testGetStats()
     {
         $cache = $this->_getCacheDriver();
