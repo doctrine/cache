@@ -233,6 +233,30 @@ abstract class CacheTest extends \Doctrine\Tests\DoctrineTestCase
         );
     }
 
+    public function testLifetime()
+    {
+        $cache = $this->_getCacheDriver();
+        $cache->save('expire', 'value', 1);
+        $this->assertTrue($cache->contains('expire'), 'Data should not be expired yet');
+        sleep(2);
+        $this->assertFalse($cache->contains('expire'), 'Data should be expired');
+    }
+
+    public function testNoExpire()
+    {
+        $cache = $this->_getCacheDriver();
+        $cache->save('noexpire', 'value', 0);
+        sleep(1);
+        $this->assertTrue($cache->contains('noexpire'), 'Data with lifetime of zero should not expire');
+    }
+
+    public function testLongLifetime()
+    {
+        $cache = $this->_getCacheDriver();
+        $cache->save('longlifetime', 'value', 30 * 24 * 3600 + 1);
+        $this->assertTrue($cache->contains('longlifetime'), 'Data with lifetime > 30 days should be accepted');
+    }
+
     public function testDeleteAllAndNamespaceVersioningBetweenCaches()
     {
         if ( ! $this->isSharedStorage()) {
