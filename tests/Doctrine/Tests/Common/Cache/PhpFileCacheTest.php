@@ -14,7 +14,7 @@ class PhpFileCacheTest extends BaseFileCacheTest
     {
         $data = parent::provideDataToCache();
 
-        unset($data['object']); // PhpFileCache only allows objects that implement __set_state() and fully support var_export()
+        unset($data['object'], $data['object_recursive']); // PhpFileCache only allows objects that implement __set_state() and fully support var_export()
         unset($data['float_zero']); // var_export exports float(0) as int(0)
 
         return $data;
@@ -93,16 +93,6 @@ class PhpFileCacheTest extends BaseFileCacheTest
         $this->assertNull($stats[Cache::STATS_UPTIME]);
         $this->assertEquals(0, $stats[Cache::STATS_MEMORY_USAGE]);
         $this->assertGreaterThan(0, $stats[Cache::STATS_MEMORY_AVAILABLE]);
-    }
-
-    public function testCachedObject()
-    {
-        $this->markTestSkipped("PhpFileCache cannot handle objects that don't implement __set_state.");
-    }
-
-    public function testFetchMultipleObjects()
-    {
-        $this->markTestSkipped("PhpFileCache cannot handle objects that don't implement __set_state.");
     }
 
     protected function _getCacheDriver()
