@@ -19,6 +19,11 @@ class ArrayCacheTest extends CacheTest
         $this->assertNull($stats);
     }
 
+    public function testLifetime()
+    {
+        $this->markTestSkipped('ArrayCache does not implement TTL currently.');
+    }
+
     protected function isSharedStorage()
     {
         return false;
