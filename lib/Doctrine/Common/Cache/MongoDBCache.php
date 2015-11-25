@@ -119,14 +119,19 @@ class MongoDBCache extends CacheProvider
      */
     protected function doSave($id, $data, $lifeTime = 0)
     {
-        $result = $this->collection->update(
-            array('_id' => $id),
-            array('$set' => array(
-                self::EXPIRATION_FIELD => ($lifeTime > 0 ? new MongoDate(time() + $lifeTime) : null),
-                self::DATA_FIELD => new MongoBinData(serialize($data), MongoBinData::BYTE_ARRAY),
-            )),
-            array('upsert' => true, 'multiple' => false)
-        );
+        try {
+            $result = $this->collection->update(
+                array('_id' => $id),
+                array('$set' => array(
+                    self::EXPIRATION_FIELD => ($lifeTime > 0 ? new MongoDate(time() + $lifeTime) : null),
+                    self::DATA_FIELD => new MongoBinData(serialize($data), MongoBinData::BYTE_ARRAY),
+                )),
+                array('upsert' => true, 'multiple' => false)
+            );
+        }
+        catch (\MongoCursorException $e) {
+            return false;
+        }
 
         return isset($result['ok']) ? $result['ok'] == 1 : true;
     }
