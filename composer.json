@@ -16,7 +16,7 @@
         "php": "~5.5|~7.0"
     },
     "require-dev": {
-        "phpunit/phpunit":         ">=3.7",
+        "phpunit/phpunit":         "~4.0|~5.0",
         "satooshi/php-coveralls":  "~0.6",
         "predis/predis":           "~1.0"
     },
