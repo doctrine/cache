@@ -232,6 +232,7 @@ abstract class CacheTest extends \Doctrine\Tests\DoctrineTestCase
             array("\0"),
             array(''),
             array(str_repeat('a', 300)), // long key
+            array(str_repeat('a', 113)),
         );
     }
 

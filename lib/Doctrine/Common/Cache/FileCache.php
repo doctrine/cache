@@ -48,6 +48,21 @@ abstract class FileCache extends CacheProvider
     private $umask;
 
     /**
+     * @var int
+     */
+    private $directoryStringLength;
+
+    /**
+     * @var int
+     */
+    private $extensionStringLength;
+
+    /**
+     * @var bool
+     */
+    private $isRunningOnWindows;
+
+    /**
      * Constructor.
      *
      * @param string $directory The cache directory.
@@ -83,6 +98,10 @@ abstract class FileCache extends CacheProvider
         // YES, this needs to be *after* createPathIfNeeded()
         $this->directory = realpath($directory);
         $this->extension = (string) $extension;
+
+        $this->directoryStringLength = strlen($this->directory);
+        $this->extensionStringLength = strlen($this->extension);
+        $this->isRunningOnWindows    = defined('PHP_WINDOWS_VERSION_BUILD');
     }
 
     /**
@@ -115,10 +134,15 @@ abstract class FileCache extends CacheProvider
         $hash = hash('sha256', $id);
 
         // This ensures that the filename is unique and that there are no invalid chars in it.
-        if ('' === $id || strlen($id) > ((255 - strlen($this->extension)) / 2)) {
-            // Most filesystems have a limit of 255 chars for each path component. So if the id in hex representation
-            // plus the extension would surpass the limit, we use the hash instead. The prefix prevents collisions
-            // between the hash and bin2hex.
+        if (
+            '' === $id
+            || ((strlen($id) * 2 + $this->extensionStringLength) > 255)
+            || (($this->isRunningOnWindows && $this->directoryStringLength + 4 + strlen($id) * 2 + $this->extensionStringLength) > 259)
+        ) {
+            // Most filesystems have a limit of 255 chars for each path component. On Windows the the whole path is limited
+            // to 260 chars (including terminating null char). Using long UNC ("\\?\" prefix) does not work with the PHP API.
+            // So if the id in hex representation would surpass the limit, we use the hash instead. The prefix prevents
+            // collisions between the hash and bin2hex.
             $filename = '_' . $hash;
         } else {
             $filename = bin2hex($id);
@@ -256,6 +280,6 @@ abstract class FileCache extends CacheProvider
     private function isFilenameEndingWithExtension($name)
     {
         return '' === $this->extension
-            || strrpos($name, $this->extension) === (strlen($name) - strlen($this->extension));
+            || strrpos($name, $this->extension) === (strlen($name) - $this->extensionStringLength);
     }
 }
