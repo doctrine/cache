@@ -13,6 +13,11 @@ class ChainCacheTest extends CacheTest
         return new ChainCache(array(new ArrayCache()));
     }
 
+    public function testLifetime()
+    {
+        $this->markTestSkipped('The ChainCache test uses ArrayCache which does not implement TTL currently.');
+    }
+
     public function testGetStats()
     {
         $cache = $this->_getCacheDriver();
