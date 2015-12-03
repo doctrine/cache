@@ -103,7 +103,7 @@ class PhpFileCache extends FileCache
         $code   = sprintf('<?php return %s;', $value);
 
         $ret = (file_put_contents($filename, $code) !== false);
-        chmod($filename, 0664);
+        @chmod($filename, 0664);
         return $ret;
     }
 }
