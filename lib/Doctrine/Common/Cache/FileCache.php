@@ -48,6 +48,21 @@ abstract class FileCache extends CacheProvider
     private $umask;
 
     /**
+     * @var int
+     */
+    private $directoryStringLength;
+
+    /**
+     * @var int
+     */
+    private $extensionStringLength;
+
+    /**
+     * @var bool
+     */
+    private $isRunningOnWindows;
+
+    /**
      * Constructor.
      *
      * @param string $directory The cache directory.
@@ -83,6 +98,10 @@ abstract class FileCache extends CacheProvider
         // YES, this needs to be *after* createPathIfNeeded()
         $this->directory = realpath($directory);
         $this->extension = (string) $extension;
+
+        $this->directoryStringLength = strlen($this->directory);
+        $this->extensionStringLength = strlen($this->extension);
+        $this->isRunningOnWindows    = defined('PHP_WINDOWS_VERSION_BUILD');
     }
 
     /**
