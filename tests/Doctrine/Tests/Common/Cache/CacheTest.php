@@ -63,72 +63,70 @@ abstract class CacheTest extends \Doctrine\Tests\DoctrineTestCase
         $this->assertTrue($cache->contains('key', 'Deleting cache item with different case must not affect other cache item'));
     }
 
-    public function testFetchMulti()
+    public function testFetchMultiple()
     {
-        $cache = $this->_getCacheDriver();
+        $cache  = $this->_getCacheDriver();
+        $values = $this->provideDataToCache();
+        $saved  = [];
 
-        $cache->deleteAll();
+        foreach ($values as $key => $value) {
+            $cache->save($key, $value[0]);
 
-        // Test saving some values, checking if it exists, and fetching it back with multiGet
-        $this->assertTrue($cache->save('key1', 'value1'));
-        $this->assertTrue($cache->save('key2', 'value2'));
-
-        $this->assertEquals(
-            array('key1' => 'value1', 'key2' => 'value2'),
-            $cache->fetchMultiple(array('key1', 'key2'))
-        );
-        $this->assertEquals(
-            array('key1' => 'value1', 'key2' => 'value2'),
-            $cache->fetchMultiple(array('key1', 'key3', 'key2'))
-        );
-        $this->assertEquals(
-            array('key1' => 'value1', 'key2' => 'value2'),
-            $cache->fetchMultiple(array('key1', 'key2', 'key3'))
-        );
-    }
-
-    public function testFetchMultiWithEmptyKeysArray()
-    {
-        $cache = $this->_getCacheDriver();
-        
-        $this->assertEmpty(
-            $cache->fetchMultiple(array())
-        );
-    }
-
-    public function testFetchMultiWithFalsey()
-    {
-        $cache = $this->_getCacheDriver();
-
-        $cache->deleteAll();
-
-        $values = array(
-            'string' => 'str',
-            'integer' => 1,
-            'boolean' => true,
-            'null' => null,
-            'array_empty' => array(),
-            'integer_zero' => 0,
-            'string_empty' => ''
-        );
-        foreach ($values AS $key => $value) {
-            $cache->save($key, $value);
+            $saved[$key] = $value[0];
         }
 
+        $keys = array_keys($saved);
+
         $this->assertEquals(
-            $values,
-            $cache->fetchMultiple(array_keys($values))
+            $saved,
+            $cache->fetchMultiple($keys),
+            'Testing fetchMultiple with different data types'
         );
+        $this->assertEquals(
+            array_slice($saved, 0, 1),
+            $cache->fetchMultiple(array_slice($keys, 0, 1)),
+            'Testing fetchMultiple with a single key'
+        );
+
+        $keysWithNonExisting = array();
+        $keysWithNonExisting[] = 'non_existing1';
+        $keysWithNonExisting[] = $keys[0];
+        $keysWithNonExisting[] = 'non_existing2';
+        $keysWithNonExisting[] = $keys[1];
+        $keysWithNonExisting[] = 'non_existing3';
+
+        $this->assertEquals(
+            array_slice($saved, 0, 2),
+            $cache->fetchMultiple($keysWithNonExisting),
+            'Testing fetchMultiple with a subset of keys and mixed with non-existing ones'
+        );
+    }
+
+    public function testFetchMultipleWithNoKeys()
+    {
+        $cache = $this->_getCacheDriver();
+
+        $this->assertSame(array(), $cache->fetchMultiple(array()));
     }
 
     public function provideDataToCache()
     {
+        $obj = new \stdClass();
+        $obj->foo = 'bar';
+        $obj2 = new \stdClass();
+        $obj2->bar = 'foo';
+        $obj2->obj = $obj;
+        $obj->obj2 = $obj2;
+
         return array(
             'array' => array(array('one', 2, 3.01)),
             'string' => array('value'),
+            'string_invalid_utf8' => array("\xc3\x28"),
+            'string_null_byte' => array('with'."\0".'null char'),
             'integer' => array(1),
             'float' => array(1.5),
-            'object' => array(new ArrayObject()),
+            'object' => array(new ArrayObject(array('one', 2, 3.01))),
+            'object_recursive' => array($obj),
             'true' => array(true),
             // the following are considered FALSE in boolean context, but caches should still recognize their existence
             'null' => array(null),
@@ -137,7 +135,7 @@ abstract class CacheTest extends \Doctrine\Tests\DoctrineTestCase
             'string_zero' => array('0'),
             'integer_zero' => array(0),
             'float_zero' => array(0.0),
-            'string_empty' => array('')
+            'string_empty' => array(''),
         );
     }
 
@@ -145,6 +143,7 @@ abstract class CacheTest extends \Doctrine\Tests\DoctrineTestCase
     {
         $cache = $this->_getCacheDriver();
 
+        $cache->delete('key');
         $this->assertFalse($cache->contains('key'));
         $this->assertTrue($cache->delete('key'));
     }
@@ -234,6 +233,32 @@ abstract class CacheTest extends \Doctrine\Tests\DoctrineTestCase
             array(''),
             array(str_repeat('a', 300)), // long key
         );
+    }
+
+    public function testLifetime()
+    {
+        $cache = $this->_getCacheDriver();
+        $cache->save('expire', 'value', 1);
+        $this->assertTrue($cache->contains('expire'), 'Data should not be expired yet');
+        // @TODO should more TTL-based tests pop up, so then we should mock the `time` API instead
+        sleep(2);
+        $this->assertFalse($cache->contains('expire'), 'Data should be expired');
+    }
+
+    public function testNoExpire()
+    {
+        $cache = $this->_getCacheDriver();
+        $cache->save('noexpire', 'value', 0);
+        // @TODO should more TTL-based tests pop up, so then we should mock the `time` API instead
+        sleep(1);
+        $this->assertTrue($cache->contains('noexpire'), 'Data with lifetime of zero should not expire');
+    }
+
+    public function testLongLifetime()
+    {
+        $cache = $this->_getCacheDriver();
+        $cache->save('longlifetime', 'value', 30 * 24 * 3600 + 1);
+        $this->assertTrue($cache->contains('longlifetime'), 'Data with lifetime > 30 days should be accepted');
     }
 
     public function testDeleteAllAndNamespaceVersioningBetweenCaches()
@@ -392,65 +417,6 @@ abstract class CacheTest extends \Doctrine\Tests\DoctrineTestCase
         $this->assertArrayHasKey(Cache::STATS_UPTIME, $stats);
         $this->assertArrayHasKey(Cache::STATS_MEMORY_USAGE, $stats);
         $this->assertArrayHasKey(Cache::STATS_MEMORY_AVAILABLE, $stats);
-    }
-
-    public function testFetchMissShouldReturnFalse()
-    {
-        $cache = $this->_getCacheDriver();
-
-        /* Ensure that caches return boolean false instead of null on a fetch
-         * miss to be compatible with ORM integration.
-         */
-        $result = $cache->fetch('nonexistent_key');
-
-        $this->assertFalse($result);
-        $this->assertNotNull($result);
-    }
-
-    /**
-     * Check to see that objects are correctly serialized and unserialized by the cache
-     * provider.
-     */
-    public function testCachedObject()
-    {
-        $cache = $this->_getCacheDriver();
-        $cache->deleteAll();
-        $obj = new \stdClass();
-        $obj->foo = "bar";
-        $obj2 = new \stdClass();
-        $obj2->bar = "foo";
-        $obj2->obj = $obj;
-        $obj->obj2 = $obj2;
-        $cache->save("obj", $obj);
-
-        $fetched = $cache->fetch("obj");
-
-        $this->assertInstanceOf("stdClass", $obj);
-        $this->assertInstanceOf("stdClass", $obj->obj2);
-        $this->assertInstanceOf("stdClass", $obj->obj2->obj);
-        $this->assertEquals("bar", $fetched->foo);
-        $this->assertEquals("foo", $fetched->obj2->bar);
-    }
-
-    /**
-     * Check to see that objects fetched via fetchMultiple are properly unserialized
-     */
-    public function testFetchMultipleObjects()
-    {
-        $cache = $this->_getCacheDriver();
-        $cache->deleteAll();
-        $obj1 = new \stdClass();
-        $obj1->foo = "bar";
-        $cache->save("obj1", $obj1);
-        $obj2 = new \stdClass();
-        $obj2->bar = "baz";
-        $cache->save("obj2", $obj2);
-
-        $fetched = $cache->fetchMultiple(array("obj1", "obj2"));
-        $this->assertInstanceOf("stdClass", $fetched["obj1"]);
-        $this->assertInstanceOf("stdClass", $fetched["obj2"]);
-        $this->assertEquals("bar", $fetched["obj1"]->foo);
-        $this->assertEquals("baz", $fetched["obj2"]->bar);
     }
 
     public function testSaveReturnsTrueWithAndWithoutTTlSet()
