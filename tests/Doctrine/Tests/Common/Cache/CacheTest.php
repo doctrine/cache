@@ -65,23 +65,25 @@ abstract class CacheTest extends \Doctrine\Tests\DoctrineTestCase
 
     public function testFetchMultiple()
     {
-        $cache = $this->_getCacheDriver();
-
+        $cache  = $this->_getCacheDriver();
         $values = $this->provideDataToCache();
+        $saved  = [];
+
         foreach ($values as $key => $value) {
             $cache->save($key, $value[0]);
-            $values[$key] = $value[0];
+
+            $saved[$key] = $value[0];
         }
 
-        $keys = array_keys($values);
+        $keys = array_keys($saved);
 
         $this->assertEquals(
-            $values,
+            $saved,
             $cache->fetchMultiple($keys),
             'Testing fetchMultiple with different data types'
         );
         $this->assertEquals(
-            array_slice($values, 0, 1),
+            array_slice($saved, 0, 1),
             $cache->fetchMultiple(array_slice($keys, 0, 1)),
             'Testing fetchMultiple with a single key'
         );
@@ -94,7 +96,7 @@ abstract class CacheTest extends \Doctrine\Tests\DoctrineTestCase
         $keysWithNonExisting[] = 'non_existing3';
 
         $this->assertEquals(
-            array_slice($values, 0, 2),
+            array_slice($saved, 0, 2),
             $cache->fetchMultiple($keysWithNonExisting),
             'Testing fetchMultiple with a subset of keys and mixed with non-existing ones'
         );
