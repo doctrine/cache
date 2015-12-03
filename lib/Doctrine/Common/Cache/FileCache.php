@@ -136,8 +136,8 @@ abstract class FileCache extends CacheProvider
         // This ensures that the filename is unique and that there are no invalid chars in it.
         if (
             '' === $id
-            || ((strlen($id) * 2 + strlen($this->extension)) > 255)
-            || (defined('PHP_WINDOWS_VERSION_BUILD') && strlen($this->directory) + 4 + strlen($id) * 2 + strlen($this->extension) > 259)
+            || ((strlen($id) * 2 + $this->extensionStringLength) > 255)
+            || (($this->isRunningOnWindows && $this->directoryStringLength + 4 + strlen($id) * 2 + $this->extensionStringLength) > 259)
         ) {
             // Most filesystems have a limit of 255 chars for each path component. On Windows the the whole path is limited
             // to 260 chars (including terminating null char). Using long UNC ("\\?\" prefix) does not work with the PHP API.
@@ -280,6 +280,6 @@ abstract class FileCache extends CacheProvider
     private function isFilenameEndingWithExtension($name)
     {
         return '' === $this->extension
-            || strrpos($name, $this->extension) === (strlen($name) - strlen($this->extension));
+            || strrpos($name, $this->extension) === (strlen($name) - $this->extensionStringLength);
     }
 }
