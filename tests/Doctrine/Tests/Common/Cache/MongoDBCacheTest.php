@@ -57,6 +57,21 @@ class MongoDBCacheTest extends CacheTest
         $this->assertNull($stats[Cache::STATS_MEMORY_AVAILABLE]);
     }
 
+    /**
+     * @group 108
+     */
+    public function testMongoCursorExceptionsDoNotBubbleUp()
+    {
+        /* @var $collection \MongoCollection|\PHPUnit_Framework_MockObject_MockObject */
+        $collection = $this->getMock('MongoCollection');
+
+        $collection->expects(self::once())->method('update')->willThrowException(new \MongoCursorException());
+
+        $cache = new MongoDBCache($collection);
+
+        self::assertFalse($cache->save('foo', 'bar'));
+    }
+
     protected function _getCacheDriver()
     {
         return new MongoDBCache($this->collection);
