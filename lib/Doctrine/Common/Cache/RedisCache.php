@@ -74,7 +74,8 @@ class RedisCache extends CacheProvider
         $fetchedItems = array_combine($keys, $this->redis->mget($keys));
 
         // Redis mget returns false for keys that do not exist. So we need to filter those out unless it's the real data.
-        $foundItems = array();
+        $foundItems   = array();
+
         foreach ($fetchedItems as $key => $value) {
             if (false !== $value || $this->redis->exists($key)) {
                 $foundItems[$key] = $value;
