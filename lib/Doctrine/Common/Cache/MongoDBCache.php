@@ -21,6 +21,7 @@ namespace Doctrine\Common\Cache;
 
 use MongoBinData;
 use MongoCollection;
+use MongoCursorException;
 use MongoDate;
 
 /**
@@ -128,8 +129,7 @@ class MongoDBCache extends CacheProvider
                 )),
                 array('upsert' => true, 'multiple' => false)
             );
-        }
-        catch (\MongoCursorException $e) {
+        } catch (MongoCursorException $e) {
             return false;
         }
 
