@@ -134,8 +134,11 @@ abstract class FileCache extends CacheProvider
         $hash = hash('sha256', $id);
 
         // This ensures that the filename is unique and that there are no invalid chars in it.
-        if ('' === $id || strlen($id) * 2 + strlen($this->extension) > 255 ||
-            (defined('PHP_WINDOWS_VERSION_BUILD') && strlen($this->directory) + 4 + strlen($id) * 2 + strlen($this->extension) > 259)) {
+        if (
+            '' === $id
+            || ((strlen($id) * 2 + strlen($this->extension)) > 255)
+            || (defined('PHP_WINDOWS_VERSION_BUILD') && strlen($this->directory) + 4 + strlen($id) * 2 + strlen($this->extension) > 259)
+        ) {
             // Most filesystems have a limit of 255 chars for each path component. On Windows the the whole path is limited
             // to 260 chars (including terminating null char). Using long UNC ("\\?\" prefix) does not work with the PHP API.
             // So if the id in hex representation would surpass the limit, we use the hash instead. The prefix prevents
