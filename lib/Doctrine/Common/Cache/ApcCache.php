@@ -20,7 +20,7 @@
 namespace Doctrine\Common\Cache;
 
 /**
- * APC cache provider.
+ * APC and APCu cache provider.
  *
  * @link   www.doctrine-project.org
  * @since  2.0
@@ -29,15 +29,29 @@ namespace Doctrine\Common\Cache;
  * @author Jonathan Wage <jonwage@gmail.com>
  * @author Roman Borschel <roman@code-factory.org>
  * @author David Abdemoulaie <dave@hobodave.com>
+ * @author Kévin Dunglas <dunglas@gmail.com>
  */
 class ApcCache extends CacheProvider
 {
+    /**
+     * @var bool
+     */
+    private $apcu;
+
+    /**
+     * @param bool $useApc Uses APC even if APCu is available
+     */
+    public function __construct($useApc = false)
+    {
+        $this->apcu = !$useApc && function_exists('apcu_fetch');
+    }
+
     /**
      * {@inheritdoc}
      */
     protected function doFetch($id)
     {
-        return apc_fetch($id);
+        return $this->apcu ? apcu_fetch($id) : apc_fetch($id);
     }
 
     /**
@@ -45,7 +59,7 @@ class ApcCache extends CacheProvider
      */
     protected function doContains($id)
     {
-        return apc_exists($id);
+        return $this->apcu ? apcu_exists($id) : apc_exists($id);
     }
 
     /**
@@ -53,7 +67,7 @@ class ApcCache extends CacheProvider
      */
     protected function doSave($id, $data, $lifeTime = 0)
     {
-        return apc_store($id, $data, $lifeTime);
+        return $this->apcu ? apcu_store($id, $data, $lifeTime) : apc_store($id, $data, $lifeTime);
     }
 
     /**
@@ -62,6 +76,10 @@ class ApcCache extends CacheProvider
     protected function doDelete($id)
     {
         // apc_delete returns false if the id does not exist
+        if ($this->apcu) {
+            return apcu_delete($id) || ! apcu_exists($id);
+        }
+
         return apc_delete($id) || ! apc_exists($id);
     }
 
@@ -70,6 +88,10 @@ class ApcCache extends CacheProvider
      */
     protected function doFlush()
     {
+        if ($this->apcu) {
+            return apcu_clear_cache();
+        }
+
         return apc_clear_cache() && apc_clear_cache('user');
     }
 
@@ -78,7 +100,7 @@ class ApcCache extends CacheProvider
      */
     protected function doFetchMultiple(array $keys)
     {
-        return apc_fetch($keys);
+        return $this->apcu ? apcu_fetch($keys) : apc_fetch($keys);
     }
 
     /**
@@ -86,8 +108,13 @@ class ApcCache extends CacheProvider
      */
     protected function doGetStats()
     {
-        $info = apc_cache_info('', true);
-        $sma  = apc_sma_info();
+        if ($this->apcu) {
+            $info = apcu_cache_info(true);
+            $sma  = apcu_sma_info();
+        } else {
+            $info = apc_cache_info('', true);
+            $sma  = apc_sma_info();
+        }
 
         // @TODO - Temporary fix @see https://github.com/krakjoe/apcu/pull/42
         if (PHP_VERSION_ID >= 50500) {
