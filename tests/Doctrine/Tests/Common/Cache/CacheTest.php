@@ -67,7 +67,7 @@ abstract class CacheTest extends \Doctrine\Tests\DoctrineTestCase
     {
         $cache  = $this->_getCacheDriver();
         $values = $this->provideDataToCache();
-        $saved  = [];
+        $saved  = array();
 
         foreach ($values as $key => $value) {
             $cache->save($key, $value[0]);
