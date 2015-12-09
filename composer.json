@@ -21,7 +21,8 @@
         "predis/predis":           "~1.0"
     },
     "conflict": {
-        "doctrine/common": ">2.2,<2.4"
+        "doctrine/common": ">2.2,<2.4",
+        "ext-apcu":        "<4.0.8"
     },
     "autoload": {
         "psr-4": { "Doctrine\\Common\\Cache\\": "lib/Doctrine/Common/Cache" }
