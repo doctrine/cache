@@ -80,6 +80,20 @@ class ApcuCache extends CacheProvider
     /**
      * {@inheritdoc}
      */
+    protected function doSaveMultiple(array $keysAndValues, $lifetime = 0)
+    {
+        $result = apcu_store($keysAndValues, null, $lifetime);
+
+        if ($result === false || count($result)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     protected function doGetStats()
     {
         $info = apcu_cache_info(true);

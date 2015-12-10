@@ -52,6 +52,28 @@ class PredisCache extends CacheProvider
     /**
      * {@inheritdoc}
      */
+    protected function doSaveMultiple(array $keysAndValues, $lifetime = 0)
+    {
+        if (!$lifetime) {
+            // No lifetime, use MSET
+            return (bool) $this->client->mset($keysAndValues);
+        }
+
+        $success = true;
+
+        // Keys have lifetime, use SETEX for each of them
+        foreach ($keysAndValues as $key => $value) {
+            if (!$this->client->setex($key, $lifetime, $value)) {
+                $success = false;
+            }
+        }
+
+        return $success;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     protected function doContains($id)
     {
         return $this->client->exists($id);

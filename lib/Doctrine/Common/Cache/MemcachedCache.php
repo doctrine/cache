@@ -80,6 +80,14 @@ class MemcachedCache extends CacheProvider
     /**
      * {@inheritdoc}
      */
+    protected function doSaveMultiple(array $keysAndValues, $lifetime = 0)
+    {
+        return $this->memcached->setMulti($keysAndValues, null, $lifetime);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     protected function doContains($id)
     {
         return false !== $this->memcached->get($id)
