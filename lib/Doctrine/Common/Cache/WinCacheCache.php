@@ -83,6 +83,20 @@ class WinCacheCache extends CacheProvider
     /**
      * {@inheritdoc}
      */
+    protected function doSaveMultiple(array $keysAndValues, $lifetime = 0)
+    {
+        $result = wincache_ucache_set($keysAndValues, null, $lifetime);
+
+        if ($result === false || count($result)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     protected function doGetStats()
     {
         $info    = wincache_ucache_info();
