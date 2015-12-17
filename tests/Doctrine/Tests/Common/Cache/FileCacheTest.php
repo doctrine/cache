@@ -138,7 +138,7 @@ class FileCacheTest extends \Doctrine\Tests\DoctrineTestCase
     public function testWindowsPathLengthLimitationsAreCorrectlyRespected()
     {
         if (! defined('PHP_WINDOWS_VERSION_BUILD')) {
-            define('PHP_WINDOWS_VERSION_BUILD', 'Yes, this is the "usual suspect"');
+            define('PHP_WINDOWS_VERSION_BUILD', 'Yes, this is the "usual suspect", with the usual limitations');
         }
 
         $fileCache = $this->getMockForAbstractClass(
@@ -146,9 +146,6 @@ class FileCacheTest extends \Doctrine\Tests\DoctrineTestCase
             [__DIR__, '.doctrine.cache']
         );
 
-        $getFileName = new \ReflectionMethod($fileCache, 'getFilename');
-
-        $getFileName->setAccessible(true);
 
         $baseDirLength        = strlen(__DIR__);
         $extensionLength      = strlen('.doctrine.cache');
@@ -158,15 +155,25 @@ class FileCacheTest extends \Doctrine\Tests\DoctrineTestCase
         self::assertSame('61', bin2hex('a'), '(added just for clarity and system integrity check)');
 
         $tooLongKey = str_repeat('a', ($maxKeyLength / 2) + 1);
-        $fittingKey = str_repeat('a', ($maxKeyLength / 2) - 1);
+        $fittingKey = str_repeat('a', ($maxKeyLength / 2) - 2); // note: 2 chars due to path separator added as well
 
         $tooLongKeyHash = hash('sha256', $tooLongKey);
         $fittingKeyHash = hash('sha256', $fittingKey);
 
+        $getFileName = new \ReflectionMethod($fileCache, 'getFilename');
+
+        $getFileName->setAccessible(true);
+
         $this->assertSame(
             __DIR__ . '/' . substr($tooLongKeyHash, 0, 2) . '/_' . $tooLongKeyHash . '.doctrine.cache',
             $getFileName->invoke($fileCache, $tooLongKey),
-            'Keys at the limit of the allowed length are hashed correctly'
+            'Keys over the limit of the allowed length are hashed correctly'
+        );
+
+        $this->assertSame(
+            __DIR__ . '/' . substr($fittingKeyHash, 0, 2) . '/' . bin2hex($fittingKey) . '.doctrine.cache',
+            $getFileName->invoke($fileCache, $fittingKey),
+            'Keys below limit of the allowed length are used directly, unhashed'
         );
     }
 }
