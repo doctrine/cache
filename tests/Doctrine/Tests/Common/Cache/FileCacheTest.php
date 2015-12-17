@@ -181,14 +181,30 @@ class FileCacheTest extends \Doctrine\Tests\DoctrineTestCase
                 . DIRECTORY_SEPARATOR
                 . bin2hex($tooLongKey)
                 . '.doctrine.cache'),
-            "Key expected to be too long is $windowsPathMaxLength characters long"
+            sprintf('Key expected to be too long is %d characters long', $windowsPathMaxLength + 1)
         );
-        
+
         $this->assertSame(
             $basePath . DIRECTORY_SEPARATOR . substr($tooLongKeyHash, 0, 2) . DIRECTORY_SEPARATOR . '_' . $tooLongKeyHash . '.doctrine.cache',
             $getFileName->invoke($fileCache, $tooLongKey),
             'Keys over the limit of the allowed length are hashed correctly'
         );
+
+        $this->assertLessThan(
+            $windowsPathMaxLength,
+            strlen($basePath
+                . DIRECTORY_SEPARATOR
+                . substr($fittingKeyHash, 0, 2)
+                . DIRECTORY_SEPARATOR
+                . bin2hex($fittingKey)
+                . '.doctrine.cache'),
+            sprintf(
+                'Key expected to fit the length limit(%d) is less than %d characters long',
+                $windowsPathMaxLength,
+                $windowsPathMaxLength
+            )
+        );
+
         $this->assertSame(
             $basePath . DIRECTORY_SEPARATOR . substr($fittingKeyHash, 0, 2) . DIRECTORY_SEPARATOR . bin2hex($fittingKey) . '.doctrine.cache',
             $getFileName->invoke($fileCache, $fittingKey),
