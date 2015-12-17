@@ -129,4 +129,44 @@ class FileCacheTest extends \Doctrine\Tests\DoctrineTestCase
 
         $this->assertEquals($extension, $actualExtension);
     }
+
+    /**
+     * @runInSeparateProcess
+     *
+     * @covers \Doctrine\Common\Cache\FileCache::getFilename
+     */
+    public function testWindowsPathLengthLimitationsAreCorrectlyRespected()
+    {
+        if (! defined('PHP_WINDOWS_VERSION_BUILD')) {
+            define('PHP_WINDOWS_VERSION_BUILD', 'Yes, this is the "usual suspect"');
+        }
+
+        $fileCache = $this->getMockForAbstractClass(
+            'Doctrine\Common\Cache\FileCache',
+            [__DIR__, '.doctrine.cache']
+        );
+
+        $getFileName = new \ReflectionMethod($fileCache, 'getFilename');
+
+        $getFileName->setAccessible(true);
+
+        $baseDirLength        = strlen(__DIR__);
+        $extensionLength      = strlen('.doctrine.cache');
+        $windowsPathMaxLength = 260;
+        $maxKeyLength         = $windowsPathMaxLength - ($baseDirLength + $extensionLength);
+
+        self::assertSame('61', bin2hex('a'), '(added just for clarity and system integrity check)');
+
+        $tooLongKey = str_repeat('a', ($maxKeyLength / 2) + 1);
+        $fittingKey = str_repeat('a', ($maxKeyLength / 2) - 1);
+
+        $tooLongKeyHash = hash('sha256', $tooLongKey);
+        $fittingKeyHash = hash('sha256', $fittingKey);
+
+        $this->assertSame(
+            __DIR__ . '/' . substr($tooLongKeyHash, 0, 2) . '/_' . $tooLongKeyHash . '.doctrine.cache',
+            $getFileName->invoke($fileCache, $tooLongKey),
+            'Keys at the limit of the allowed length are hashed correctly'
+        );
+    }
 }
