@@ -173,6 +173,17 @@ class FileCacheTest extends \Doctrine\Tests\DoctrineTestCase
 
         $getFileName->setAccessible(true);
 
+        $this->assertEquals(
+            $windowsPathMaxLength + 1,
+            strlen($basePath
+                . DIRECTORY_SEPARATOR
+                . substr($tooLongKeyHash, 0, 2)
+                . DIRECTORY_SEPARATOR
+                . bin2hex($tooLongKey)
+                . '.doctrine.cache'),
+            "Key expected to be too long is $windowsPathMaxLength characters long"
+        );
+        
         $this->assertSame(
             $basePath . DIRECTORY_SEPARATOR . substr($tooLongKeyHash, 0, 2) . DIRECTORY_SEPARATOR . '_' . $tooLongKeyHash . '.doctrine.cache',
             $getFileName->invoke($fileCache, $tooLongKey),
