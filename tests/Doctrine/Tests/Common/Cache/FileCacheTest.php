@@ -143,7 +143,7 @@ class FileCacheTest extends \Doctrine\Tests\DoctrineTestCase
 
         $fileCache = $this->getMockForAbstractClass(
             'Doctrine\Common\Cache\FileCache',
-            [__DIR__, '.doctrine.cache']
+            array(__DIR__, '.doctrine.cache')
         );
 
 
@@ -169,7 +169,6 @@ class FileCacheTest extends \Doctrine\Tests\DoctrineTestCase
             $getFileName->invoke($fileCache, $tooLongKey),
             'Keys over the limit of the allowed length are hashed correctly'
         );
-
         $this->assertSame(
             __DIR__ . '/' . substr($fittingKeyHash, 0, 2) . '/' . bin2hex($fittingKey) . '.doctrine.cache',
             $getFileName->invoke($fileCache, $fittingKey),
