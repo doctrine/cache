@@ -130,85 +130,127 @@ class FileCacheTest extends \Doctrine\Tests\DoctrineTestCase
         $this->assertEquals($extension, $actualExtension);
     }
 
+    const WIN_MAX_PATH_LEN = 258;
+
+    public static function getBasePathForWindowsPathLengthTests($pathLength)
+    {
+        // Not using __DIR__ because it can get screwed up when xdebug debugger is attached.
+        $basePath = realpath(sys_get_temp_dir());
+
+        // Test whether the desired path length is odd or even.
+        $desiredPathLengthIsOdd = ($pathLength % 2) == 1;
+
+        // If the cache key is not too long, the filecache codepath will add
+        // a slash and bin2hex($key). The length of the added portion will be an odd number.
+        // len(desired) = len(base path) + len(slash . bin2hex($key))
+        //          odd = even           + odd
+        //         even = odd            + odd
+        $basePathLengthShouldBeOdd = !$desiredPathLengthIsOdd;
+
+        $basePathLengthIsOdd = (strlen($basePath) % 2) == 1;
+
+        // If the base path needs to be odd or even where it is not, we add an odd number of
+        // characters as a pad. In this case, we're adding '\aa' (or '/aa' depending on platform)
+        // This is all to make it so that the key we're testing would result in
+        // a path that is exactly the length we want to test IF the path length limit
+        // were not in place in FileCache.
+        if ($basePathLengthIsOdd != $basePathLengthShouldBeOdd) {
+            $basePath .= DIRECTORY_SEPARATOR . "aa";
+        }
+
+        return $basePath;
+    }
+
+    public static function getKeyAndPathFittingLength($length)
+    {
+        $basePath = self::getBasePathForWindowsPathLengthTests($length);
+
+        $baseDirLength = strlen($basePath);
+        $extensionLength = strlen('.doctrine.cache');
+        $directoryLength = strlen(DIRECTORY_SEPARATOR . 'aa' . DIRECTORY_SEPARATOR);
+        $keyLength = $length - ($baseDirLength + $extensionLength + $directoryLength); // - 1 because of slash
+
+        $key = str_repeat('a', floor($keyLength / 2));
+
+        $keyHash = hash('sha256', $key);
+
+        $keyPath = $basePath
+            . DIRECTORY_SEPARATOR
+            . substr($keyHash, 0, 2)
+            . DIRECTORY_SEPARATOR
+            . bin2hex($key)
+            . '.doctrine.cache';
+
+        $hashedKeyPath = $basePath
+            . DIRECTORY_SEPARATOR
+            . substr($keyHash, 0, 2)
+            . DIRECTORY_SEPARATOR
+            . '_' . $keyHash
+            . '.doctrine.cache';
+
+        return array($key, $keyPath, $hashedKeyPath);
+    }
+
+    public function getPathLengthsToTest()
+    {
+        // Windows officially supports 260 bytes including null terminator
+        // 259 characters is too large due to PHP bug (https://bugs.php.net/bug.php?id=70943)
+        // 260 characters is too large - null terminator is included in allowable length
+        return array(
+            array(257, false),
+            array(258, false),
+            array(259, true),
+            array(260, true)
+        );
+    }
+
     /**
      * @runInSeparateProcess
+     * @dataProvider getPathLengthsToTest
      *
      * @covers \Doctrine\Common\Cache\FileCache::getFilename
      */
-    public function testWindowsPathLengthLimitationsAreCorrectlyRespected()
+    public function testWindowsPathLengthLimitationsAreCorrectlyRespected($length, $pathShouldBeHashed)
     {
         if (! defined('PHP_WINDOWS_VERSION_BUILD')) {
             define('PHP_WINDOWS_VERSION_BUILD', 'Yes, this is the "usual suspect", with the usual limitations');
         }
 
-        // Not using __DIR__ because it can get screwed up when xdebug debugger is attached.
-        $basePath = realpath(sys_get_temp_dir());
-
-        // If the base path length is even, pad it with '/aa' so it's odd.
-        // That way we can test a path of length 260
-        // 260 characters is too large - null terminator is included in allowable length
-        if (!(strlen($basePath) % 1)) {
-            $basePath .= DIRECTORY_SEPARATOR . "aa";
-        }
+        $basePath = $this->getBasePathForWindowsPathLengthTests($length);
 
         $fileCache = $this->getMockForAbstractClass(
             'Doctrine\Common\Cache\FileCache',
             array($basePath, '.doctrine.cache')
         );
 
-        $baseDirLength        = strlen($basePath);
-        $extensionLength      = strlen('.doctrine.cache');
-        $windowsPathMaxLength = 259; // 260 bytes including null terminator
-        $maxKeyLength         = $windowsPathMaxLength - ($baseDirLength + $extensionLength);
-
-        self::assertSame('61', bin2hex('a'), '(added just for clarity and system integrity check)');
-
-        $tooLongKey = str_repeat('a', ($maxKeyLength / 2) - 1); // note: 1 char because reasons, ok?
-        $fittingKey = str_repeat('a', ($maxKeyLength / 2) - 2); // note: 2 chars due to path separator added as well
-
-        $tooLongKeyHash = hash('sha256', $tooLongKey);
-        $fittingKeyHash = hash('sha256', $fittingKey);
+        list($key, $keyPath, $hashedKeyPath) = $this->getKeyAndPathFittingLength($length);
 
         $getFileName = new \ReflectionMethod($fileCache, 'getFilename');
 
         $getFileName->setAccessible(true);
 
         $this->assertEquals(
-            $windowsPathMaxLength + 1,
-            strlen($basePath
-                . DIRECTORY_SEPARATOR
-                . substr($tooLongKeyHash, 0, 2)
-                . DIRECTORY_SEPARATOR
-                . bin2hex($tooLongKey)
-                . '.doctrine.cache'),
-            sprintf('Key expected to be too long is %d characters long', $windowsPathMaxLength + 1)
+            $length,
+            strlen($keyPath),
+            sprintf('Path expected to be %d characters long is %d characters long', $length, strlen($keyPath))
         );
 
-        $this->assertSame(
-            $basePath . DIRECTORY_SEPARATOR . substr($tooLongKeyHash, 0, 2) . DIRECTORY_SEPARATOR . '_' . $tooLongKeyHash . '.doctrine.cache',
-            $getFileName->invoke($fileCache, $tooLongKey),
-            'Keys over the limit of the allowed length are hashed correctly'
-        );
+        if ($pathShouldBeHashed) {
+            $keyPath = $hashedKeyPath;
+        }
 
-        $this->assertLessThan(
-            $windowsPathMaxLength,
-            strlen($basePath
-                . DIRECTORY_SEPARATOR
-                . substr($fittingKeyHash, 0, 2)
-                . DIRECTORY_SEPARATOR
-                . bin2hex($fittingKey)
-                . '.doctrine.cache'),
-            sprintf(
-                'Key expected to fit the length limit(%d) is less than %d characters long',
-                $windowsPathMaxLength,
-                $windowsPathMaxLength
-            )
-        );
-
-        $this->assertSame(
-            $basePath . DIRECTORY_SEPARATOR . substr($fittingKeyHash, 0, 2) . DIRECTORY_SEPARATOR . bin2hex($fittingKey) . '.doctrine.cache',
-            $getFileName->invoke($fileCache, $fittingKey),
-            'Keys below limit of the allowed length are used directly, unhashed'
-        );
+        if ($pathShouldBeHashed) {
+            $this->assertSame(
+                $hashedKeyPath,
+                $getFileName->invoke($fileCache, $key),
+                'Keys should be hashed correctly if they are over the limit.'
+            );
+        } else {
+            $this->assertSame(
+                $keyPath,
+                $getFileName->invoke($fileCache, $key),
+                'Keys below limit of the allowed length are used directly, unhashed'
+            );
+        }
     }
 }
