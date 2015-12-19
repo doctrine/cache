@@ -137,7 +137,7 @@ abstract class FileCache extends CacheProvider
         if (
             '' === $id
             || ((strlen($id) * 2 + $this->extensionStringLength) > 255)
-            || (($this->isRunningOnWindows && $this->directoryStringLength + 4 + strlen($id) * 2 + $this->extensionStringLength) > 259)
+            || ($this->isRunningOnWindows && ($this->directoryStringLength + 4 + strlen($id) * 2 + $this->extensionStringLength) > 259)
         ) {
             // Most filesystems have a limit of 255 chars for each path component. On Windows the the whole path is limited
             // to 260 chars (including terminating null char). Using long UNC ("\\?\" prefix) does not work with the PHP API.
