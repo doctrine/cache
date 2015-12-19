@@ -52,4 +52,94 @@ abstract class BaseFileCacheTest extends CacheTest
     {
         return false;
     }
+
+    public function getPathLengthsToTest()
+    {
+        // Windows officially supports 260 bytes including null terminator
+        // 258 bytes available to use due to php bug #70943
+        // Windows officially supports 260 bytes including null terminator
+        // 259 characters is too large due to PHP bug (https://bugs.php.net/bug.php?id=70943)
+        // 260 characters is too large - null terminator is included in allowable length
+        return array(
+            array(257, false),
+            array(258, false),
+            array(259, true),
+            array(260, true)
+        );
+    }
+
+    private static function getBasePathForWindowsPathLengthTests($pathLength)
+    {
+        return FileCacheTest::getBasePathForWindowsPathLengthTests($pathLength);
+    }
+
+    private static function getKeyAndPathFittingLength($length)
+    {
+        $basePath = self::getBasePathForWindowsPathLengthTests($length);
+
+        $baseDirLength = strlen($basePath);
+        $extensionLength = strlen('.doctrine.cache');
+        $directoryLength = strlen(DIRECTORY_SEPARATOR . 'aa' . DIRECTORY_SEPARATOR);
+        $namespaceAndBracketLength = strlen(bin2hex("[][1]"));
+        $keyLength = $length
+            - ($baseDirLength
+                + $extensionLength
+                + $directoryLength
+                + $namespaceAndBracketLength);
+
+        $key = str_repeat('a', floor($keyLength / 2));
+        $namespacedKey = '[' . $key . '][1]';
+
+        $keyHash = hash('sha256', $namespacedKey);
+
+        $keyPath = $basePath
+            . DIRECTORY_SEPARATOR
+            . substr($keyHash, 0, 2)
+            . DIRECTORY_SEPARATOR
+            . bin2hex($namespacedKey)
+            . '.doctrine.cache';
+
+        $hashedKeyPath = $basePath
+            . DIRECTORY_SEPARATOR
+            . substr($keyHash, 0, 2)
+            . DIRECTORY_SEPARATOR
+            . '_' . $keyHash
+            . '.doctrine.cache';
+
+        return array($key, $keyPath, $hashedKeyPath);
+    }
+
+    /**
+     * @dataProvider getPathLengthsToTest
+     */
+    public function testWindowsPathLengthLimitIsCorrectlyHandled($length, $pathShouldBeHashed)
+    {
+        $this->directory = self::getBasePathForWindowsPathLengthTests($length);
+
+        list($key, $keyPath, $hashedKeyPath) = self::getKeyAndPathFittingLength($length);
+
+        $this->assertEquals($length, strlen($keyPath), "Unhashed path should be of correct length.");
+
+        $cacheClass = get_class($this->_getCacheDriver());
+        $cache = new $cacheClass($this->directory, '.doctrine.cache');
+
+        // Trick it into thinking this is windows.
+        $reflClass = new \ReflectionClass('\Doctrine\Common\Cache\FileCache');
+        $reflProp = $reflClass->getProperty('isRunningOnWindows');
+        $reflProp->setAccessible(true);
+        $reflProp->setValue($cache, true);
+        $reflProp->setAccessible(false);
+
+        $cache->save($key, $length);
+        $fetched = $cache->fetch($key);
+        $this->assertEquals($length, $fetched);
+
+        if ($pathShouldBeHashed) {
+            $this->assertFileExists($hashedKeyPath, "Path generated for key should be hashed.");
+            unlink($hashedKeyPath);
+        } else {
+            $this->assertFileExists($keyPath, "Path generated for key should not be hashed.");
+            unlink($keyPath);
+        }
+    }
 }
