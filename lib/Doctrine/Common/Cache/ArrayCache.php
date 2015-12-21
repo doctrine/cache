@@ -38,11 +38,37 @@ class ArrayCache extends CacheProvider
     private $data = array();
 
     /**
+     * @var array $stats
+     */
+    private $stats = array();
+
+
+    /**
+     * ArrayCache constructor.
+     */
+    public function __construct()
+    {
+        $this->stats = array(
+            Cache::STATS_HITS   => 0,
+            Cache::STATS_MISSES => 0,
+            Cache::STATS_UPTIME => time(),
+            Cache::STATS_MEMORY_USAGE => null,
+            Cache::STATS_MEMORY_AVAILABLE => null,
+        );
+    }
+
+    /**
      * {@inheritdoc}
      */
     protected function doFetch($id)
     {
-        return $this->doContains($id) ? $this->data[$id] : false;
+        if ($this->doContains($id)) {
+            $this->stats[Cache::STATS_HITS]++;
+            return $this->data[$id]['content'];
+        } else {
+            $this->stats[Cache::STATS_MISSES]++;
+            return false;
+        }
     }
 
     /**
@@ -51,7 +77,14 @@ class ArrayCache extends CacheProvider
     protected function doContains($id)
     {
         // isset() is required for performance optimizations, to avoid unnecessary function calls to array_key_exists.
-        return isset($this->data[$id]) || array_key_exists($id, $this->data);
+        if (isset($this->data[$id])) {
+            if ($this->data[$id]['ttl'] !== false && $this->data[$id]['ttl'] < time()) {
+                $this->doDelete($id);
+            } else {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -59,8 +92,8 @@ class ArrayCache extends CacheProvider
      */
     protected function doSave($id, $data, $lifeTime = 0)
     {
-        $this->data[$id] = $data;
-
+        $ttl = $lifeTime > 0 ? time()+$lifeTime : false;
+        $this->data[$id] = array('content'=>$data, 'ttl'=>$ttl);
         return true;
     }
 
@@ -89,6 +122,6 @@ class ArrayCache extends CacheProvider
      */
     protected function doGetStats()
     {
-        return null;
+        return $this->stats;
     }
 }
