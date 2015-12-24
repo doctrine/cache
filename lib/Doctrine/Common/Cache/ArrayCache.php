@@ -42,9 +42,8 @@ class ArrayCache extends CacheProvider
      */
     private $stats = array();
 
-
     /**
-     * ArrayCache constructor.
+     * {@inheritdoc}
      */
     public function __construct()
     {
@@ -64,7 +63,7 @@ class ArrayCache extends CacheProvider
     {
         if ($this->doContains($id)) {
             $this->stats[Cache::STATS_HITS]++;
-            return $this->data[$id]['content'];
+            return $this->data[$id][0];
         } else {
             $this->stats[Cache::STATS_MISSES]++;
             return false;
@@ -78,7 +77,8 @@ class ArrayCache extends CacheProvider
     {
         // isset() is required for performance optimizations, to avoid unnecessary function calls to array_key_exists.
         if (isset($this->data[$id])) {
-            if ($this->data[$id]['ttl'] !== false && $this->data[$id]['ttl'] < time()) {
+            $ttl = $this->data[$id][1];
+            if ($ttl !== false && $ttl < time()) {
                 $this->doDelete($id);
             } else {
                 return true;
@@ -93,7 +93,7 @@ class ArrayCache extends CacheProvider
     protected function doSave($id, $data, $lifeTime = 0)
     {
         $ttl = $lifeTime > 0 ? time()+$lifeTime : false;
-        $this->data[$id] = array('content'=>$data, 'ttl'=>$ttl);
+        $this->data[$id] = array($data, $ttl);
         return true;
     }
 
