@@ -48,7 +48,7 @@ class ArrayCache extends CacheProvider
     public function __construct()
     {
         $this->stats = array(
-            Cache::STATS_HITS   => 0,
+            Cache::STATS_HITS => 0,
             Cache::STATS_MISSES => 0,
             Cache::STATS_UPTIME => time(),
             Cache::STATS_MEMORY_USAGE => null,
