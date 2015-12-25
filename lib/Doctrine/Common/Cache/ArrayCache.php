@@ -33,7 +33,7 @@ namespace Doctrine\Common\Cache;
 class ArrayCache extends CacheProvider
 {
     /**
-     * @var array $data
+     * @var array[] $data
      */
     private $data = array();
 
@@ -81,16 +81,19 @@ class ArrayCache extends CacheProvider
      */
     protected function doContains($id)
     {
-        // isset() is required for performance optimizations, to avoid unnecessary function calls to array_key_exists.
-        if (isset($this->data[$id])) {
-            $ttl = $this->data[$id][1];
-            if ($ttl !== false && $ttl < time()) {
-                $this->doDelete($id);
-            } else {
-                return true;
-            }
+        if (! isset($this->data[$id])) {
+            return false;
         }
-        return false;
+
+        $expiration = $this->data[$id][1];
+
+        if ($expiration && $expiration < time()) {
+            $this->doDelete($id);
+
+            return false;
+        }
+
+        return true;
     }
 
     /**
@@ -98,8 +101,8 @@ class ArrayCache extends CacheProvider
      */
     protected function doSave($id, $data, $lifeTime = 0)
     {
-        $ttl = $lifeTime > 0 ? time()+$lifeTime : false;
-        $this->data[$id] = array($data, $ttl);
+        $this->data[$id] = array($data, $lifeTime ? time() + $lifeTime : false);
+
         return true;
     }
 
