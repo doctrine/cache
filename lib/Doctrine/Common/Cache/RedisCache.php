@@ -90,21 +90,21 @@ class RedisCache extends CacheProvider
      */
     protected function doSaveMultiple(array $keysAndValues, $lifetime = 0)
     {
-        $success = true;
+        if ($lifetime) {
+            $success = true;
 
-        if (!$lifetime) {
-            // No lifetime, use MSET
-            $success = $this->redis->mset($keysAndValues);
-        } else {
             // Keys have lifetime, use SETEX for each of them
             foreach ($keysAndValues as $key => $value) {
                 if (!$this->redis->setex($key, $lifetime, $value)) {
                     $success = false;
                 }
             }
+
+            return $success;
         }
 
-        return $success;
+        // No lifetime, use MSET
+        return (bool) $this->redis->mset($keysAndValues);
     }
 
     /**

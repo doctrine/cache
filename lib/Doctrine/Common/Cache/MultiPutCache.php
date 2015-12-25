@@ -23,7 +23,7 @@ namespace Doctrine\Common\Cache;
  * Interface for cache drivers that allows to put many items at once.
  *
  * @link   www.doctrine-project.org
- * @since  1.4
+ * @since  1.6
  * @author Daniel Gorgan <danut007ro@gmail.com>
  */
 interface MultiPutCache

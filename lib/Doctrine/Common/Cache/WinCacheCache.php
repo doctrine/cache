@@ -87,11 +87,7 @@ class WinCacheCache extends CacheProvider
     {
         $result = wincache_ucache_set($keysAndValues, null, $lifetime);
 
-        if ($result === false || count($result)) {
-            return false;
-        }
-
-        return true;
+        return empty($result);
     }
 
     /**

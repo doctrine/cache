@@ -84,11 +84,7 @@ class ApcuCache extends CacheProvider
     {
         $result = apcu_store($keysAndValues, null, $lifetime);
 
-        if ($result === false || count($result)) {
-            return false;
-        }
-
-        return true;
+        return empty($result);
     }
 
     /**

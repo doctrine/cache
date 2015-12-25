@@ -89,11 +89,7 @@ class ApcCache extends CacheProvider
     {
         $result = apc_store($keysAndValues, null, $lifetime);
 
-        if ($result === false || count($result)) {
-            return false;
-        }
-
-        return true;
+        return empty($result);
     }
 
     /**

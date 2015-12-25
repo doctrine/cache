@@ -54,27 +54,27 @@ class PredisCache extends CacheProvider
      */
     protected function doSaveMultiple(array $keysAndValues, $lifetime = 0)
     {
-        $success = true;
+        if ($lifetime) {
+            $success = true;
 
-        if (!$lifetime) {
-            // No lifetime, use MSET
-            $response = $this->client->mset(array_map(function ($value) {
-                return serialize($value);
-            }, $keysAndValues));
-
-            $success = ((string) $response === 'OK');
-        } else {
             // Keys have lifetime, use SETEX for each of them
             foreach ($keysAndValues as $key => $value) {
                 $response = $this->client->setex($key, $lifetime, serialize($value));
 
-                if ((string) $response !== 'OK') {
+                if ((string) $response != 'OK') {
                     $success = false;
                 }
             }
+
+            return $success;
         }
 
-        return $success;
+        // No lifetime, use MSET
+        $response = $this->client->mset(array_map(function ($value) {
+            return serialize($value);
+        }, $keysAndValues));
+
+        return (string) $response == 'OK';
     }
 
     /**

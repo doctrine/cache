@@ -252,7 +252,7 @@ abstract class CacheProvider implements Cache, FlushableCache, ClearableCache, M
     abstract protected function doContains($id);
 
     /**
-     * Default implementation of doSaveMultiple. Each driver that supports multi-put should overwrite it.
+     * Default implementation of doSaveMultiple. Each driver that supports multi-put should override it.
      *
      * @param array $keysAndValues  Array of keys and values to save in cache
      * @param int   $lifetime       The lifetime. If != 0, sets a specific lifetime for these
