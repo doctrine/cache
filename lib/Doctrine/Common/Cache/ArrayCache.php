@@ -33,16 +33,47 @@ namespace Doctrine\Common\Cache;
 class ArrayCache extends CacheProvider
 {
     /**
-     * @var array $data
+     * @var array[] $data each element being a tuple of [$data, $expiration], where the expiration is int|bool
      */
     private $data = array();
+
+    /**
+     * @var int
+     */
+    private $hitsCount = 0;
+
+    /**
+     * @var int
+     */
+    private $missesCount = 0;
+
+    /**
+     * @var int
+     */
+    private $upTime;
+
+    /**
+     * {@inheritdoc}
+     */
+    public function __construct()
+    {
+        $this->upTime = time();
+    }
 
     /**
      * {@inheritdoc}
      */
     protected function doFetch($id)
     {
-        return $this->doContains($id) ? $this->data[$id] : false;
+        if (! $this->doContains($id)) {
+            $this->missesCount += 1;
+
+            return false;
+        }
+
+        $this->hitsCount += 1;
+
+        return $this->data[$id][0];
     }
 
     /**
@@ -50,8 +81,19 @@ class ArrayCache extends CacheProvider
      */
     protected function doContains($id)
     {
-        // isset() is required for performance optimizations, to avoid unnecessary function calls to array_key_exists.
-        return isset($this->data[$id]) || array_key_exists($id, $this->data);
+        if (! isset($this->data[$id])) {
+            return false;
+        }
+
+        $expiration = $this->data[$id][1];
+
+        if ($expiration && $expiration < time()) {
+            $this->doDelete($id);
+
+            return false;
+        }
+
+        return true;
     }
 
     /**
@@ -59,7 +101,7 @@ class ArrayCache extends CacheProvider
      */
     protected function doSave($id, $data, $lifeTime = 0)
     {
-        $this->data[$id] = $data;
+        $this->data[$id] = array($data, $lifeTime ? time() + $lifeTime : false);
 
         return true;
     }
@@ -89,6 +131,12 @@ class ArrayCache extends CacheProvider
      */
     protected function doGetStats()
     {
-        return null;
+        return array(
+            Cache::STATS_HITS             => $this->hitsCount,
+            Cache::STATS_MISSES           => $this->missesCount,
+            Cache::STATS_UPTIME           => $this->upTime,
+            Cache::STATS_MEMORY_USAGE     => null,
+            Cache::STATS_MEMORY_AVAILABLE => null,
+        );
     }
 }
