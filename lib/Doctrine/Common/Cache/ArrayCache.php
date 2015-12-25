@@ -35,7 +35,7 @@ class ArrayCache extends CacheProvider
     /**
      * @var array[] $data each element being a tuple of [$data, $expiration], where the expiration is int|bool
      */
-    private $data = array();
+    private $data = [];
 
     /**
      * @var int
@@ -101,7 +101,7 @@ class ArrayCache extends CacheProvider
      */
     protected function doSave($id, $data, $lifeTime = 0)
     {
-        $this->data[$id] = array($data, $lifeTime ? time() + $lifeTime : false);
+        $this->data[$id] = [$data, $lifeTime ? time() + $lifeTime : false];
 
         return true;
     }
@@ -131,12 +131,12 @@ class ArrayCache extends CacheProvider
      */
     protected function doGetStats()
     {
-        return array(
+        return [
             Cache::STATS_HITS             => $this->hitsCount,
             Cache::STATS_MISSES           => $this->missesCount,
             Cache::STATS_UPTIME           => $this->upTime,
             Cache::STATS_MEMORY_USAGE     => null,
             Cache::STATS_MEMORY_AVAILABLE => null,
-        );
+        ];
     }
 }
