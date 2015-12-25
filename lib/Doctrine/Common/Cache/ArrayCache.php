@@ -121,7 +121,7 @@ class ArrayCache extends CacheProvider
      */
     protected function doFlush()
     {
-        $this->data = array();
+        $this->data = [];
 
         return true;
     }
