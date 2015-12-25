@@ -33,7 +33,7 @@ namespace Doctrine\Common\Cache;
 class ArrayCache extends CacheProvider
 {
     /**
-     * @var array[] $data
+     * @var array[] $data each element being a tuple of [$data, $expiration], where the expiration is int|bool
      */
     private $data = array();
 
