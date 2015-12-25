@@ -64,10 +64,9 @@ class ArrayCache extends CacheProvider
         if ($this->doContains($id)) {
             $this->stats[Cache::STATS_HITS]++;
             return $this->data[$id][0];
-        } else {
-            $this->stats[Cache::STATS_MISSES]++;
-            return false;
         }
+        $this->stats[Cache::STATS_MISSES]++;
+        return false;
     }
 
     /**
