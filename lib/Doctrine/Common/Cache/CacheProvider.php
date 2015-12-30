@@ -29,7 +29,7 @@ namespace Doctrine\Common\Cache;
  * @author Roman Borschel <roman@code-factory.org>
  * @author Fabio B. Silva <fabio.bat.silva@gmail.com>
  */
-abstract class CacheProvider implements Cache, FlushableCache, ClearableCache, MultiGetCache
+abstract class CacheProvider implements Cache, FlushableCache, ClearableCache, MultiGetCache, MultiPutCache
 {
     const DOCTRINE_NAMESPACE_CACHEKEY = 'DoctrineNamespaceCacheKey[%s]';
 
@@ -101,6 +101,19 @@ abstract class CacheProvider implements Cache, FlushableCache, ClearableCache, M
         }
 
         return $foundItems;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function saveMultiple(array $keysAndValues, $lifetime = 0)
+    {
+        $namespacedKeysAndValues = array();
+        foreach ($keysAndValues as $key => $value) {
+            $namespacedKeysAndValues[$this->getNamespacedId($key)] = $value;
+        }
+
+        return $this->doSaveMultiple($namespacedKeysAndValues, $lifetime);
     }
 
     /**
@@ -237,6 +250,28 @@ abstract class CacheProvider implements Cache, FlushableCache, ClearableCache, M
      * @return bool TRUE if a cache entry exists for the given cache id, FALSE otherwise.
      */
     abstract protected function doContains($id);
+
+    /**
+     * Default implementation of doSaveMultiple. Each driver that supports multi-put should override it.
+     *
+     * @param array $keysAndValues  Array of keys and values to save in cache
+     * @param int   $lifetime       The lifetime. If != 0, sets a specific lifetime for these
+     *                              cache entries (0 => infinite lifeTime).
+     *
+     * @return bool TRUE if the operation was successful, FALSE if it wasn't.
+     */
+    protected function doSaveMultiple(array $keysAndValues, $lifetime = 0)
+    {
+        $success = true;
+
+        foreach ($keysAndValues as $key => $value) {
+            if (!$this->doSave($key, $value, $lifetime)) {
+                $success = false;
+            }
+        }
+
+        return $success;
+    }
 
     /**
      * Puts data into the cache.

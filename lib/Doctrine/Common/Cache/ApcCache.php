@@ -85,6 +85,16 @@ class ApcCache extends CacheProvider
     /**
      * {@inheritdoc}
      */
+    protected function doSaveMultiple(array $keysAndValues, $lifetime = 0)
+    {
+        $result = apc_store($keysAndValues, null, $lifetime);
+
+        return empty($result);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     protected function doGetStats()
     {
         $info = apc_cache_info('', true);
