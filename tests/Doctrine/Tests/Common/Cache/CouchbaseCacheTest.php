@@ -16,7 +16,7 @@ class CouchbaseCacheTest extends CacheTest
     {
         try {
             $this->couchbase = new Couchbase('127.0.0.1', 'Administrator', 'password', 'default');
-        } catch(Exception $ex) {
+        } catch(\Exception $ex) {
              $this->markTestSkipped('Could not instantiate the Couchbase cache because of: ' . $ex);
         }
     }
