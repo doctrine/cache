@@ -37,7 +37,7 @@ class ApcCache extends CacheProvider
      */
     protected function doFetch($id)
     {
-        return apc_fetch($id);
+        return apcu_fetch($id);
     }
 
     /**
@@ -45,7 +45,7 @@ class ApcCache extends CacheProvider
      */
     protected function doContains($id)
     {
-        return apc_exists($id);
+        return apcu_exists($id);
     }
 
     /**
@@ -53,7 +53,7 @@ class ApcCache extends CacheProvider
      */
     protected function doSave($id, $data, $lifeTime = 0)
     {
-        return (bool) apc_store($id, $data, (int) $lifeTime);
+        return (bool) apcu_store($id, $data, (int) $lifeTime);
     }
 
     /**
@@ -61,8 +61,8 @@ class ApcCache extends CacheProvider
      */
     protected function doDelete($id)
     {
-        // apc_delete returns false if the id does not exist
-        return apc_delete($id) || ! apc_exists($id);
+        // apcu_delete returns false if the id does not exist
+        return apcu_delete($id) || ! apcu_exists($id);
     }
 
     /**
@@ -70,7 +70,7 @@ class ApcCache extends CacheProvider
      */
     protected function doFlush()
     {
-        return apc_clear_cache() && apc_clear_cache('user');
+        return apcu_clear_cache();
     }
 
     /**
@@ -78,7 +78,7 @@ class ApcCache extends CacheProvider
      */
     protected function doFetchMultiple(array $keys)
     {
-        return apc_fetch($keys);
+        return apcu_fetch($keys);
     }
 
     /**
@@ -86,8 +86,8 @@ class ApcCache extends CacheProvider
      */
     protected function doGetStats()
     {
-        $info = apc_cache_info('', true);
-        $sma  = apc_sma_info();
+        $info = apcu_cache_info(true);
+        $sma  = apcu_sma_info();
 
         // @TODO - Temporary fix @see https://github.com/krakjoe/apcu/pull/42
         if (PHP_VERSION_ID >= 50500) {
