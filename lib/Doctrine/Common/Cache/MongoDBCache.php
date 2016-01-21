@@ -75,6 +75,25 @@ class MongoDBCache extends CacheProvider
     public function __construct(MongoCollection $collection)
     {
         $this->collection = $collection;
+        $this->createIndex();
+    }
+
+    /**
+     * Create required index if it does not exist yet.
+     *
+     * This is required for TTL Collections to purge expired entries automatically.
+     *
+     * @link http://docs.mongodb.org/manual/tutorial/expire-data/
+     */
+    private function createIndex()
+    {
+        $this->collection->createIndex(
+            array(self::EXPIRATION_FIELD => 1),
+            array(
+                'background' => true, // Build the index in the background so that building it does not block other database activities.
+                'expireAfterSeconds' => 0, // Have entries expire directly (0 seconds) after reaching expiration time
+            )
+        );
     }
 
     /**
