@@ -28,7 +28,7 @@ use Redis;
  * @since  2.2
  * @author Osman Ungur <osmanungur@gmail.com>
  */
-class RedisCache extends CacheProvider
+class RedisCache extends CacheProvider implements TaggedCache
 {
     /**
      * @var Redis|null
@@ -86,6 +86,18 @@ class RedisCache extends CacheProvider
     }
 
     /**
+     * @param array|string[] $tags
+     *
+     * @return array|mixed[]
+     */
+    protected function doFetchByTags(array $tags = array())
+    {
+        $ids = call_user_func_array(array($this->getRedis(), 'sInter'), $tags);
+
+        return $this->fetchMultiple($ids);
+    }
+
+    /**
      * {@inheritdoc}
      */
     protected function doSaveMultiple(array $keysAndValues, $lifetime = 0)
@@ -128,11 +140,38 @@ class RedisCache extends CacheProvider
     }
 
     /**
+     * @param string         $id
+     * @param array|string[] $tags
+     */
+    protected function doTag($id, array $tags = [])
+    {
+        $multi = $this->getRedis()->multi();
+        foreach ($tags as $tag) {
+            $multi->sAdd($tag, $id);
+        }
+        $multi->exec();
+    }
+
+    /**
      * {@inheritdoc}
      */
     protected function doDelete($id)
     {
         return $this->redis->delete($id) >= 0;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function doDeleteByTags(array $tags = array())
+    {
+        $nsIds = (array) call_user_func_array(array($this->getRedis(), 'sInter'), $tags);
+
+        if (empty($nsIds)) {
+            return true;
+        }
+
+        return call_user_func_array(array($this->getRedis(), 'delete'), $nsIds);
     }
 
     /**

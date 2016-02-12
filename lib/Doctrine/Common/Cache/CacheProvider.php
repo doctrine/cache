@@ -86,7 +86,7 @@ abstract class CacheProvider implements Cache, FlushableCache, ClearableCache, M
         if (empty($keys)) {
             return array();
         }
-        
+
         // note: the array_combine() is in place to keep an association between our $keys and the $namespacedKeys
         $namespacedKeys = array_combine($keys, array_map(array($this, 'getNamespacedId'), $keys));
         $items          = $this->doFetchMultiple($namespacedKeys);
@@ -101,6 +101,29 @@ abstract class CacheProvider implements Cache, FlushableCache, ClearableCache, M
         }
 
         return $foundItems;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function fetchByTags(array $tags = array())
+    {
+        $nsTags = array();
+        foreach ($tags as $key => $value) {
+            $nsTag = is_string($key) ? $key.':'.$value : $value;
+            $nsTags[] = $this->getNamespacedTag($nsTag);
+        }
+
+        $nsValues = $this->doFetchByTags($nsTags);
+
+        $values = array();
+        foreach ($nsValues as $nsId => $value) {
+            $id = $this->getOriginalId($nsId);
+
+            $values[$id] = $value;
+        }
+
+        return $values;
     }
 
     /**
@@ -135,9 +158,39 @@ abstract class CacheProvider implements Cache, FlushableCache, ClearableCache, M
     /**
      * {@inheritdoc}
      */
+    public function tag($id, array $tags = [])
+    {
+        $nsId = $this->getNamespacedId($id);
+
+        $nsTags = array();
+        foreach ($tags as $key => $value) {
+            $tag = is_string($key) ? $key.':'.$value : $value;
+            $nsTags[] = $this->getNamespacedTag($tag);
+        }
+
+        $this->doTag($nsId, $nsTags);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function delete($id)
     {
         return $this->doDelete($this->getNamespacedId($id));
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function deleteByTags(array $tags = array())
+    {
+        $nsTags = array();
+        foreach ($tags as $key => $value) {
+            $tag = is_string($key) ? $key.':'.$value : $value;
+            $nsTags[] = $this->getNamespacedTag($tag);
+        }
+
+        return $this->doDeleteByTags($nsTags);
     }
 
     /**
@@ -188,6 +241,27 @@ abstract class CacheProvider implements Cache, FlushableCache, ClearableCache, M
     }
 
     /**
+     * @param string $nsId
+     *
+     * @return string
+     */
+    private function getOriginalId($nsId)
+    {
+        static $regex;
+        if (empty($regex)) {
+            $regex = $this->getNamespacedId('#ID#');
+            $regex = '/'.preg_quote($regex).'/';
+            $regex = str_replace('#ID#', '(?P<id>[^]]++)', $regex);
+        }
+
+        preg_match($regex, $nsId, $m);
+
+        if (isset($m['id'])) {
+            return $m['id'];
+        }
+    }
+
+    /**
      * Returns the namespace cache key.
      *
      * @return string
@@ -195,6 +269,18 @@ abstract class CacheProvider implements Cache, FlushableCache, ClearableCache, M
     private function getNamespaceCacheKey()
     {
         return sprintf(self::DOCTRINE_NAMESPACE_CACHEKEY, $this->namespace);
+    }
+
+    /**
+     * @param string $tag
+     *
+     * @return string
+     */
+    private function getNamespacedTag($tag)
+    {
+        $namespaceVersion = $this->getNamespaceVersion();
+
+        return sprintf('%sTags[%s][%s]', $this->namespace, $tag, $namespaceVersion);
     }
 
     /**
@@ -242,6 +328,29 @@ abstract class CacheProvider implements Cache, FlushableCache, ClearableCache, M
      */
     abstract protected function doFetch($id);
 
+
+    /**
+     * @param array|string[] $tags
+     *
+     * @return array|mixed[]
+     */
+    protected function doFetchByTags(array $tags = array())
+    {
+        $idLists = $this->doFetchMultiple($tags);
+        foreach ($idLists as &$idList) {
+            $idList = explode(';', $idList);
+            $idList = array_unique($idList);
+        }
+
+        if (empty($idLists)) {
+            return array();
+        }
+
+        $ids = call_user_func_array('array_intersect', $idLists);
+
+        return $this->doFetchMultiple($ids);
+    }
+
     /**
      * Tests if an entry exists in the cache.
      *
@@ -286,6 +395,22 @@ abstract class CacheProvider implements Cache, FlushableCache, ClearableCache, M
     abstract protected function doSave($id, $data, $lifeTime = 0);
 
     /**
+     * @param string $id
+     * @param array|string[] $tags
+     */
+    protected function doTag($id, array $tags = [])
+    {
+        foreach ($tags as $tag) {
+            $set = (string)$this->doFetch($tag);
+            $set = explode(';', $set);
+            $set[] = $id;
+            $set = array_unique($set);
+            $set = implode(';', $set);
+            $this->doSave($tag, $set);
+        }
+    }
+
+    /**
      * Deletes a cache entry.
      *
      * @param string $id The cache id.
@@ -293,6 +418,30 @@ abstract class CacheProvider implements Cache, FlushableCache, ClearableCache, M
      * @return bool TRUE if the cache entry was successfully deleted, FALSE otherwise.
      */
     abstract protected function doDelete($id);
+
+    /**
+     * @param array|string[] $tags
+     *
+     * @return bool
+     */
+    protected function doDeleteByTags(array $tags = array())
+    {
+        $idLists = $this->doFetchMultiple($tags);
+        foreach ($idLists as &$idList) {
+            $idList = explode(';', $idList);
+            $idList = array_unique($idList);
+        }
+
+        if (empty($idLists)) {
+            return true;
+        }
+
+        $ids = call_user_func_array('array_intersect', $idLists);
+
+        foreach ($ids as $id) {
+            return $this->doDelete($id);
+        }
+    }
 
     /**
      * Flushes all cache entries.

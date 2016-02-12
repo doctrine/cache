@@ -2,24 +2,25 @@
 
 namespace Doctrine\Common\Cache;
 
+use Predis\Client;
 use Predis\ClientInterface;
+use Predis\Command\TransactionMulti;
+use Predis\Transaction\MultiExec;
 
 /**
  * Predis cache provider.
  *
  * @author othillo <othillo@othillo.nl>
  */
-class PredisCache extends CacheProvider
+class PredisCache extends CacheProvider implements TaggedCache
 {
     /**
-     * @var ClientInterface
+     * @var ClientInterface|Client
      */
     private $client;
 
     /**
      * @param ClientInterface $client
-     *
-     * @return void
      */
     public function __construct(ClientInterface $client)
     {
@@ -47,6 +48,20 @@ class PredisCache extends CacheProvider
         $fetchedItems = call_user_func_array(array($this->client, 'mget'), $keys);
 
         return array_map('unserialize', array_filter(array_combine($keys, $fetchedItems)));
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function doFetchByTags(array $tags = array())
+    {
+        $nsIds = call_user_func_array(array($this->client, 'sinter'), $tags);
+
+        if (empty($nsIds)) {
+            return array();
+        }
+
+        return $this->doFetchMultiple($nsIds);
     }
 
     /**
@@ -103,9 +118,36 @@ class PredisCache extends CacheProvider
     /**
      * {@inheritdoc}
      */
+    protected function doTag($id, array $tags = [])
+    {
+        /** @var MultiExec $tx */
+        $tx = $this->client->transaction();
+        foreach ($tags as $tag) {
+            $tx->sAdd($tag, $id);
+        }
+        $tx->execute();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     protected function doDelete($id)
     {
         return $this->client->del($id) >= 0;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function doDeleteByTags(array $tags = array())
+    {
+        $nsIds = (array) call_user_func_array(array($this->client, 'sinter'), $tags);
+
+        if (empty($nsIds)) {
+            return true;
+        }
+
+        return $this->doDelete($nsIds);
     }
 
     /**
