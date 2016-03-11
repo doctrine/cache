@@ -86,7 +86,7 @@ class MemcachedCache extends CacheProvider
             $lifetime = time() + $lifetime;
         }
 
-        return $this->memcached->setMulti($keysAndValues, null, $lifetime);
+        return $this->memcached->setMulti($keysAndValues, $lifetime);
     }
 
     /**
