@@ -108,8 +108,7 @@ class PhpFileCache extends FileCache
     {
         $fileName = $this->getFilename($id);
 
-        // note: error suppression is still faster than `file_exists`, `is_file` and `is_readable`
-        $value = file_exists($fileName) ? include $fileName : null;
+        $value = file_exists($fileName) ? @include $fileName : null;
 
         if (! isset($value['lifetime'])) {
             return false;

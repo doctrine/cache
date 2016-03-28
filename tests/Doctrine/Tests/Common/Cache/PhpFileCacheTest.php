@@ -71,7 +71,7 @@ class PhpFileCacheTest extends BaseFileCacheTest
     {
         $cache = $this->_getCacheDriver();
         set_error_handler(function($errno, $errstr, $errfile, $errlin){
-            exit('Oops '.$errstr);
+            $this->fail('include failure captured');
         });
         $cache->fetch('key');
 
