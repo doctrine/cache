@@ -14,7 +14,6 @@ class PhpFileCacheTest extends BaseFileCacheTest
     {
         $data = parent::provideDataToCache();
 
-        unset($data['object'], $data['object_recursive']); // PhpFileCache only allows objects that implement __set_state() and fully support var_export()
         unset($data['float_zero']); // var_export exports float(0) as int(0)
 
         return $data;
@@ -46,8 +45,11 @@ class PhpFileCacheTest extends BaseFileCacheTest
     {
         $cache = $this->_getCacheDriver();
 
-        $this->setExpectedException('InvalidArgumentException');
         $cache->save('test_not_set_state', new NotSetStateClass(array(1,2,3)));
+        $value = $cache->fetch('test_not_set_state');
+        $this->assertInstanceOf('Doctrine\Tests\Common\Cache\NotSetStateClass', $value);
+        $this->assertEquals(array(1,2,3), $value->getValue());
+        $this->assertTrue($cache->contains('test_not_set_state'));
     }
 
     public function testGetStats()
