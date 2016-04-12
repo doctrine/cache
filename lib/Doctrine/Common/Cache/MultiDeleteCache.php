@@ -29,9 +29,9 @@ namespace Doctrine\Common\Cache;
 interface MultiDeleteCache
 {
     /**
-     * Returns a boolean value indicating if the operation succeeded.
+     * Deletes several cache entries.
      *
-     * @param array $keys Array of keys to delete from cache
+     * @param string[] $keys Array of keys to delete from cache
      *
      * @return bool TRUE if the operation was successful, FALSE if it wasn't.
      */

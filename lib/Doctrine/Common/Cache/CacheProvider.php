@@ -138,12 +138,7 @@ abstract class CacheProvider implements Cache, FlushableCache, ClearableCache, M
      */
     public function deleteMultiple(array $keys)
     {
-        $namespacedKeys = array();
-        foreach ($keys as $key) {
-            $namespacedKeys[] = $this->getNamespacedId($key);
-        }
-
-        return $this->doDeleteMultiple($namespacedKeys);
+        return $this->doDeleteMultiple(array_map(array($this, 'getNamespacedId'), $keys));
     }
 
     /**
