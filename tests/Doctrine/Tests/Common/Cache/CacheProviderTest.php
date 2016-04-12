@@ -100,4 +100,35 @@ class CacheProviderTest extends \Doctrine\Tests\DoctrineTestCase
             'kok'   => 'vok',
         ]);
     }
+
+    public function testDeleteMultipleNoFail()
+    {
+        /* @var $cache \Doctrine\Common\Cache\CacheProvider|\PHPUnit_Framework_MockObject_MockObject */
+        $cache = $this->getMockForAbstractClass(
+            'Doctrine\Common\Cache\CacheProvider',
+            array(),
+            '',
+            true,
+            true,
+            true,
+            array('doDelete')
+        );
+
+        $cache
+            ->expects($this->at(1))
+            ->method('doDelete')
+            ->with('[kerr][1]')
+            ->will($this->returnValue(false));
+
+        $cache
+            ->expects($this->at(2))
+            ->method('doDelete')
+            ->with('[kok][1]')
+            ->will($this->returnValue(true));
+
+        $cache->deleteMultiple(array(
+            'kerr',
+            'kok',
+        ));
+    }
 }
