@@ -89,7 +89,7 @@ class PhpFileCache extends FileCache
         $filename  = $this->getFilename($id);
 
         $value = array(
-            'lifetime'  => $lifeTime,
+            'lifetime'  => (int) $lifeTime,
             'data'      => $data
         );
 
