@@ -77,6 +77,30 @@ class ChainCache extends CacheProvider
     }
 
     /**
+     * {@inheritdoc}
+     */
+    protected function doFetchMultiple(array $keys)
+    {
+        $count = count($keys);
+        $values = array();
+
+        foreach ($this->cacheProviders as $key => $cacheProvider) {
+            $values = $cacheProvider->doFetchMultiple($keys);
+
+            // We populate all the previous cache layers (that are assumed to be faster)
+            if (count($values) === $count) {
+                for ($subKey = $key - 1 ; $subKey >= 0 ; $subKey--) {
+                    $this->cacheProviders[$subKey]->doSaveMultiple($values);
+                }
+
+                return $values;
+            }
+        }
+
+        return $values;
+    }
+
+    /**
      * {@inheritDoc}
      */
     protected function doContains($id)
@@ -105,6 +129,20 @@ class ChainCache extends CacheProvider
     }
 
     /**
+     * {@inheritdoc}
+     */
+    protected function doSaveMultiple(array $keysAndValues, $lifetime = 0)
+    {
+        $stored = true;
+
+        foreach ($this->cacheProviders as $cacheProvider) {
+            $stored = $cacheProvider->doSaveMultiple($keysAndValues, $lifetime) && $stored;
+        }
+
+        return $stored;
+    }
+
+    /**
      * {@inheritDoc}
      */
     protected function doDelete($id)
@@ -113,6 +151,20 @@ class ChainCache extends CacheProvider
 
         foreach ($this->cacheProviders as $cacheProvider) {
             $deleted = $cacheProvider->doDelete($id) && $deleted;
+        }
+
+        return $deleted;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function doDeleteMultiple(array $keys)
+    {
+        $deleted = true;
+
+        foreach ($this->cacheProviders as $cacheProvider) {
+            $deleted = $cacheProvider->doDeleteMultiple($keys) && $deleted;
         }
 
         return $deleted;
