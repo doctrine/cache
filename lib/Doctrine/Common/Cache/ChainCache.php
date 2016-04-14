@@ -38,7 +38,9 @@ class ChainCache extends CacheProvider
      */
     public function __construct($cacheProviders = array())
     {
-        $this->cacheProviders = $cacheProviders;
+        $this->cacheProviders = $cacheProviders instanceof \Traversable
+            ? iterator_to_array($cacheProviders, false)
+            : array_values($cacheProviders);
     }
 
     /**
