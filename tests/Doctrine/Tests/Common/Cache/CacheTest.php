@@ -269,6 +269,17 @@ abstract class CacheTest extends \Doctrine\Tests\DoctrineTestCase
         $this->assertTrue($cache->contains('nulllifetime'), 'Data should not be expired');
     }
 
+    public function testNullLifetimeMultiple()
+    {
+        $cache = $this->_getCacheDriver();
+        $data = [
+            'nulllifetime' => 'value',
+            'otherkey' => 'othervalue'
+        ];
+        $cache->saveMultiple($data, null);
+        $this->assertTrue($cache->contains('nulllifetime'), 'Data should not be expired');
+    }
+
     public function testNoExpire()
     {
         $cache = $this->_getCacheDriver();

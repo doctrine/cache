@@ -129,7 +129,7 @@ abstract class CacheProvider implements Cache, FlushableCache, ClearableCache, M
      */
     public function save($id, $data, $lifeTime = 0)
     {
-        return $this->doSave($this->getNamespacedId($id), $data, $lifeTime);
+        return $this->doSave($this->getNamespacedId($id), $data, (int) $lifeTime);
     }
 
     /**
@@ -265,7 +265,7 @@ abstract class CacheProvider implements Cache, FlushableCache, ClearableCache, M
         $success = true;
 
         foreach ($keysAndValues as $key => $value) {
-            if (!$this->doSave($key, $value, $lifetime)) {
+            if (!$this->doSave($key, $value, (int) $lifetime)) {
                 $success = false;
             }
         }
