@@ -61,7 +61,7 @@ class ChainCacheTest extends CacheTest
         $result = $chainCache->fetch('bar');
 
         $this->assertEquals('value', $result);
-        $this->assertTrue($cache2->contains('bar'));
+        $this->assertTrue($cache1->contains('bar'));
     }
 
     public function testFetchMultiplePropagateToFastestCache()
