@@ -89,7 +89,7 @@ class MemcacheCache extends CacheProvider
         if ($lifeTime > 30 * 24 * 3600) {
             $lifeTime = time() + $lifeTime;
         }
-        return $this->memcache->set($id, $data, 0, (int) $lifeTime);
+        return $this->memcache->set($id, $data, 0, $lifeTime);
     }
 
     /**

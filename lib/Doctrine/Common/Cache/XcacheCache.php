@@ -53,7 +53,7 @@ class XcacheCache extends CacheProvider
      */
     protected function doSave($id, $data, $lifeTime = 0)
     {
-        return xcache_set($id, serialize($data), (int) $lifeTime);
+        return xcache_set($id, serialize($data), $lifeTime);
     }
 
     /**

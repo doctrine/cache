@@ -81,7 +81,7 @@ class CouchbaseCache extends CacheProvider
         if ($lifeTime > 30 * 24 * 3600) {
             $lifeTime = time() + $lifeTime;
         }
-        return $this->couchbase->set($id, $data, (int) $lifeTime);
+        return $this->couchbase->set($id, $data, $lifeTime);
     }
 
     /**
