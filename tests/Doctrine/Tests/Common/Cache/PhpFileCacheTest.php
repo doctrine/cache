@@ -70,7 +70,8 @@ class PhpFileCacheTest extends BaseFileCacheTest
     public function testFailureOnIncludeNotSettedCacheDoesntGetCaughtAsError()
     {
         $cache = $this->_getCacheDriver();
-        set_error_handler(function($errno, $errstr, $errfile, $errlin){
+        set_error_handler(function($errno, $errstr, $errfile, $errline){
+            restore_error_handler();
             $this->fail('include failure captured');
         });
         $cache->fetch('key');
