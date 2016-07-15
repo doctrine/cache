@@ -20,7 +20,6 @@
 namespace Doctrine\Common\Cache;
 
 use Riak\Bucket;
-use Riak\Connection;
 use Riak\Input;
 use Riak\Exception;
 use Riak\Object;
