@@ -60,7 +60,7 @@ abstract class CacheTest extends \Doctrine\Tests\DoctrineTestCase
         $this->assertFalse($cache->fetch('KEY'));
 
         $cache->delete('KEY');
-        $this->assertTrue($cache->contains('key', 'Deleting cache item with different case must not affect other cache item'));
+        $this->assertTrue($cache->contains('key'), 'Deleting cache item with different case must not affect other cache item');
     }
 
     public function testFetchMultiple()
