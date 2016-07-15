@@ -86,11 +86,13 @@ class SQLite3Cache extends CacheProvider
      */
     protected function doFetch($id)
     {
-        if ($item = $this->findById($id)) {
-            return unserialize($item[self::DATA_FIELD]);
+        $item = $this->findById($id)
+
+        if (!$item) {
+            return false;
         }
 
-        return false;
+        return unserialize($item[self::DATA_FIELD]);
     }
 
     /**
