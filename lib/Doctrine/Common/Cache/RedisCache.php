@@ -74,7 +74,7 @@ class RedisCache extends CacheProvider
         $fetchedItems = array_combine($keys, $this->redis->mget($keys));
 
         // Redis mget returns false for keys that do not exist. So we need to filter those out unless it's the real data.
-        $foundItems   = array();
+        $foundItems   = [];
 
         foreach ($fetchedItems as $key => $value) {
             if (false !== $value || $this->redis->exists($key)) {
@@ -149,13 +149,13 @@ class RedisCache extends CacheProvider
     protected function doGetStats()
     {
         $info = $this->redis->info();
-        return array(
+        return [
             Cache::STATS_HITS   => $info['keyspace_hits'],
             Cache::STATS_MISSES => $info['keyspace_misses'],
             Cache::STATS_UPTIME => $info['uptime_in_seconds'],
             Cache::STATS_MEMORY_USAGE      => $info['used_memory'],
             Cache::STATS_MEMORY_AVAILABLE  => false
-        );
+        ];
     }
 
     /**

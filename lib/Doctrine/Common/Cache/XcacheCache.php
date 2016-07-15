@@ -101,12 +101,12 @@ class XcacheCache extends CacheProvider
         $this->checkAuthorization();
 
         $info = xcache_info(XC_TYPE_VAR, 0);
-        return array(
+        return [
             Cache::STATS_HITS   => $info['hits'],
             Cache::STATS_MISSES => $info['misses'],
             Cache::STATS_UPTIME => null,
             Cache::STATS_MEMORY_USAGE      => $info['size'],
             Cache::STATS_MEMORY_AVAILABLE  => $info['avail'],
-        );
+        ];
     }
 }

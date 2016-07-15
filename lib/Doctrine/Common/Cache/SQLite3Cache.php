@@ -201,7 +201,7 @@ class SQLite3Cache extends CacheProvider
      */
     private function getFields()
     {
-        return array(static::ID_FIELD, static::DATA_FIELD, static::EXPIRATION_FIELD);
+        return [static::ID_FIELD, static::DATA_FIELD, static::EXPIRATION_FIELD];
     }
 
     /**

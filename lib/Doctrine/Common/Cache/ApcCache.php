@@ -107,12 +107,12 @@ class ApcCache extends CacheProvider
             $info['start_time'] = isset($info['start_time']) ? $info['start_time'] : $info['stime'];
         }
 
-        return array(
+        return [
             Cache::STATS_HITS             => $info['num_hits'],
             Cache::STATS_MISSES           => $info['num_misses'],
             Cache::STATS_UPTIME           => $info['start_time'],
             Cache::STATS_MEMORY_USAGE     => $info['mem_size'],
             Cache::STATS_MEMORY_AVAILABLE => $sma['avail_mem'],
-        );
+        ];
     }
 }

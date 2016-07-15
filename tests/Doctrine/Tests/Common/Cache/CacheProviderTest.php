@@ -9,26 +9,26 @@ class CacheProviderTest extends \Doctrine\Tests\DoctrineTestCase
         /* @var $cache \Doctrine\Common\Cache\CacheProvider|\PHPUnit_Framework_MockObject_MockObject */
         $cache = $this->getMockForAbstractClass(
             'Doctrine\Common\Cache\CacheProvider',
-            array(),
+            [],
             '',
             true,
             true,
             true,
-            array('doFetchMultiple')
+            ['doFetchMultiple']
         );
 
         $cache
             ->expects($this->once())
             ->method('doFetchMultiple')
-            ->will($this->returnValue(array(
+            ->will($this->returnValue([
                 '[foo][1]' => 'bar',
                 '[bar][1]' => 'baz',
                 '[baz][1]' => 'tab',
-            )));
+            ]));
 
         $this->assertEquals(
-            array('foo' => 'bar', 'bar' => 'baz'),
-            $cache->fetchMultiple(array('foo', 'bar'))
+            ['foo' => 'bar', 'bar' => 'baz'],
+            $cache->fetchMultiple(['foo', 'bar'])
         );
     }
 
@@ -37,12 +37,12 @@ class CacheProviderTest extends \Doctrine\Tests\DoctrineTestCase
         /* @var $cache \Doctrine\Common\Cache\CacheProvider|\PHPUnit_Framework_MockObject_MockObject */
         $cache = $this->getMockForAbstractClass(
             'Doctrine\Common\Cache\CacheProvider',
-            array(),
+            [],
             '',
             true,
             true,
             true,
-            array('doFetch', 'doSave', 'doContains')
+            ['doFetch', 'doSave', 'doContains']
         );
 
         $cache
@@ -75,12 +75,12 @@ class CacheProviderTest extends \Doctrine\Tests\DoctrineTestCase
         /* @var $cache \Doctrine\Common\Cache\CacheProvider|\PHPUnit_Framework_MockObject_MockObject */
         $cache = $this->getMockForAbstractClass(
             'Doctrine\Common\Cache\CacheProvider',
-            array(),
+            [],
             '',
             true,
             true,
             true,
-            array('doSave')
+            ['doSave']
         );
 
         $cache
@@ -95,9 +95,9 @@ class CacheProviderTest extends \Doctrine\Tests\DoctrineTestCase
             ->with('[kok][1]', 'vok', 0)
             ->will($this->returnValue(true));
 
-        $cache->saveMultiple(array(
+        $cache->saveMultiple([
             'kerr'  => 'verr',
             'kok'   => 'vok',
-        ));
+        ]);
     }
 }
