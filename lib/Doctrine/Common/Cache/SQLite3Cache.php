@@ -86,7 +86,7 @@ class SQLite3Cache extends CacheProvider
      */
     protected function doFetch($id)
     {
-        $item = $this->findById($id)
+        $item = $this->findById($id);
 
         if (!$item) {
             return false;
