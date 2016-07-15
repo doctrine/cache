@@ -202,13 +202,13 @@ abstract class FileCache extends CacheProvider
 
         $free = disk_free_space($this->directory);
 
-        return array(
+        return [
             Cache::STATS_HITS               => null,
             Cache::STATS_MISSES             => null,
             Cache::STATS_UPTIME             => null,
             Cache::STATS_MEMORY_USAGE       => $usage,
             Cache::STATS_MEMORY_AVAILABLE   => $free,
-        );
+        ];
     }
 
     /**

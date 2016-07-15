@@ -110,12 +110,12 @@ class CouchbaseCache extends CacheProvider
         $server  = explode(":", $servers[0]);
         $key     = $server[0] . ":" . "11210";
         $stats   = $stats[$key];
-        return array(
+        return [
             Cache::STATS_HITS   => $stats['get_hits'],
             Cache::STATS_MISSES => $stats['get_misses'],
             Cache::STATS_UPTIME => $stats['uptime'],
             Cache::STATS_MEMORY_USAGE     => $stats['bytes'],
             Cache::STATS_MEMORY_AVAILABLE => $stats['limit_maxbytes'],
-        );
+        ];
     }
 }

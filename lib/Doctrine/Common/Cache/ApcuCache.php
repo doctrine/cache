@@ -95,12 +95,12 @@ class ApcuCache extends CacheProvider
         $info = apcu_cache_info(true);
         $sma  = apcu_sma_info();
 
-        return array(
+        return [
             Cache::STATS_HITS             => $info['num_hits'],
             Cache::STATS_MISSES           => $info['num_misses'],
             Cache::STATS_UPTIME           => $info['start_time'],
             Cache::STATS_MEMORY_USAGE     => $info['mem_size'],
             Cache::STATS_MEMORY_AVAILABLE => $sma['avail_mem'],
-        );
+        ];
     }
 }

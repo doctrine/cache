@@ -84,13 +84,13 @@ abstract class CacheProvider implements Cache, FlushableCache, ClearableCache, M
     public function fetchMultiple(array $keys)
     {
         if (empty($keys)) {
-            return array();
+            return [];
         }
         
         // note: the array_combine() is in place to keep an association between our $keys and the $namespacedKeys
-        $namespacedKeys = array_combine($keys, array_map(array($this, 'getNamespacedId'), $keys));
+        $namespacedKeys = array_combine($keys, array_map([$this, 'getNamespacedId'], $keys));
         $items          = $this->doFetchMultiple($namespacedKeys);
-        $foundItems     = array();
+        $foundItems     = [];
 
         // no internal array function supports this sort of mapping: needs to be iterative
         // this filters and combines keys in one pass
@@ -108,7 +108,7 @@ abstract class CacheProvider implements Cache, FlushableCache, ClearableCache, M
      */
     public function saveMultiple(array $keysAndValues, $lifetime = 0)
     {
-        $namespacedKeysAndValues = array();
+        $namespacedKeysAndValues = [];
         foreach ($keysAndValues as $key => $value) {
             $namespacedKeysAndValues[$this->getNamespacedId($key)] = $value;
         }
@@ -222,7 +222,7 @@ abstract class CacheProvider implements Cache, FlushableCache, ClearableCache, M
      */
     protected function doFetchMultiple(array $keys)
     {
-        $returnValues = array();
+        $returnValues = [];
 
         foreach ($keys as $key) {
             if (false !== ($item = $this->doFetch($key)) || $this->doContains($key)) {

@@ -61,7 +61,7 @@ class PredisCache extends CacheProvider
      */
     protected function doFetchMultiple(array $keys)
     {
-        $fetchedItems = call_user_func_array(array($this->client, 'mget'), $keys);
+        $fetchedItems = call_user_func_array([$this->client, 'mget'], $keys);
 
         return array_map('unserialize', array_filter(array_combine($keys, $fetchedItems)));
     }
@@ -142,12 +142,12 @@ class PredisCache extends CacheProvider
     {
         $info = $this->client->info();
 
-        return array(
+        return [
             Cache::STATS_HITS              => $info['Stats']['keyspace_hits'],
             Cache::STATS_MISSES            => $info['Stats']['keyspace_misses'],
             Cache::STATS_UPTIME            => $info['Server']['uptime_in_seconds'],
             Cache::STATS_MEMORY_USAGE      => $info['Memory']['used_memory'],
             Cache::STATS_MEMORY_AVAILABLE  => false
-        );
+        ];
     }
 }

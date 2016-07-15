@@ -88,10 +88,10 @@ class PhpFileCache extends FileCache
 
         $filename  = $this->getFilename($id);
 
-        $value = array(
+        $value = [
             'lifetime'  => $lifeTime,
             'data'      => $data
-        );
+        ];
 
         $value  = var_export($value, true);
         $code   = sprintf('<?php return %s;', $value);
