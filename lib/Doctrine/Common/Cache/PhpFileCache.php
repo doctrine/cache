@@ -118,9 +118,10 @@ class PhpFileCache extends FileCache
     {
         $fileName = $this->getFilename($id);
 
+        // note: error suppression is still faster than `file_exists`, `is_file` and `is_readable`
         set_error_handler(self::$emptyErrorHandler);
 
-        $value = @include $fileName;
+        $value = include $fileName;
 
         restore_error_handler();
 
