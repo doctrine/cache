@@ -69,6 +69,18 @@ class PhpFileCacheTest extends BaseFileCacheTest
     {
         return new PhpFileCache($this->directory);
     }
+
+    public function testFailureOnIncludeNotSettedCacheDoesntGetCaughtAsError()
+    {
+        $cache = $this->_getCacheDriver();
+        set_error_handler(function($errno, $errstr, $errfile, $errline){
+            restore_error_handler();
+            $this->fail('include failure captured');
+        });
+        $cache->fetch('key');
+
+        restore_error_handler();
+    }
 }
 
 class NotSetStateClass
