@@ -45,12 +45,27 @@ class PhpFileCacheTest extends BaseFileCacheTest
         $this->assertTrue($cache->contains('test_set_state'));
     }
 
+    /**
+     * @group 154
+     */
     public function testNotImplementsSetState()
     {
         $cache = $this->_getCacheDriver();
 
-        $this->setExpectedException('InvalidArgumentException');
-        $cache->save('test_not_set_state', new NotSetStateClass([1,2,3]));
+        $cache->save('test_not_set_state', new NotSetStateClass([5,6,7]));
+        $this->assertEquals(new NotSetStateClass([5,6,7]), $cache->fetch('test_not_set_state'));
+    }
+
+    /**
+     * @group 154
+     */
+    public function testNotImplementsSetStateInArray()
+    {
+        $cache = $this->_getCacheDriver();
+
+        $cache->save('test_not_set_state_in_array', [new NotSetStateClass([4,3,2])]);
+        $this->assertEquals([new NotSetStateClass([4,3,2])], $cache->fetch('test_not_set_state_in_array'));
+        $this->assertTrue($cache->contains('test_not_set_state_in_array'));
     }
 
     public function testGetStats()
