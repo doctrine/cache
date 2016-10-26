@@ -90,7 +90,7 @@ class RedisCache extends CacheProvider
      */
     protected function doSaveMultiple(array $keysAndValues, $lifeTime = 0)
     {
-        if ($lifeTime > 0) {
+        if ($lifeTime) {
             $success = true;
 
             // Keys have lifetime, use SETEX for each of them
