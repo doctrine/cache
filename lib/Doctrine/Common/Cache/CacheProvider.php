@@ -28,8 +28,9 @@ namespace Doctrine\Common\Cache;
  * @author Jonathan Wage <jonwage@gmail.com>
  * @author Roman Borschel <roman@code-factory.org>
  * @author Fabio B. Silva <fabio.bat.silva@gmail.com>
+ * @author Andreas Flack <flack@contentcontrol-berlin.de>
  */
-abstract class CacheProvider implements Cache, FlushableCache, ClearableCache, MultiGetCache, MultiPutCache
+abstract class CacheProvider implements Cache, FlushableCache, ClearableCache, MultiGetCache, MultiPutCache, MultiDeleteCache
 {
     const DOCTRINE_NAMESPACE_CACHEKEY = 'DoctrineNamespaceCacheKey[%s]';
 
@@ -86,7 +87,7 @@ abstract class CacheProvider implements Cache, FlushableCache, ClearableCache, M
         if (empty($keys)) {
             return [];
         }
-        
+
         // note: the array_combine() is in place to keep an association between our $keys and the $namespacedKeys
         $namespacedKeys = array_combine($keys, array_map([$this, 'getNamespacedId'], $keys));
         $items          = $this->doFetchMultiple($namespacedKeys);
@@ -114,6 +115,16 @@ abstract class CacheProvider implements Cache, FlushableCache, ClearableCache, M
         }
 
         return $this->doSaveMultiple($namespacedKeysAndValues, $lifetime);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function deleteMultiple(array $keys)
+    {
+        $namespacedKeys = array_map([$this, 'getNamespacedId'], $keys);
+
+        return $this->doDeleteMultiple($namespacedKeys);
     }
 
     /**
@@ -284,6 +295,26 @@ abstract class CacheProvider implements Cache, FlushableCache, ClearableCache, M
      * @return bool TRUE if the entry was successfully stored in the cache, FALSE otherwise.
      */
     abstract protected function doSave($id, $data, $lifeTime = 0);
+
+    /**
+     * Default implementation of doDeleteMultiple. Each driver that supports multi-delete should override it.
+     *
+     * @param array $keys Array of keys to delete from the cache
+     *
+     * @return bool TRUE if the operation was successful, FALSE if it wasn't.
+     */
+    protected function doDeleteMultiple(array $keys)
+    {
+        $success = true;
+
+        foreach ($keys as $key) {
+            if (!$this->doDelete($key)) {
+                $success = false;
+            }
+        }
+
+        return $success;
+    }
 
     /**
      * Deletes a cache entry.

@@ -64,6 +64,14 @@ class ApcuCache extends CacheProvider
     /**
      * {@inheritdoc}
      */
+    protected function doDeleteMultiple(array $keys)
+    {
+        return apcu_delete($keys);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     protected function doFlush()
     {
         return apcu_clear_cache();
