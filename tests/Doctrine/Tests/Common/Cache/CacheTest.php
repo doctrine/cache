@@ -292,6 +292,20 @@ abstract class CacheTest extends \Doctrine\Tests\DoctrineTestCase
         $this->assertTrue($cache->contains('noexpire'), 'Data with lifetime of zero should not expire');
     }
 
+    /**
+     * When a negative TTL is passed in, it should be considered as 0
+     *
+     * @group #148
+     */
+    public function testNoExpireWithNegativeTtl()
+    {
+        $cache = $this->_getCacheDriver();
+        $cache->save('noexpire', 'value', -100);
+        // @TODO should more TTL-based tests pop up, so then we should mock the `time` API instead
+        sleep(1);
+        $this->assertTrue($cache->contains('noexpire'), 'Data with negative lifetime should not expire');
+    }
+
     public function testLongLifetime()
     {
         $cache = $this->_getCacheDriver();
