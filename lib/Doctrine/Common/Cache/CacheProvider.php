@@ -113,7 +113,7 @@ abstract class CacheProvider implements Cache, FlushableCache, ClearableCache, M
             $namespacedKeysAndValues[$this->getNamespacedId($key)] = $value;
         }
 
-        return $this->doSaveMultiple($namespacedKeysAndValues, $lifetime);
+        return $this->doSaveMultiple($namespacedKeysAndValues, max($lifetime, 0));
     }
 
     /**
@@ -129,7 +129,7 @@ abstract class CacheProvider implements Cache, FlushableCache, ClearableCache, M
      */
     public function save($id, $data, $lifeTime = 0)
     {
-        return $this->doSave($this->getNamespacedId($id), $data, $lifeTime);
+        return $this->doSave($this->getNamespacedId($id), $data, max($lifeTime, 0));
     }
 
     /**
@@ -256,7 +256,7 @@ abstract class CacheProvider implements Cache, FlushableCache, ClearableCache, M
      *
      * @param array $keysAndValues  Array of keys and values to save in cache
      * @param int   $lifetime       The lifetime. If != 0, sets a specific lifetime for these
-     *                              cache entries (0 => infinite lifeTime).
+     *                              cache entries (0 => infinite lifeTime). Is always an unsigned integer
      *
      * @return bool TRUE if the operation was successful, FALSE if it wasn't.
      */
@@ -279,7 +279,7 @@ abstract class CacheProvider implements Cache, FlushableCache, ClearableCache, M
      * @param string $id       The cache id.
      * @param string $data     The cache entry/data.
      * @param int    $lifeTime The lifetime. If != 0, sets a specific lifetime for this
-     *                           cache entry (0 => infinite lifeTime).
+     *                           cache entry (0 => infinite lifeTime). Is always an unsigned integer
      *
      * @return bool TRUE if the entry was successfully stored in the cache, FALSE otherwise.
      */
