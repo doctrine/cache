@@ -125,6 +125,27 @@ abstract class CacheTest extends \Doctrine\Tests\DoctrineTestCase
         $this->assertEquals($data, $cache->fetchMultiple($keys));
     }
 
+    /**
+     * When a negative TTL is passed in, it should be considered as 0
+     *
+     * @group #148
+     */
+    public function testSaveMultipleWithNegativeTtl()
+    {
+        $cache = $this->_getCacheDriver();
+        $cache->deleteAll();
+
+        $data = array_map(function ($value) {
+            return $value[0];
+        }, $this->provideDataToCache());
+
+        $this->assertTrue($cache->saveMultiple($data, -100));
+
+        $keys = array_keys($data);
+
+        $this->assertEquals($data, $cache->fetchMultiple($keys));
+    }
+
     public function provideDataToCache()
     {
         $obj = new \stdClass();
