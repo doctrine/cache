@@ -444,6 +444,10 @@ abstract class CacheTest extends \Doctrine\Tests\DoctrineTestCase
         $this->assertTrue($cache->save('with_ttl', 'with_ttl', 3600));
     }
 
+    /**
+     * @group 147
+     * @group 152
+     */
     public function testFetchingANonExistingKeyShouldNeverCauseANoticeOrWarning()
     {
         $cache = $this->_getCacheDriver();
