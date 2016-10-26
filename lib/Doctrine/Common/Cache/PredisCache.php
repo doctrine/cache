@@ -82,7 +82,7 @@ class PredisCache extends CacheProvider
      */
     protected function doContains($id)
     {
-        return $this->client->exists($id);
+        return (bool) $this->client->exists($id);
     }
 
     /**
