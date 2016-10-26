@@ -30,11 +30,21 @@ class PhpFileCache extends FileCache
     const EXTENSION = '.doctrinecache.php';
 
     /**
+     * @var callable
+     *
+     * This is cached in a local static variable to avoid instantiating a closure each time we need an empty handler
+     */
+    private static $emptyErrorHandler;
+
+    /**
      * {@inheritdoc}
      */
     public function __construct($directory, $extension = self::EXTENSION, $umask = 0002)
     {
         parent::__construct($directory, $extension, $umask);
+
+        self::$emptyErrorHandler = function () {
+        };
     }
 
     /**
@@ -108,7 +118,11 @@ class PhpFileCache extends FileCache
     {
         $fileName = $this->getFilename($id);
 
-        $value = file_exists($fileName) ? @include $fileName : null;
+        set_error_handler(self::$emptyErrorHandler);
+
+        $value = @include $fileName;
+
+        restore_error_handler();
 
         if (! isset($value['lifetime'])) {
             return false;
