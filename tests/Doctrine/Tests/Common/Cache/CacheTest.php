@@ -125,6 +125,26 @@ abstract class CacheTest extends \Doctrine\Tests\DoctrineTestCase
         $this->assertEquals($data, $cache->fetchMultiple($keys));
     }
 
+    public function testDeleteMultiple()
+    {
+        $cache = $this->_getCacheDriver();
+        $cache->deleteAll();
+
+        $data = array_map(function ($value) {
+            return $value[0];
+        }, $this->provideDataToCache());
+
+        $this->assertTrue($cache->saveMultiple($data));
+
+        $keys = array_keys($data);
+
+        $this->assertTrue($cache->deleteMultiple($keys));
+
+        foreach ($keys as $key) {
+            $this->assertFalse($cache->fetch($key));
+        }
+    }
+
     public function provideDataToCache()
     {
         $obj = new \stdClass();
