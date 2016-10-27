@@ -52,7 +52,34 @@ class ChainCache extends CacheProvider
             $cacheProvider->setNamespace($namespace);
         }
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    protected function doFetchMultiple(array $keys)
+    {
+        $returnValues = [];
 
+        $keys = array_combine($keys, $keys);
+        foreach ($this->cacheProviders as $idProvider => $cacheProvider) {
+            $items = $cacheProvider->doFetchMultiple($keys);
+            foreach ($items as $key => $value) {
+                if(false !== $value) {
+                    $returnValues[$key] = $value;
+                    for ($subIDProvider = $idProvider - 1 ; $subIDProvider >= 0 ; $subIDProvider--) {
+                        $this->cacheProviders[$subIDProvider]->doSave($key, $value);
+                    }
+                    unset($keys[$key]);
+                }
+            }
+        }
+        foreach ($keys as $key) {
+            $returnValues[$key] = false;
+        }
+
+        return $returnValues;
+    }
+    
     /**
      * {@inheritDoc}
      */
