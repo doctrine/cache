@@ -66,7 +66,9 @@ class ApcuCache extends CacheProvider
      */
     protected function doDeleteMultiple(array $keys)
     {
-        return apcu_delete($keys);
+        // Contrary to what the documentation states, delete returns an array
+        // that includes al keys for which deletion failed
+        return apcu_delete($keys) === [];
     }
 
     /**
