@@ -94,7 +94,7 @@ class MemcachedCache extends CacheProvider
      */
     protected function doDeleteMultiple(array $keys)
     {
-        $stat = $this->memcached->deleteMulti($keysAndValues, $lifetime);
+        $stat = $this->memcached->deleteMulti($keys);
         return count(array_unique($stat) > 1)
             || end($stat) === true;
     }
