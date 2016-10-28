@@ -105,15 +105,21 @@ abstract class CacheProvider implements Cache, FlushableCache, ClearableCache, M
 
     /**
      * {@inheritdoc}
+     *
+     * @throws \RuntimeException
      */
     public function saveMultiple(array $keysAndValues, $lifetime = 0)
     {
+        if ($lifetime < 0) {
+            throw new \RuntimeException('Cannot assign a negative value as $lifetime');
+        }
+
         $namespacedKeysAndValues = [];
         foreach ($keysAndValues as $key => $value) {
             $namespacedKeysAndValues[$this->getNamespacedId($key)] = $value;
         }
 
-        return $this->doSaveMultiple($namespacedKeysAndValues, max($lifetime, 0));
+        return $this->doSaveMultiple($namespacedKeysAndValues, $lifetime);
     }
 
     /**
@@ -126,10 +132,16 @@ abstract class CacheProvider implements Cache, FlushableCache, ClearableCache, M
 
     /**
      * {@inheritdoc}
+     *
+     * @throws \RuntimeException
      */
     public function save($id, $data, $lifeTime = 0)
     {
-        return $this->doSave($this->getNamespacedId($id), $data, max($lifeTime, 0));
+        if ($lifeTime < 0) {
+            throw new \RuntimeException('Cannot assign a negative value as $lifeTime');
+        }
+
+        return $this->doSave($this->getNamespacedId($id), $data, $lifeTime);
     }
 
     /**
