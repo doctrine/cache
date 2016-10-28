@@ -445,6 +445,35 @@ abstract class CacheTest extends \Doctrine\Tests\DoctrineTestCase
     }
 
     /**
+     * @group 147
+     * @group 152
+     */
+    public function testFetchingANonExistingKeyShouldNeverCauseANoticeOrWarning()
+    {
+        $cache = $this->_getCacheDriver();
+
+        $errorHandler = function () {
+            restore_error_handler();
+
+            $this->fail('include failure captured');
+        };
+
+        set_error_handler($errorHandler);
+
+        $cache->fetch('key');
+
+        self::assertSame(
+            $errorHandler,
+            set_error_handler(function () {
+            }),
+            'The error handler is the one set by this test, and wasn\'t replaced'
+        );
+
+        restore_error_handler();
+        restore_error_handler();
+    }
+
+    /**
      * Return whether multiple cache providers share the same storage.
      *
      * This is used for skipping certain tests for shared storage behavior.

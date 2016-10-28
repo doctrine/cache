@@ -79,7 +79,7 @@ class ApcCache extends CacheProvider
      */
     protected function doFetchMultiple(array $keys)
     {
-        return apc_fetch($keys);
+        return apc_fetch($keys) ?: [];
     }
 
     /**
