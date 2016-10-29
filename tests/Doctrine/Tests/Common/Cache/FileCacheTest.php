@@ -3,6 +3,7 @@
 namespace Doctrine\Tests\Common\Cache;
 
 use Doctrine\Common\Cache\Cache;
+use Doctrine\Common\Cache\FileCache;
 
 /**
  * @group DCOM-101
@@ -16,11 +17,11 @@ class FileCacheTest extends \Doctrine\Tests\DoctrineTestCase
 
     protected function setUp()
     {
-        $this->driver = $this->getMock(
-            'Doctrine\Common\Cache\FileCache',
-            ['doFetch', 'doContains', 'doSave'],
-            [], '', false
-        );
+        $this->driver = $this
+            ->getMockBuilder(FileCache::class)
+            ->setMethods(['doFetch', 'doContains', 'doSave'])
+            ->disableOriginalConstructor()
+            ->getMock();
     }
 
     public function testFilenameShouldCreateThePathWithOneSubDirectory()
@@ -43,16 +44,17 @@ class FileCacheTest extends \Doctrine\Tests\DoctrineTestCase
 
     public function testFileExtensionCorrectlyEscaped()
     {
-        $driver1 = $this->getMock(
-            'Doctrine\Common\Cache\FileCache',
-            ['doFetch', 'doContains', 'doSave'],
-            [__DIR__, '.*']
-        );
-        $driver2 = $this->getMock(
-            'Doctrine\Common\Cache\FileCache',
-            ['doFetch', 'doContains', 'doSave'],
-            [__DIR__, '.php']
-        );
+        $driver1 = $this
+            ->getMockBuilder(FileCache::class)
+            ->setMethods(['doFetch', 'doContains', 'doSave'])
+            ->setConstructorArgs([__DIR__, '.*'])
+            ->getMock();
+
+        $driver2 = $this
+            ->getMockBuilder(FileCache::class)
+            ->setMethods(['doFetch', 'doContains', 'doSave'])
+            ->setConstructorArgs([__DIR__, '.php'])
+            ->getMock();
 
         $doGetStats = new \ReflectionMethod($driver1, 'doGetStats');
 
@@ -70,11 +72,11 @@ class FileCacheTest extends \Doctrine\Tests\DoctrineTestCase
      */
     public function testFileExtensionSlashCorrectlyEscaped()
     {
-        $driver = $this->getMock(
-            'Doctrine\Common\Cache\FileCache',
-            ['doFetch', 'doContains', 'doSave'],
-            [__DIR__ . '/../', DIRECTORY_SEPARATOR . basename(__FILE__)]
-        );
+        $driver = $this
+            ->getMockBuilder(FileCache::class)
+            ->setMethods(['doFetch', 'doContains', 'doSave'])
+            ->setConstructorArgs([__DIR__ . '/../', DIRECTORY_SEPARATOR . basename(__FILE__)])
+            ->getMock();
 
         $doGetStats = new \ReflectionMethod($driver, 'doGetStats');
 
@@ -89,21 +91,22 @@ class FileCacheTest extends \Doctrine\Tests\DoctrineTestCase
     {
         $this->setExpectedException('InvalidArgumentException');
 
-        $this->getMock(
-            'Doctrine\Common\Cache\FileCache',
-            ['doFetch', 'doContains', 'doSave'],
-            ['', '', 'invalid']
-        );
+        $this
+            ->getMockBuilder(FileCache::class)
+            ->setMethods(['doFetch', 'doContains', 'doSave'])
+            ->setConstructorArgs(['', '', 'invalid'])
+            ->getMock();
     }
 
     public function testGetDirectoryReturnsRealpathDirectoryString()
     {
         $directory = __DIR__ . '/../';
-        $driver = $this->getMock(
-            'Doctrine\Common\Cache\FileCache',
-            ['doFetch', 'doContains', 'doSave'],
-            [$directory]
-        );
+
+        $driver = $this
+            ->getMockBuilder(FileCache::class)
+            ->setMethods(['doFetch', 'doContains', 'doSave'])
+            ->setConstructorArgs([$directory])
+            ->getMock();
 
         $doGetDirectory = new \ReflectionMethod($driver, 'getDirectory');
 
@@ -117,11 +120,12 @@ class FileCacheTest extends \Doctrine\Tests\DoctrineTestCase
     {
         $directory = __DIR__ . '/../';
         $extension = DIRECTORY_SEPARATOR . basename(__FILE__);
-        $driver = $this->getMock(
-            'Doctrine\Common\Cache\FileCache',
-            ['doFetch', 'doContains', 'doSave'],
-            [$directory, $extension]
-        );
+
+        $driver = $this
+            ->getMockBuilder(FileCache::class)
+            ->setMethods(['doFetch', 'doContains', 'doSave'])
+            ->setConstructorArgs([$directory, $extension])
+            ->getMock();
 
         $doGetExtension = new \ReflectionMethod($driver, 'getExtension');
 
