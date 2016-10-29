@@ -4,6 +4,7 @@ namespace Doctrine\Tests\Common\Cache;
 
 use Doctrine\Common\Cache\Cache;
 use Doctrine\Common\Cache\FileCache;
+use InvalidArgumentException;
 
 /**
  * @group DCOM-101
@@ -89,7 +90,7 @@ class FileCacheTest extends \Doctrine\Tests\DoctrineTestCase
 
     public function testNonIntUmaskThrowsInvalidArgumentException()
     {
-        $this->setExpectedException('InvalidArgumentException');
+        $this->expectException(InvalidArgumentException::class);
 
         $this
             ->getMockBuilder(FileCache::class)
