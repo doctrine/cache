@@ -117,7 +117,7 @@ abstract class CacheProvider implements Cache, FlushableCache, ClearableCache, M
         }
 
         if ($lifetime < 0) {
-            throw LifeTimeException::fromNegativeValue();
+            throw LifeTimeException::fromNegativeLifetime();
         }
 
         $namespacedKeysAndValues = [];
@@ -148,7 +148,7 @@ abstract class CacheProvider implements Cache, FlushableCache, ClearableCache, M
         }
 
         if ($lifeTime < 0) {
-            throw LifeTimeException::fromNegativeValue();
+            throw LifeTimeException::fromNegativeLifetime();
         }
 
         return $this->doSave($this->getNamespacedId($id), $data, $lifeTime);
