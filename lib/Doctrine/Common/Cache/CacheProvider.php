@@ -19,6 +19,8 @@
 
 namespace Doctrine\Common\Cache;
 
+use Doctrine\Common\Cache\Exception\LifeTimeException;
+
 /**
  * Base class for cache provider implementations.
  *
@@ -105,15 +107,25 @@ abstract class CacheProvider implements Cache, FlushableCache, ClearableCache, M
 
     /**
      * {@inheritdoc}
+     *
+     * @throws \RuntimeException
      */
     public function saveMultiple(array $keysAndValues, $lifetime = 0)
     {
+        if (! is_numeric($lifetime)) {
+            throw LifeTimeException::fromNonIntegerLifetime($lifetime);
+        }
+
+        if ($lifetime < 0) {
+            throw LifeTimeException::fromNegativeLifetime();
+        }
+
         $namespacedKeysAndValues = [];
         foreach ($keysAndValues as $key => $value) {
             $namespacedKeysAndValues[$this->getNamespacedId($key)] = $value;
         }
 
-        return $this->doSaveMultiple($namespacedKeysAndValues, max($lifetime, 0));
+        return $this->doSaveMultiple($namespacedKeysAndValues, $lifetime);
     }
 
     /**
@@ -126,10 +138,20 @@ abstract class CacheProvider implements Cache, FlushableCache, ClearableCache, M
 
     /**
      * {@inheritdoc}
+     *
+     * @throws \Doctrine\Common\Cache\Exception\LifeTimeException
      */
     public function save($id, $data, $lifeTime = 0)
     {
-        return $this->doSave($this->getNamespacedId($id), $data, max($lifeTime, 0));
+        if (! is_numeric($lifeTime)) {
+            throw LifeTimeException::fromNonIntegerLifetime($lifeTime);
+        }
+
+        if ($lifeTime < 0) {
+            throw LifeTimeException::fromNegativeLifetime();
+        }
+
+        return $this->doSave($this->getNamespacedId($id), $data, $lifeTime);
     }
 
     /**

@@ -4,9 +4,37 @@ namespace Doctrine\Tests\Common\Cache;
 
 use Doctrine\Common\Cache\Cache;
 use ArrayObject;
+use Doctrine\Common\Cache\Exception\LifeTimeException;
 
 abstract class CacheTest extends \Doctrine\Tests\DoctrineTestCase
 {
+    public function testSetNameSpace()
+    {
+        $cache = $this->_getCacheDriver();
+
+        $cache->setNamespace('Foo');
+
+        $this->assertSame('Foo', $cache->getNamespace());
+        $this->assertInternalType('string', $cache->getNamespace());
+
+        $cache->setNamespace(123456);
+
+        $this->assertSame('123456', $cache->getNamespace());
+        $this->assertInternalType('string', $cache->getNamespace());
+    }
+
+    /**
+     * @dataProvider providerNonIntegerLifeTime
+     */
+    public function testLifeTimeShouldBeAnIntegerValue($lifeTime)
+    {
+        $cache = $this->_getCacheDriver();
+
+        $this->setExpectedException(LifeTimeException::class);
+
+        $cache->save('id', 'data', $lifeTime);
+    }
+
     /**
      * @dataProvider provideDataToCache
      */
@@ -139,11 +167,9 @@ abstract class CacheTest extends \Doctrine\Tests\DoctrineTestCase
             return $value[0];
         }, $this->provideDataToCache());
 
+        $this->setExpectedException(LifeTimeException::class);
+
         $this->assertTrue($cache->saveMultiple($data, -100));
-
-        $keys = array_keys($data);
-
-        $this->assertEquals($data, $cache->fetchMultiple($keys));
     }
 
     public function provideDataToCache()
@@ -273,6 +299,17 @@ abstract class CacheTest extends \Doctrine\Tests\DoctrineTestCase
         ];
     }
 
+    public function providerNonIntegerLifeTime()
+    {
+        return [
+            ['string'],
+            [new \StdClass],
+            [[]],
+            [true],
+            [false],
+        ];
+    }
+
     public function testLifetime()
     {
         $cache = $this->_getCacheDriver();
@@ -300,10 +337,10 @@ abstract class CacheTest extends \Doctrine\Tests\DoctrineTestCase
     public function testNoExpireWithNegativeTtl()
     {
         $cache = $this->_getCacheDriver();
+
+        $this->setExpectedException(LifeTimeException::class);
+
         $cache->save('noexpire', 'value', -100);
-        // @TODO should more TTL-based tests pop up, so then we should mock the `time` API instead
-        sleep(1);
-        $this->assertTrue($cache->contains('noexpire'), 'Data with negative lifetime should not expire');
     }
 
     public function testLongLifetime()
