@@ -307,7 +307,6 @@ abstract class CacheTest extends \Doctrine\Tests\DoctrineTestCase
             [[]],
             [true],
             [false],
-            [3e10]
         ];
     }
 
