@@ -338,7 +338,7 @@ abstract class CacheTest extends \Doctrine\Tests\DoctrineTestCase
     {
         $cache = $this->_getCacheDriver();
 
-        $this->setExpectedException('RuntimeException');
+        $this->setExpectedException('Doctrine\Common\Cache\Exception\LifeTimeException');
 
         $cache->save('noexpire', 'value', -100);
     }
