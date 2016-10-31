@@ -30,11 +30,11 @@ class LifeTimeException extends \RuntimeException
 {
     public static function fromNonIntegerLifetime($value)
     {
-        return new self(sprintf('$lifetime should be an integer, %s given', gettype($value)));
+        return new self(sprintf('Lifetime should be an integer, %s given', gettype($value)));
     }
 
     public static function fromNegativeValue()
     {
-        return new self('Cannot assign a negative value as $lifeTime');
+        return new self('Cannot assign a negative value as LifeTime');
     }
 }
