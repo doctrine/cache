@@ -23,7 +23,7 @@ namespace Doctrine\Common\Cache\Exception;
  * Life Time Exception.
  *
  * @link   www.doctrine-project.org
- * @since  2.0
+ * @since  1.7
  * @author Jefersson Nathan <malukenho@phpse.net>
  */
 class LifeTimeException extends \RuntimeException
