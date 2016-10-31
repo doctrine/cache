@@ -4,6 +4,7 @@ namespace Doctrine\Tests\Common\Cache;
 
 use Doctrine\Common\Cache\Cache;
 use ArrayObject;
+use Doctrine\Common\Cache\Exception\LifeTimeException;
 
 abstract class CacheTest extends \Doctrine\Tests\DoctrineTestCase
 {
@@ -29,7 +30,7 @@ abstract class CacheTest extends \Doctrine\Tests\DoctrineTestCase
     {
         $cache = $this->_getCacheDriver();
 
-        $this->setExpectedException('Doctrine\Common\Cache\Exception\LifeTimeException');
+        $this->setExpectedException(LifeTimeException::class);
 
         $cache->save('id', 'data', $lifeTime);
     }
@@ -166,7 +167,7 @@ abstract class CacheTest extends \Doctrine\Tests\DoctrineTestCase
             return $value[0];
         }, $this->provideDataToCache());
 
-        $this->setExpectedException('RunTimeException');
+        $this->setExpectedException(LifeTimeException::class);
 
         $this->assertTrue($cache->saveMultiple($data, -100));
     }
@@ -338,7 +339,7 @@ abstract class CacheTest extends \Doctrine\Tests\DoctrineTestCase
     {
         $cache = $this->_getCacheDriver();
 
-        $this->setExpectedException('Doctrine\Common\Cache\Exception\LifeTimeException');
+        $this->setExpectedException(LifeTimeException::class);
 
         $cache->save('noexpire', 'value', -100);
     }
