@@ -19,6 +19,8 @@
 
 namespace Doctrine\Common\Cache;
 
+use Doctrine\Common\Cache\Exception\LifeTimeException;
+
 /**
  * Base class for cache provider implementations.
  *
@@ -110,8 +112,12 @@ abstract class CacheProvider implements Cache, FlushableCache, ClearableCache, M
      */
     public function saveMultiple(array $keysAndValues, $lifetime = 0)
     {
+        if (! is_int($lifetime)) {
+            throw LifeTimeException::fromWrongTypeValue($lifetime);
+        }
+
         if ($lifetime < 0) {
-            throw new \RuntimeException('Cannot assign a negative value as $lifetime');
+            throw LifeTimeException::fromNegativeValue();
         }
 
         $namespacedKeysAndValues = [];
@@ -133,12 +139,16 @@ abstract class CacheProvider implements Cache, FlushableCache, ClearableCache, M
     /**
      * {@inheritdoc}
      *
-     * @throws \RuntimeException
+     * @throws \Doctrine\Common\Cache\Exception\LifeTimeException
      */
     public function save($id, $data, $lifeTime = 0)
     {
+        if (! is_int($lifeTime)) {
+            throw LifeTimeException::fromWrongTypeValue($lifeTime);
+        }
+
         if ($lifeTime < 0) {
-            throw new \RuntimeException('Cannot assign a negative value as $lifeTime');
+            throw LifeTimeException::fromNegativeValue();
         }
 
         return $this->doSave($this->getNamespacedId($id), $data, $lifeTime);
