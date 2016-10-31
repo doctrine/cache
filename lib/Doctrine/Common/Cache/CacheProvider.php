@@ -113,7 +113,7 @@ abstract class CacheProvider implements Cache, FlushableCache, ClearableCache, M
     public function saveMultiple(array $keysAndValues, $lifetime = 0)
     {
         if (! is_int($lifetime)) {
-            throw LifeTimeException::fromWrongTypeValue($lifetime);
+            throw LifeTimeException::fromNonIntegerLifetime($lifetime);
         }
 
         if ($lifetime < 0) {
@@ -144,7 +144,7 @@ abstract class CacheProvider implements Cache, FlushableCache, ClearableCache, M
     public function save($id, $data, $lifeTime = 0)
     {
         if (! is_int($lifeTime)) {
-            throw LifeTimeException::fromWrongTypeValue($lifeTime);
+            throw LifeTimeException::fromNonIntegerLifetime($lifeTime);
         }
 
         if ($lifeTime < 0) {

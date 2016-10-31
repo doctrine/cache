@@ -28,7 +28,7 @@ namespace Doctrine\Common\Cache\Exception;
  */
 class LifeTimeException extends \RuntimeException
 {
-    public static function fromWrongTypeValue($value)
+    public static function fromNonIntegerLifetime($value)
     {
         return new self(sprintf('$lifetime should be an integer, %s given', gettype($value)));
     }
