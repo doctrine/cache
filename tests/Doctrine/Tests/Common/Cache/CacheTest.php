@@ -23,6 +23,18 @@ abstract class CacheTest extends \Doctrine\Tests\DoctrineTestCase
     }
 
     /**
+     * @dataProvider providerNonIntegerLifeTime
+     */
+    public function testLifeTimeShouldBeAnIntegerValue($lifeTime)
+    {
+        $cache = $this->_getCacheDriver();
+
+        $this->setExpectedException('Doctrine\Common\Cache\Exception\LifeTimeException');
+
+        $cache->save('id', 'data', $lifeTime);
+    }
+
+    /**
      * @dataProvider provideDataToCache
      */
     public function testSetContainsFetchDelete($value)
@@ -283,6 +295,18 @@ abstract class CacheTest extends \Doctrine\Tests\DoctrineTestCase
             [''],
             [str_repeat('a', 300)], // long key
             [str_repeat('a', 113)],
+        ];
+    }
+
+    public function providerNonIntegerLifeTime()
+    {
+        return [
+            ['string'],
+            [new \StdClass],
+            [[]],
+            [true],
+            [false],
+            [3e10]
         ];
     }
 
