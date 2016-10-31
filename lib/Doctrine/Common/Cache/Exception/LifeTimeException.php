@@ -35,6 +35,6 @@ class LifeTimeException extends \RuntimeException
 
     public static function fromNegativeLifetime()
     {
-        return new self('Cannot assign a negative value as LifeTime');
+        return new self('Cannot assign a negative value as lifetime');
     }
 }

@@ -23,7 +23,7 @@ class LifeTimeExceptionTest extends \PHPUnit_Framework_TestCase
 
         $this->assertInstanceOf(LifeTimeException::class, $exception);
         $this->assertSame(
-            'Cannot assign a negative value as LifeTime',
+            'Cannot assign a negative value as lifetime',
             $exception->getMessage()
         );
     }
