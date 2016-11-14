@@ -29,6 +29,22 @@ namespace Doctrine\Common\Cache;
 interface TaggableCache
 {
     /**
+     * Puts data into the cache and mark enty with tags.
+     *
+     * If a cache entry with the given id already exists, its data will be replaced.
+     *
+     * @param string $id       The cache id.
+     * @param mixed  $data     The cache entry/data.
+     * @param int    $lifeTime The lifetime in number of seconds for this cache entry.
+     *                         If zero (the default), the entry never expires (although it may be deleted from the cache
+     *                         to make place for other entries).
+     * @param array $tags
+     *
+     * @return bool TRUE if the entry was successfully stored in the cache, FALSE otherwise.
+     */
+    public function saveWithTags($id, $data, $lifeTime = 0, array $tags = []);
+
+    /**
      * Fetches an entry tags from the cache.
      *
      * @param string $id The id of the cache entry to fetch.

@@ -160,15 +160,23 @@ abstract class CacheProvider implements Cache, FlushableCache, ClearableCache, M
     /**
      * {@inheritdoc}
      */
-    public function save($id, $data, $lifeTime = 0, array $tags = [])
+    public function save($id, $data, $lifeTime = 0)
+    {
+        return $this->doSave($this->getNamespacedId($id), $data, $lifeTime);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function saveWithTags($id, $data, $lifeTime = 0, array $tags = [])
     {
         if (!empty($tags)) {
             $this->updateTagsReferences($id, $tags);
 
-            $this->doSave($this->getNamespacedId($id.self::TAG_SUFFIX), $tags, $lifeTime);
+            $this->save($id.self::TAG_SUFFIX, $tags, $lifeTime);
         }
 
-        return $this->doSave($this->getNamespacedId($id), $data, $lifeTime);
+        return $this->save($id, $data, $lifeTime);
     }
 
     /**
