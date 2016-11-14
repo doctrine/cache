@@ -73,10 +73,11 @@ interface Cache
      * @param int    $lifeTime The lifetime in number of seconds for this cache entry.
      *                         If zero (the default), the entry never expires (although it may be deleted from the cache
      *                         to make place for other entries).
+     * @param array $tags
      *
      * @return bool TRUE if the entry was successfully stored in the cache, FALSE otherwise.
      */
-    public function save($id, $data, $lifeTime = 0);
+    public function save($id, $data, $lifeTime = 0, array $tags = []);
 
     /**
      * Deletes a cache entry.

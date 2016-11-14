@@ -29,9 +29,11 @@ namespace Doctrine\Common\Cache;
  * @author Roman Borschel <roman@code-factory.org>
  * @author Fabio B. Silva <fabio.bat.silva@gmail.com>
  */
-abstract class CacheProvider implements Cache, FlushableCache, ClearableCache, MultiGetCache, MultiPutCache
+abstract class CacheProvider implements Cache, FlushableCache, ClearableCache, MultiGetCache, MultiPutCache, TaggableCache
 {
     const DOCTRINE_NAMESPACE_CACHEKEY = 'DoctrineNamespaceCacheKey[%s]';
+    const TAG_PREFIX = 'DoctrineTAG#_';
+    const TAG_SUFFIX = '_#DoctrineTAGS';
 
     /**
      * The namespace to prefix all cache ids with.
@@ -106,6 +108,37 @@ abstract class CacheProvider implements Cache, FlushableCache, ClearableCache, M
     /**
      * {@inheritdoc}
      */
+    public function fetchTags($id)
+    {
+        return $this->fetch($id.self::TAG_SUFFIX);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function fetchByTag($tag)
+    {
+        $tagStoredKeys = $this->fetch(self::TAG_PREFIX.$tag);
+
+        if (!is_array($tagStoredKeys)) {
+            $tagStoredKeys = [];
+        }
+
+        $result = [];
+
+        foreach ($tagStoredKeys as $storedKey => $_dummy) {
+            $val = $this->fetch($storedKey);
+            if ($val !== false) {
+                $result[$storedKey] = $val;
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function saveMultiple(array $keysAndValues, $lifetime = 0)
     {
         $namespacedKeysAndValues = [];
@@ -127,8 +160,14 @@ abstract class CacheProvider implements Cache, FlushableCache, ClearableCache, M
     /**
      * {@inheritdoc}
      */
-    public function save($id, $data, $lifeTime = 0)
+    public function save($id, $data, $lifeTime = 0, array $tags = [])
     {
+        if (!empty($tags)) {
+            $this->updateTagsReferences($id, $tags);
+
+            $this->doSave($this->getNamespacedId($id.self::TAG_SUFFIX), $tags, $lifeTime);
+        }
+
         return $this->doSave($this->getNamespacedId($id), $data, $lifeTime);
     }
 
@@ -137,7 +176,39 @@ abstract class CacheProvider implements Cache, FlushableCache, ClearableCache, M
      */
     public function delete($id)
     {
+        $this->doDelete($this->getNamespacedId($id).self::TAG_SUFFIX);
+
         return $this->doDelete($this->getNamespacedId($id));
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function deleteByTag($tag)
+    {
+        $tagKey = self::TAG_PREFIX.$tag;
+
+        $tagStoredKeys = $this->fetch($tagKey);
+
+        if (!is_array($tagStoredKeys)) {
+            $tagStoredKeys = [];
+        }
+
+        foreach ($tagStoredKeys as $storedKey => $_dummy) {
+            $this->delete($storedKey);
+        }
+
+        return $this->delete($tagKey);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function deleteByTags(array $tags = [])
+    {
+        foreach ($tags as $tag) {
+            $this->deleteByTag($tag);
+        }
     }
 
     /**
@@ -231,6 +302,31 @@ abstract class CacheProvider implements Cache, FlushableCache, ClearableCache, M
         }
 
         return $returnValues;
+    }
+
+    /**
+     * Update tags references for cache entry.
+     *
+     * @param string $id
+     * @param array  $tags
+     */
+    protected function updateTagsReferences($id, array $tags = [])
+    {
+        foreach ($tags as $tag) {
+            $tagKey = self::TAG_PREFIX.$tag;
+
+            $tagStoredKeys = $this->fetch($tagKey);
+
+            if (!is_array($tagStoredKeys)) {
+                $tagStoredKeys = [];
+            }
+
+            if (!isset($tagStoredKeys[$id])) {
+                $tagStoredKeys[$id] = 1;
+            }
+
+            $this->doSave($this->getNamespacedId($tagKey), $tagStoredKeys, 0);
+        }
     }
 
     /**
