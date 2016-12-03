@@ -219,7 +219,6 @@ class FileCacheTest extends \Doctrine\Tests\DoctrineTestCase
     }
 
     /**
-     * @runInSeparateProcess
      * @dataProvider getPathLengthsToTest
      *
      * @covers \Doctrine\Common\Cache\FileCache::getFilename
