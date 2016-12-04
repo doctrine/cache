@@ -2,6 +2,8 @@
 
 namespace Doctrine\Tests\Common\Cache;
 
+use Doctrine\Common\Cache\CacheProvider;
+
 class CacheProviderTest extends \Doctrine\Tests\DoctrineTestCase
 {
     public function testFetchMultiWillFilterNonRequestedKeys()
@@ -99,5 +101,57 @@ class CacheProviderTest extends \Doctrine\Tests\DoctrineTestCase
             'kerr'  => 'verr',
             'kok'   => 'vok',
         ]);
+    }
+
+    public function testSaveItIfNotExists()
+    {
+        $cacheEntry = 'foo';
+        $cacheValue = 'bar';
+
+        $cache = $this->getMockBuilder(CacheProvider::class)
+            ->setMethods(['contains', 'fetch', 'save'])
+            ->getMockForAbstractClass();
+
+        $cache->expects($this->once())
+            ->method('contains')
+            ->with($cacheEntry)
+            ->will($this->returnValue(false));
+
+        $cache->expects($this->once())
+            ->method('save')
+            ->with($cacheEntry, $cacheValue, 0)
+            ->will($this->returnValue(true));
+
+        $cache->expects($this->never())
+            ->method('fetch');
+
+        $result = $cache->fetchAndSave($cacheEntry, $cacheValue, 0);
+        $this->assertEquals($cacheValue, $result);
+    }
+
+    public function testFetchIfExists()
+    {
+        $cacheEntry = 'foo';
+        $cacheValue = 'bar';
+
+        $cache = $this->getMockBuilder(CacheProvider::class)
+            ->setMethods(['contains', 'fetch', 'save'])
+            ->getMockForAbstractClass();
+
+        $cache->expects($this->once())
+            ->method('contains')
+            ->with($cacheEntry)
+            ->will($this->returnValue(true));
+
+        $cache->expects($this->once())
+            ->method('fetch')
+            ->with($cacheEntry)
+            ->will($this->returnValue($cacheValue));
+
+        $cache->expects($this->never())
+            ->method('save');
+
+        $result = $cache->fetchAndSave($cacheEntry, $cacheValue, 0);
+        $this->assertEquals($cacheValue, $result);
     }
 }

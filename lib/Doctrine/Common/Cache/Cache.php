@@ -89,6 +89,20 @@ interface Cache
     public function delete($id);
 
     /**
+     * Fetches an entry from the cache, if it exists.
+     * If it doesn't, put it into the cache and return
+     *
+     * @param string $id       The cache id.
+     * @param mixed  $data     The cache entry/data.
+     * @param int    $lifeTime The lifetime in number of seconds for this cache entry.
+     *                         If zero (the default), the entry never expires (although it may be deleted from the cache
+     *                         to make place for other entries).
+     *
+     * @return mixed The cached data or FALSE, if no cache entry exists for the given id.
+     */
+    public function fetchAndSave($id, $data, $lifeTime = 0);
+
+    /**
      * Retrieves cached information from the data store.
      *
      * The server's statistics array has the following values:
