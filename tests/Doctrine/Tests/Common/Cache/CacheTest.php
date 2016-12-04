@@ -444,6 +444,16 @@ abstract class CacheTest extends \Doctrine\Tests\DoctrineTestCase
         $this->assertTrue($cache->save('with_ttl', 'with_ttl', 3600));
     }
 
+    public function testValueThatIsFalseBooleanIsProperlyRetrieved()
+    {
+        $cache = $this->_getCacheDriver();
+        $cache->deleteAll();
+
+        $this->assertTrue($cache->save('key1', false));
+        $this->assertTrue($cache->contains('key1'));
+        $this->assertFalse($cache->fetch('key1'));
+    }
+
     /**
      * Return whether multiple cache providers share the same storage.
      *
