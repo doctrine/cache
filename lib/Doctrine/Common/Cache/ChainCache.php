@@ -44,12 +44,12 @@ class ChainCache extends CacheProvider
     /**
      * {@inheritDoc}
      */
-    public function setNamespace($namespace)
+    public function setNamespace($namespace, $version = null)
     {
-        parent::setNamespace($namespace);
+        parent::setNamespace($namespace, $version);
 
         foreach ($this->cacheProviders as $cacheProvider) {
-            $cacheProvider->setNamespace($namespace);
+            $cacheProvider->setNamespace($namespace, $version);
         }
     }
 
