@@ -49,6 +49,33 @@ class MemcachedCacheTest extends CacheTest
         $this->assertInstanceOf('Memcached', $this->_getCacheDriver()->getMemcached());
     }
 
+    public function testDoContains()
+    {
+        $driver = $this->_getCacheDriver();
+        $reflection = new \ReflectionClass($driver);
+        $method = $reflection->getMethod('doContains');
+        $method->setAccessible(true);
+
+        $testKey = __CLASS__.'#'.__METHOD__;
+
+        $this->memcached->set($testKey, false);
+
+        $this->assertTrue($method->invokeArgs($driver, [$testKey]));
+        $this->assertFalse($method->invokeArgs($driver, [$testKey.'2']));
+
+        $memcached = new Memcached();
+        $memcached->addServer('0.0.0.1', 11211); // fake server is not available
+
+        $driver = new MemcachedCache();
+        $driver->setMemcached($memcached);
+        $reflection = new \ReflectionClass($driver);
+        $method = $reflection->getMethod('doContains');
+        $method->setAccessible(true);
+
+        $this->assertFalse($method->invokeArgs($driver, [$testKey]));
+        $this->assertFalse($method->invokeArgs($driver, [$testKey.'2']));
+    }
+
     /**
      * {@inheritDoc}
      */
