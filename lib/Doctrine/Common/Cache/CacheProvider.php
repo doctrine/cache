@@ -28,8 +28,9 @@ namespace Doctrine\Common\Cache;
  * @author Jonathan Wage <jonwage@gmail.com>
  * @author Roman Borschel <roman@code-factory.org>
  * @author Fabio B. Silva <fabio.bat.silva@gmail.com>
+ * @author Benoit Burnichon <bburnichon@gmail.com>
  */
-abstract class CacheProvider implements Cache, FlushableCache, ClearableCache, MultiGetCache, MultiPutCache
+abstract class CacheProvider implements Cache, FlushableCache, ClearableCache, MultiGetCache, MultiPutCache, MultiDeleteCache
 {
     const DOCTRINE_NAMESPACE_CACHEKEY = 'DoctrineNamespaceCacheKey[%s]';
 
@@ -130,6 +131,14 @@ abstract class CacheProvider implements Cache, FlushableCache, ClearableCache, M
     public function save($id, $data, $lifeTime = 0)
     {
         return $this->doSave($this->getNamespacedId($id), $data, $lifeTime);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function deleteMultiple(array $keys)
+    {
+        return $this->doDeleteMultiple(array_map(array($this, 'getNamespacedId'), $keys));
     }
 
     /**
@@ -284,6 +293,26 @@ abstract class CacheProvider implements Cache, FlushableCache, ClearableCache, M
      * @return bool TRUE if the entry was successfully stored in the cache, FALSE otherwise.
      */
     abstract protected function doSave($id, $data, $lifeTime = 0);
+
+    /**
+     * Default implementation of doDeleteMultiple. Each driver that supports multi-delete should override it.
+     *
+     * @param array $keys Array of keys to delete from cache
+     *
+     * @return bool TRUE if the operation was successful, FALSE if it wasn't
+     */
+    protected function doDeleteMultiple(array $keys)
+    {
+        $success = true;
+
+        foreach ($keys as $key) {
+            if (! $this->doDelete($key)) {
+                $success = false;
+            }
+        }
+
+        return $success;
+    }
 
     /**
      * Deletes a cache entry.

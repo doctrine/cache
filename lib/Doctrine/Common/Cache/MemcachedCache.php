@@ -112,6 +112,15 @@ class MemcachedCache extends CacheProvider
     /**
      * {@inheritdoc}
      */
+    protected function doDeleteMultiple(array $keys)
+    {
+        return $this->memcached->deleteMulti($keys)
+            || $this->memcached->getResultCode() === Memcached::RES_NOTFOUND;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     protected function doDelete($id)
     {
         return $this->memcached->delete($id)

@@ -175,6 +175,18 @@ abstract class CacheTest extends \Doctrine\Tests\DoctrineTestCase
         $this->assertFalse($cache->contains('key2'));
     }
 
+    public function testDeleteMulti()
+    {
+        $cache = $this->_getCacheDriver();
+
+        $this->assertTrue($cache->save('key1', 1));
+        $this->assertTrue($cache->save('key2', 1));
+        $this->assertTrue($cache->deleteMultiple(['key1', 'key2', 'key3']));
+        $this->assertFalse($cache->contains('key1'));
+        $this->assertFalse($cache->contains('key2'));
+        $this->assertFalse($cache->contains('key3'));
+    }
+
     /**
      * @dataProvider provideCacheIds
      */
