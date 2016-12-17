@@ -134,6 +134,22 @@ class ChainCacheTest extends CacheTest
         $chainCache->flushAll();
     }
 
+    /**
+     * @group 155
+     *
+     * @return void
+     */
+    public function testChainCacheAcceptsArrayIteratorsAsDependency()
+    {
+        $cache1 = $this->getMockForAbstractClass('Doctrine\Common\Cache\CacheProvider');
+        $cache2 = $this->getMockForAbstractClass('Doctrine\Common\Cache\CacheProvider');
+
+        $cache1->expects($this->once())->method('doFlush');
+        $cache2->expects($this->once())->method('doFlush');
+
+        (new ChainCache(new \ArrayIterator([$cache1, $cache2])))->flushAll();
+    }
+
     protected function isSharedStorage()
     {
         return false;
