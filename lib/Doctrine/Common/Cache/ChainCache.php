@@ -81,23 +81,27 @@ class ChainCache extends CacheProvider
      */
     protected function doFetchMultiple(array $keys)
     {
-        $count = count($keys);
-        $values = array();
+        /* @var $traversedProviders CacheProvider[] */
+        $traversedProviders = [];
+        $keysCount          = count($keys);
+        $fetchedValues      = [];
 
         foreach ($this->cacheProviders as $key => $cacheProvider) {
-            $values = $cacheProvider->doFetchMultiple($keys);
+            $fetchedValues = $cacheProvider->doFetchMultiple($keys);
 
             // We populate all the previous cache layers (that are assumed to be faster)
-            if (count($values) === $count) {
-                for ($subKey = $key - 1 ; $subKey >= 0 ; $subKey--) {
-                    $this->cacheProviders[$subKey]->doSaveMultiple($values);
+            if (count($fetchedValues) === $keysCount) {
+                foreach ($traversedProviders as $previousCacheProvider) {
+                    $previousCacheProvider->doSaveMultiple($fetchedValues);
                 }
 
-                return $values;
+                return $fetchedValues;
             }
+
+            $traversedProviders[] = $cacheProvider;
         }
 
-        return $values;
+        return $fetchedValues;
     }
 
     /**
