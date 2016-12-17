@@ -306,7 +306,7 @@ abstract class CacheProvider implements Cache, FlushableCache, ClearableCache, M
         $success = true;
 
         foreach ($keys as $key) {
-            if (!$this->doDelete($key)) {
+            if (! $this->doDelete($key)) {
                 $success = false;
             }
         }
