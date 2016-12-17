@@ -3,6 +3,7 @@
 namespace Doctrine\Tests\Common\Cache;
 
 use Doctrine\Common\Cache\ArrayCache;
+use Doctrine\Common\Cache\CacheProvider;
 use Doctrine\Common\Cache\ChainCache;
 
 class ChainCacheTest extends CacheTest
@@ -37,24 +38,16 @@ class ChainCacheTest extends CacheTest
     {
         $cache1 = new ArrayCache();
         $cache2 = $this
-            ->getMockBuilder('Doctrine\Common\Cache\CacheProvider')
-            ->setMethods([
-                'doFetch',
-                'doFetchMultiple',
-                'doContains',
-                'doSave',
-                'doDelete',
-                'doFlush',
-                'doGetStats',
-            ])
-            ->getMock();
+            ->getMockBuilder(CacheProvider::class)
+            ->setMethods(['doFetchMultiple'])
+            ->getMockForAbstractClass();
 
         $cache2->expects($this->never())->method('doFetchMultiple');
 
-        $chainCache = new ChainCache(array($cache1, $cache2));
-        $chainCache->saveMultiple(array('bar' => 'Bar', 'foo' => 'Foo'));
+        $chainCache = new ChainCache([$cache1, $cache2]);
+        $chainCache->saveMultiple(['bar' => 'Bar', 'foo' => 'Foo']);
 
-        $this->assertEquals(array('bar' => 'Bar', 'foo' => 'Foo'), $chainCache->fetchMultiple(array('bar', 'foo')));
+        $this->assertEquals(['bar' => 'Bar', 'foo' => 'Foo'], $chainCache->fetchMultiple(['bar', 'foo']));
     }
 
     public function testFetchPropagateToFastestCache()
@@ -80,16 +73,16 @@ class ChainCacheTest extends CacheTest
         $cache2 = new ArrayCache();
 
         $cache1->save('bar', 'Bar');
-        $cache2->saveMultiple(array('bar' => 'Bar', 'foo' => 'Foo'));
+        $cache2->saveMultiple(['bar' => 'Bar', 'foo' => 'Foo']);
 
-        $chainCache = new ChainCache(array($cache1, $cache2));
+        $chainCache = new ChainCache([$cache1, $cache2]);
 
         $this->assertTrue($cache1->contains('bar'));
         $this->assertFalse($cache1->contains('foo'));
 
-        $result = $chainCache->fetchMultiple(array('bar', 'foo'));
+        $result = $chainCache->fetchMultiple(['bar', 'foo']);
 
-        $this->assertEquals(array('bar' => 'Bar', 'foo' => 'Foo'), $result);
+        $this->assertEquals(['bar' => 'Bar', 'foo' => 'Foo'], $result);
         $this->assertTrue($cache1->contains('foo'));
     }
 
@@ -119,11 +112,13 @@ class ChainCacheTest extends CacheTest
 
     public function testDeleteMultipleToAllProviders()
     {
-        $cache1 = $this->getMockBuilder('Doctrine\Common\Cache\CacheProvider')
-            ->setMethods(array('doDeleteMultiple'))
+        $cache1 = $this
+            ->getMockBuilder(CacheProvider::class)
+            ->setMethods(['doDeleteMultiple'])
             ->getMockForAbstractClass();
-        $cache2 = $this->getMockBuilder('Doctrine\Common\Cache\CacheProvider')
-            ->setMethods(array('doDeleteMultiple'))
+        $cache2 = $this
+            ->getMockBuilder(CacheProvider::class)
+            ->setMethods(['doDeleteMultiple'])
             ->getMockForAbstractClass();
 
         $cache1->expects($this->once())->method('doDeleteMultiple')->willReturn(true);
@@ -152,8 +147,8 @@ class ChainCacheTest extends CacheTest
      */
     public function testChainCacheAcceptsArrayIteratorsAsDependency()
     {
-        $cache1 = $this->getMockForAbstractClass('Doctrine\Common\Cache\CacheProvider');
-        $cache2 = $this->getMockForAbstractClass('Doctrine\Common\Cache\CacheProvider');
+        $cache1 = $this->getMockForAbstractClass(CacheProvider::class);
+        $cache2 = $this->getMockForAbstractClass(CacheProvider::class);
 
         $cache1->expects($this->once())->method('doFlush');
         $cache2->expects($this->once())->method('doFlush');

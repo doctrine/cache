@@ -2,6 +2,8 @@
 
 namespace Doctrine\Tests\Common\Cache;
 
+use Doctrine\Common\Cache\CacheProvider;
+
 class CacheProviderTest extends \Doctrine\Tests\DoctrineTestCase
 {
     public function testFetchMultiWillFilterNonRequestedKeys()
@@ -104,15 +106,10 @@ class CacheProviderTest extends \Doctrine\Tests\DoctrineTestCase
     public function testDeleteMultipleNoFail()
     {
         /* @var $cache \Doctrine\Common\Cache\CacheProvider|\PHPUnit_Framework_MockObject_MockObject */
-        $cache = $this->getMockForAbstractClass(
-            'Doctrine\Common\Cache\CacheProvider',
-            array(),
-            '',
-            true,
-            true,
-            true,
-            array('doDelete')
-        );
+        $cache = $this
+            ->getMockBuilder(CacheProvider::class)
+            ->setMethods(['doDelete'])
+            ->getMockForAbstractClass();
 
         $cache
             ->expects($this->at(1))
@@ -126,9 +123,6 @@ class CacheProviderTest extends \Doctrine\Tests\DoctrineTestCase
             ->with('[kok][1]')
             ->will($this->returnValue(true));
 
-        $cache->deleteMultiple(array(
-            'kerr',
-            'kok',
-        ));
+        $cache->deleteMultiple(['kerr', 'kok']);
     }
 }
