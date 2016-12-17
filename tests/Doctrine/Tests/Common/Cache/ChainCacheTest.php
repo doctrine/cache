@@ -36,7 +36,18 @@ class ChainCacheTest extends CacheTest
     public function testOnlyFetchFirstCompleteSet()
     {
         $cache1 = new ArrayCache();
-        $cache2 = $this->getMockForAbstractClass('Doctrine\Common\Cache\CacheProvider');
+        $cache2 = $this
+            ->getMockBuilder('Doctrine\Common\Cache\CacheProvider')
+            ->setMethods([
+                'doFetch',
+                'doFetchMultiple',
+                'doContains',
+                'doSave',
+                'doDelete',
+                'doFlush',
+                'doGetStats',
+            ])
+            ->getMock();
 
         $cache2->expects($this->never())->method('doFetchMultiple');
 
