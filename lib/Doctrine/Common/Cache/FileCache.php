@@ -132,12 +132,15 @@ abstract class FileCache extends CacheProvider
     protected function getFilename($id)
     {
         $hash = hash('sha256', $id);
+        
+        //If users use .deb files to deploy wamed-up cache to production, during the install dpkg-deb adds .dpkg-tmp suffix
+        $debSuffixLength = 9;
 
         // This ensures that the filename is unique and that there are no invalid chars in it.
         if (
             '' === $id
-            || ((strlen($id) * 2 + $this->extensionStringLength) > 255)
-            || ($this->isRunningOnWindows && ($this->directoryStringLength + 4 + strlen($id) * 2 + $this->extensionStringLength) > 258)
+            || ((strlen($id) * 2 + $this->extensionStringLength) + $debSuffixLength > 255)
+            || ($this->isRunningOnWindows && ($this->directoryStringLength + 4 + strlen($id) * 2 + $this->extensionStringLength + $debSuffixLength) > 258)
         ) {
             // Most filesystems have a limit of 255 chars for each path component. On Windows the the whole path is limited
             // to 260 chars (including terminating null char). Using long UNC ("\\?\" prefix) does not work with the PHP API.
