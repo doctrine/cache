@@ -128,6 +128,14 @@ class PredisCache extends CacheProvider
     /**
      * {@inheritdoc}
      */
+    protected function doDeleteMultiple(array $keys)
+    {
+        return $this->client->del($keys) >= 0;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     protected function doFlush()
     {
         $response = $this->client->flushdb();
