@@ -49,31 +49,29 @@ class MemcachedCacheTest extends CacheTest
         $this->assertInstanceOf('Memcached', $this->_getCacheDriver()->getMemcached());
     }
 
-    public function testDoContains()
+    public function testContainsWithKeyWithFalseAsValue()
     {
+        $testKey = __METHOD__;
         $driver = $this->_getCacheDriver();
         $reflection = new \ReflectionClass($driver);
-        $method = $reflection->getMethod('doContains');
+        $method = $reflection->getMethod('getNamespacedId');
         $method->setAccessible(true);
+        $testKeyNS = $method->invokeArgs($driver, [$testKey]);
+        $this->memcached->set($testKeyNS, false);
 
-        $testKey = __CLASS__.'#'.__METHOD__;
+        $this->assertTrue($driver->contains($testKey), sprintf('Expected key "%s" to be found in cache.', $testKey));
+        $this->assertFalse($driver->contains($testKey.'1'), 'No set key should not be found.');
+    }
 
-        $this->memcached->set($testKey, false);
-
-        $this->assertTrue($method->invokeArgs($driver, [$testKey]));
-        $this->assertFalse($method->invokeArgs($driver, [$testKey.'2']));
-
+    public function testContainsWithKeyOnNonReachableCache()
+    {
+        $testKey = __METHOD__;
         $memcached = new Memcached();
         $memcached->addServer('0.0.0.1', 11211); // fake server is not available
-
         $driver = new MemcachedCache();
         $driver->setMemcached($memcached);
-        $reflection = new \ReflectionClass($driver);
-        $method = $reflection->getMethod('doContains');
-        $method->setAccessible(true);
 
-        $this->assertFalse($method->invokeArgs($driver, [$testKey]));
-        $this->assertFalse($method->invokeArgs($driver, [$testKey.'2']));
+        $this->assertFalse($driver->contains($testKey), sprintf('Expected key "%s" not to be found in cache.', $testKey));
     }
 
     /**
