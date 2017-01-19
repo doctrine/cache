@@ -138,6 +138,14 @@ class RedisCache extends CacheProvider
     /**
      * {@inheritdoc}
      */
+    protected function doDeleteMultiple(array $keys)
+    {
+        return $this->redis->delete($keys) >= 0;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     protected function doFlush()
     {
         return $this->redis->flushDB();
