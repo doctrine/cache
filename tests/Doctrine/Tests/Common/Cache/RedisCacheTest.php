@@ -35,18 +35,6 @@ class RedisCacheTest extends CacheTest
         $this->assertInstanceOf('Redis', $this->_getCacheDriver()->getRedis());
     }
 
-    public function testSerializerOptionWithOutIgbinaryExtension()
-    {
-        if (defined('Redis::SERIALIZER_IGBINARY') && extension_loaded('igbinary')) {
-            $this->markTestSkipped('Extension igbinary is loaded.');
-        }
-
-        $this->assertEquals(
-            \Redis::SERIALIZER_PHP,
-            $this->_getCacheDriver()->getRedis()->getOption(\Redis::OPT_SERIALIZER)
-        );
-    }
-
     /**
      * {@inheritDoc}
      */
