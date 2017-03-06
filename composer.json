@@ -21,7 +21,8 @@
         "phpunit/phpunit": "^6.3",
         "predis/predis":   "~1.0",
         "squizlabs/php_codesniffer": "^3.0",
-        "doctrine/coding-standard": "^1.0"
+        "doctrine/coding-standard": "^1.0",
+        "basho/riak":      "^3.3.0"
     },
     "suggest": {
         "alcaeus/mongo-php-adapter": "Required to use legacy MongoDB driver"
