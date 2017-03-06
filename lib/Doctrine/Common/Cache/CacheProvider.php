@@ -30,7 +30,7 @@ namespace Doctrine\Common\Cache;
  * @author Fabio B. Silva <fabio.bat.silva@gmail.com>
  * @author Benoit Burnichon <bburnichon@gmail.com>
  */
-abstract class CacheProvider implements Cache, FlushableCache, ClearableCache, MultiGetCache, MultiPutCache, MultiDeleteCache
+abstract class CacheProvider implements Cache, FlushableCache, ClearableCache, MultiOperationCache
 {
     const DOCTRINE_NAMESPACE_CACHEKEY = 'DoctrineNamespaceCacheKey[%s]';
 
