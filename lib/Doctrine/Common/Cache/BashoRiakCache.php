@@ -78,7 +78,12 @@ class BashoRiakCache extends CacheProvider
 
             // Check for attempted siblings
             $object = ($response->hasSiblings())
-                ? $this->resolveConflict($id, $response->getObject()->getVclock(), $response->getSiblings())
+                ? $this->resolveConflict(
+                    $id,
+                    $response->getObject()->getVclock(),
+                    $response->getObject()->getMetaDataValue(self::EXPIRES_HEADER),
+                    $response->getSiblings()
+                )
                 : $response->getObject();
 
             // Check for expired object
@@ -296,11 +301,12 @@ class BashoRiakCache extends CacheProvider
      *
      * @param string   $id
      * @param string   $vClock
+     * @param string   $expires
      * @param Object[] $objectList
      *
      * @return \Basho\Riak\Object
      */
-    protected function resolveConflict($id, $vClock, array $objectList)
+    protected function resolveConflict($id, $vClock, $expires, array $objectList)
     {
         // Our approach here is last-write wins
         $winner = $objectList[count($objectList) - 1];
@@ -312,17 +318,13 @@ class BashoRiakCache extends CacheProvider
                 ->build();
 
             $mergedObject = $command->getObject();
-
-            $expires = $winner->getObject()->getMetaDataValue(self::EXPIRES_HEADER);
+            $mergedObject->setVclock($vClock);
 
             if ($expires) {
                 $mergedObject->setMetaDataValue(self::EXPIRES_HEADER, $expires);
-                $mergedObject->setVclock($vClock);
             }
 
             $response = $command->execute();
-
-            return true;
         } catch (RiakException $e) {
             // Do nothing
         }

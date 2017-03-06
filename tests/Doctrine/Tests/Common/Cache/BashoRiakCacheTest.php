@@ -3,9 +3,9 @@
 namespace Doctrine\Tests\Common\Cache;
 
 use Basho\Riak;
-use Basho\Riak\Command;
 use Basho\Riak\Exception as RiakException;
 use Basho\Riak\Node;
+use Basho\Riak\Object;
 use Doctrine\Common\Cache\BashoRiakCache;
 
 /**
@@ -50,6 +50,27 @@ class BashoRiakCacheTest extends CacheTest
         $stats = $cache->getStats();
 
         $this->assertTrue(is_array($stats) && count($stats) > 0);
+    }
+
+    /**
+     * @link https://github.com/doctrine/cache/pull/215
+     */
+    public function testResolveConflict()
+    {
+        $cache = $this->_getCacheDriver();
+
+        $reflection = new \ReflectionMethod(BashoRiakCache::class, 'resolveConflict');
+        $reflection->setAccessible(true);
+
+        $id = '1';
+        $vClock = 'a';
+        $expires = (string) (time() + 5);
+        $objectList = [new Object('a'), new Object('b')];
+
+        $object = $reflection->invoke($cache, $id, $vClock, $expires, $objectList);
+
+        $this->assertTrue($object !== null);
+        $this->assertEquals('b', unserialize($object->getData()));
     }
 
     /**
