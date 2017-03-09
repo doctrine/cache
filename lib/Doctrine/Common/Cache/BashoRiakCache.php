@@ -296,8 +296,8 @@ class BashoRiakCache extends CacheProvider
      * In our specific case, we do not care about the intermediate ones since
      * they are all the same read from storage, and we do apply a last sibling
      * (last write) wins logic.
-     * If by any means our resolution generates another conflict, it'll up to
-     * next read to properly solve it.}
+     * If by any means our resolution generates another conflict, it'll be up to
+     * the next read to properly solve it.}
      *
      * @param string   $id
      * @param string   $vClock
