@@ -214,6 +214,7 @@ class BashoRiakCache extends CacheProvider
         try {
             $command = (new Command\Builder\ListObjects($this->riak))
                 ->buildBucket($this->bucketName)
+                ->acknowledgeRisk(true)
                 ->build();
 
             $response = $command->execute();
@@ -222,18 +223,12 @@ class BashoRiakCache extends CacheProvider
                 return false;
             }
 
-            $data = $response->getObject()->getData();
+            $keys = $response->getKeys();
 
-            if ( ! count($data->keys)) {
-                return false;
-            }
-
-            foreach ($data->keys as $id) {
-                $id = urlencode($id);
-
+            foreach ($keys as $location) {
                 try {
                     $command = (new Command\Builder\DeleteObject($this->riak))
-                        ->buildLocation($id, $this->bucketName)
+                        ->atLocation($location)
                         ->build();
 
                     $response = $command->execute();
