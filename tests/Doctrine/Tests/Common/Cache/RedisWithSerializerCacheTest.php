@@ -2,13 +2,13 @@
 
 namespace Doctrine\Tests\Common\Cache;
 
-use Doctrine\Common\Cache\RedisCache;
+use Doctrine\Common\Cache\RedisWithSerializerCache;
 use Doctrine\Common\Cache\Cache;
 
 /**
  * @requires extension redis
  */
-class RedisCacheTest extends CacheTest
+class RedisWithSerializerCacheTest extends CacheTest
 {
     private $_redis;
 
