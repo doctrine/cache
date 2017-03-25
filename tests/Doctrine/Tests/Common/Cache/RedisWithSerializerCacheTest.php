@@ -52,7 +52,7 @@ class RedisWithSerializerCacheTest extends CacheTest
      */
     protected function _getCacheDriver()
     {
-        $driver = new RedisCache();
+        $driver = new RedisWithSerializerCache();
         $driver->setRedis($this->_redis);
         return $driver;
     }
