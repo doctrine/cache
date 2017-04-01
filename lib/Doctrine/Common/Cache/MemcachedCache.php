@@ -103,7 +103,7 @@ class MemcachedCache extends CacheProvider
      */
     protected function doSave($id, $data, $lifeTime = 0)
     {
-        if ($lifeTime > 30 * 24 * 3600) {
+        if ($lifeTime < 30 * 24 * 3600) {
             $lifeTime = time() + $lifeTime;
         }
         return $this->memcached->set($id, $data, (int) $lifeTime);
