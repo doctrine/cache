@@ -45,6 +45,11 @@ class ArrayCacheTest extends CacheTest
         $this->assertEquals(8, $stats[Cache::STATS_MISSES]); // +1 for internal call to DoctrineNamespaceCacheKey
     }
 
+    public function testMaxLifetime()
+    {
+        $this->markTestSkipped('ArrayCache does not implement TTL currently.');
+    }
+
     protected function isSharedStorage()
     {
         return false;
