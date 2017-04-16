@@ -486,6 +486,30 @@ abstract class CacheTest extends \Doctrine\Tests\DoctrineTestCase
     }
 
     /**
+     * Check to see that objects are correctly serialized and unserialized by the cache
+     * provider.
+     */
+    public function testCachedObject()
+    {
+        $cache = $this->_getCacheDriver();
+        $obj = new \stdClass();
+        $obj->foo = "bar";
+        $obj2 = new \stdClass();
+        $obj2->bar = "foo";
+        $obj2->obj = $obj;
+        $obj->obj2 = $obj2;
+        $cache->save("obj", $obj);
+
+        $fetched = $cache->fetch("obj");
+
+        $this->assertInstanceOf("stdClass", $obj);
+        $this->assertInstanceOf("stdClass", $obj->obj2);
+        $this->assertInstanceOf("stdClass", $obj->obj2->obj);
+        $this->assertEquals("bar", $fetched->foo);
+        $this->assertEquals("foo", $fetched->obj2->bar);
+    }
+
+    /**
      * Return whether multiple cache providers share the same storage.
      *
      * This is used for skipping certain tests for shared storage behavior.
