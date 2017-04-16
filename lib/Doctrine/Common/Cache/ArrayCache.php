@@ -78,6 +78,10 @@ class ArrayCache extends CacheProvider
 
     /**
      * {@inheritdoc}
+     *
+     * For performance optimization, and because "isset" is faster than
+     * "array_key_exists", has opted for this implementation, while not the most
+     * logical.
      */
     protected function doContains($id)
     {
