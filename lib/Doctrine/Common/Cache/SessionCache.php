@@ -1,0 +1,118 @@
+<?php
+/*
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+ * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+ * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+ * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ * This software consists of voluntary contributions made by many individuals
+ * and is licensed under the MIT license. For more information, see
+ * <http://www.doctrine-project.org>.
+ */
+
+namespace Doctrine\Common\Cache;
+
+/**
+ * Session cache provider.
+ *
+ * @author Rudolf Theunissen <rudolf.theunissen@gmail.com>
+ */
+class SessionCache extends CacheProvider
+{
+    /**
+     * @param boolean $start Whether a session should be started if a session
+     *                       has not already been started.
+     */
+    public function __construct($start = true)
+    {
+        if ($start && ! $this->sessionStarted()) {
+            session_start();
+        }
+    }
+
+    /**
+     * @return boolean true if a session is already started, false otherwise.
+     */
+    private function sessionStarted()
+    {
+        if (version_compare(phpversion(), "5.4.0", ">=")) {
+            return session_status() === PHP_SESSION_ACTIVE;
+        }
+
+        return session_id() !== "";
+    }
+
+     /**
+     * {@inheritdoc}
+     */
+    protected function doFetch($id)
+    {
+        if (isset($_SESSION[$id])) {
+            return unserialize($_SESSION[$id]);
+        }
+
+        return false;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function doContains($id)
+    {
+        if (!isset($_SESSION)) {
+            return false;
+        }
+
+        return isset($_SESSION[$id]) || array_key_exists($id, $_SESSION);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function doSave($id, $data, $lifeTime = 0)
+    {
+        if (!isset($_SESSION)) {
+            return false;
+        }
+
+        $_SESSION[$id] = serialize($data);
+        return true;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function doDelete($id)
+    {
+        if (!isset($_SESSION)) {
+            return false;
+        }
+
+        unset($_SESSION[$id]);
+        return true;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function doFlush()
+    {
+        session_unset();
+        return true;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function doGetStats()
+    {
+        // Session doesn't provide any valuable stats
+    }
+}
