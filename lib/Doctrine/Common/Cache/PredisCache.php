@@ -42,6 +42,14 @@ class PredisCache extends CacheProvider
     {
         $this->client = $client;
     }
+    
+    /**
+     * @return Client
+     */
+    public function getClient()
+    {
+        return $this->client;
+    }
 
     /**
      * {@inheritdoc}
