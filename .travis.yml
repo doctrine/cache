@@ -21,8 +21,10 @@ services:
 before_install:
     - if [[ $TRAVIS_PHP_VERSION != 'hhvm' ]] ; then pecl channel-update pecl.php.net; fi;
     - if [[ $TRAVIS_PHP_VERSION != 'hhvm' && $TRAVIS_PHP_VERSION != 7.* ]]; then pecl install riak-beta; fi;
-    - if [[ $TRAVIS_PHP_VERSION = '5.6' ]] ; then echo yes | pecl install apcu-4.0.10; fi;
-    - if [[ $TRAVIS_PHP_VERSION = 7.* ]] ; then pecl config-set preferred_state beta; echo yes | pecl install apcu; fi;
+    - if [[ $TRAVIS_PHP_VERSION = '5.6' ]] ; then echo yes | pecl install apcu-4.0.11; fi;
+    - if [[ $TRAVIS_PHP_VERSION = 7.* ]] ; then echo yes | pecl upgrade apcu apcu_bc-beta; fi;
+    - if [[ $TRAVIS_PHP_VERSION = '5.6' ]]; then phpenv config-add ./tests/travis/php-5.ini; fi;
+    - if [[ $TRAVIS_PHP_VERSION = 7.* ]]; then phpenv config-add ./tests/travis/php-7.ini; fi;
     - if [[ $TRAVIS_PHP_VERSION != 'hhvm' ]]; then phpenv config-add ./tests/travis/php.ini; fi;
     - if [[ $TRAVIS_PHP_VERSION = '5.6' ]]; then PHPUNIT_FLAGS="--coverage-clover clover.xml"; fi
 
