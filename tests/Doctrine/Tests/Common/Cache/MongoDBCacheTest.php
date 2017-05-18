@@ -8,7 +8,7 @@ use MongoClient;
 use MongoCollection;
 
 /**
- * @requires extension mongo
+ * @requires extension mongodb
  */
 class MongoDBCacheTest extends CacheTest
 {
@@ -19,10 +19,6 @@ class MongoDBCacheTest extends CacheTest
 
     protected function setUp()
     {
-        if ( ! version_compare(phpversion('mongo'), '1.3.0', '>=')) {
-            $this->markTestSkipped('Mongo >= 1.3.0 is required.');
-        }
-
         $mongo = new MongoClient();
         $this->collection = $mongo->selectCollection('doctrine_common_cache', 'test');
     }
