@@ -188,7 +188,7 @@ class MongoDBCache extends CacheProvider
      *
      * @return bool
      */
-    private function isExpired(array $document)
+    private function isExpired(array $document) : bool
     {
         return isset($document[self::EXPIRATION_FIELD]) &&
             $document[self::EXPIRATION_FIELD] instanceof MongoDate &&

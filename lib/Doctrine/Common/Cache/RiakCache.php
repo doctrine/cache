@@ -203,7 +203,7 @@ class RiakCache extends CacheProvider
      *
      * @return bool
      */
-    private function isExpired(Object $object)
+    private function isExpired(Object $object) : bool
     {
         $metadataMap = $object->getMetadataMap();
 

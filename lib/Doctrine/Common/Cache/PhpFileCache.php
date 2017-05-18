@@ -54,7 +54,7 @@ class PhpFileCache extends FileCache
     {
         $value = $this->includeFileForId($id);
 
-        if (! $value) {
+        if ($value === null) {
             return false;
         }
 
@@ -72,7 +72,7 @@ class PhpFileCache extends FileCache
     {
         $value = $this->includeFileForId($id);
 
-        if (! $value) {
+        if ($value === null) {
             return false;
         }
 
@@ -109,9 +109,9 @@ class PhpFileCache extends FileCache
     /**
      * @param string $id
      *
-     * @return array|false
+     * @return array|null
      */
-    private function includeFileForId($id)
+    private function includeFileForId(string $id) : ?array
     {
         $fileName = $this->getFilename($id);
 
@@ -123,7 +123,7 @@ class PhpFileCache extends FileCache
         restore_error_handler();
 
         if (! isset($value['lifetime'])) {
-            return false;
+            return null;
         }
 
         return $value;
