@@ -2,6 +2,7 @@
 
 namespace Doctrine\Tests\Common\Cache;
 
+use Doctrine\Common\Cache\CacheProvider;
 use Doctrine\Common\Cache\WinCacheCache;
 
 /**
@@ -9,7 +10,7 @@ use Doctrine\Common\Cache\WinCacheCache;
  */
 class WinCacheCacheTest extends CacheTest
 {
-    protected function _getCacheDriver()
+    protected function _getCacheDriver() : CacheProvider
     {
         return new WinCacheCache();
     }

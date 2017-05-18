@@ -8,12 +8,12 @@ use Doctrine\Common\Cache\ChainCache;
 
 class ChainCacheTest extends CacheTest
 {
-    protected function _getCacheDriver()
+    protected function _getCacheDriver() : CacheProvider
     {
         return new ChainCache([new ArrayCache()]);
     }
 
-    public function testGetStats()
+    public function testGetStats() : void
     {
         $cache = $this->_getCacheDriver();
         $stats = $cache->getStats();
@@ -21,10 +21,10 @@ class ChainCacheTest extends CacheTest
         $this->assertInternalType('array', $stats);
     }
 
-    public function testOnlyFetchFirstOne()
+    public function testOnlyFetchFirstOne() : void
     {
         $cache1 = new ArrayCache();
-        $cache2 = $this->getMockForAbstractClass('Doctrine\Common\Cache\CacheProvider');
+        $cache2 = $this->getMockForAbstractClass(CacheProvider::class);
 
         $cache2->expects($this->never())->method('doFetch');
 
@@ -34,7 +34,7 @@ class ChainCacheTest extends CacheTest
         $this->assertEquals('bar', $chainCache->fetch('id'));
     }
 
-    public function testOnlyFetchFirstCompleteSet()
+    public function testOnlyFetchFirstCompleteSet() : void
     {
         $cache1 = new ArrayCache();
         $cache2 = $this
@@ -50,7 +50,7 @@ class ChainCacheTest extends CacheTest
         $this->assertEquals(['bar' => 'Bar', 'foo' => 'Foo'], $chainCache->fetchMultiple(['bar', 'foo']));
     }
 
-    public function testFetchPropagateToFastestCache()
+    public function testFetchPropagateToFastestCache() : void
     {
         $cache1 = new ArrayCache();
         $cache2 = new ArrayCache();
@@ -67,7 +67,7 @@ class ChainCacheTest extends CacheTest
         $this->assertTrue($cache1->contains('bar'));
     }
 
-    public function testFetchMultiplePropagateToFastestCache()
+    public function testFetchMultiplePropagateToFastestCache() : void
     {
         $cache1 = new ArrayCache();
         $cache2 = new ArrayCache();
@@ -86,7 +86,7 @@ class ChainCacheTest extends CacheTest
         $this->assertTrue($cache1->contains('foo'));
     }
 
-    public function testNamespaceIsPropagatedToAllProviders()
+    public function testNamespaceIsPropagatedToAllProviders() : void
     {
         $cache1 = new ArrayCache();
         $cache2 = new ArrayCache();
@@ -98,7 +98,7 @@ class ChainCacheTest extends CacheTest
         $this->assertEquals('bar', $cache2->getNamespace());
     }
 
-    public function testDeleteToAllProviders()
+    public function testDeleteToAllProviders() : void
     {
         $cache1 = $this->getMockForAbstractClass('Doctrine\Common\Cache\CacheProvider');
         $cache2 = $this->getMockForAbstractClass('Doctrine\Common\Cache\CacheProvider');
@@ -110,7 +110,7 @@ class ChainCacheTest extends CacheTest
         $chainCache->delete('bar');
     }
 
-    public function testDeleteMultipleToAllProviders()
+    public function testDeleteMultipleToAllProviders() : void
     {
         $cache1 = $this
             ->getMockBuilder(CacheProvider::class)
@@ -128,7 +128,7 @@ class ChainCacheTest extends CacheTest
         $chainCache->deleteMultiple(array('bar', 'foo'));
     }
 
-    public function testFlushToAllProviders()
+    public function testFlushToAllProviders() : void
     {
         $cache1 = $this->getMockForAbstractClass('Doctrine\Common\Cache\CacheProvider');
         $cache2 = $this->getMockForAbstractClass('Doctrine\Common\Cache\CacheProvider');
@@ -145,7 +145,7 @@ class ChainCacheTest extends CacheTest
      *
      * @return void
      */
-    public function testChainCacheAcceptsArrayIteratorsAsDependency()
+    public function testChainCacheAcceptsArrayIteratorsAsDependency() : void
     {
         $cache1 = $this->getMockForAbstractClass(CacheProvider::class);
         $cache2 = $this->getMockForAbstractClass(CacheProvider::class);
@@ -156,7 +156,7 @@ class ChainCacheTest extends CacheTest
         (new ChainCache(new \ArrayIterator([$cache1, $cache2])))->flushAll();
     }
 
-    protected function isSharedStorage()
+    protected function isSharedStorage() : bool
     {
         return false;
     }

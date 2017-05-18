@@ -16,7 +16,7 @@ class FileCacheTest extends \Doctrine\Tests\DoctrineTestCase
      */
     private $driver;
 
-    protected function setUp()
+    protected function setUp() : void
     {
         $this->driver = $this
             ->getMockBuilder(FileCache::class)
@@ -25,15 +25,12 @@ class FileCacheTest extends \Doctrine\Tests\DoctrineTestCase
             ->getMock();
     }
 
-    public function testFilenameShouldCreateThePathWithOneSubDirectory()
+    public function testFilenameShouldCreateThePathWithOneSubDirectory() : void
     {
         $cache          = $this->driver;
         $method         = new \ReflectionMethod($cache, 'getFilename');
         $key            = 'item-key';
-        $expectedDir    = [
-            '84',
-        ];
-        $expectedDir    = implode(DIRECTORY_SEPARATOR, $expectedDir);
+        $expectedDir    = '84';
 
         $method->setAccessible(true);
 
@@ -43,7 +40,7 @@ class FileCacheTest extends \Doctrine\Tests\DoctrineTestCase
         $this->assertEquals(DIRECTORY_SEPARATOR . $expectedDir, $dirname);
     }
 
-    public function testFileExtensionCorrectlyEscaped()
+    public function testFileExtensionCorrectlyEscaped() : void
     {
         $driver1 = $this
             ->getMockBuilder(FileCache::class)
@@ -71,7 +68,7 @@ class FileCacheTest extends \Doctrine\Tests\DoctrineTestCase
     /**
      * @group DCOM-266
      */
-    public function testFileExtensionSlashCorrectlyEscaped()
+    public function testFileExtensionSlashCorrectlyEscaped() : void
     {
         $driver = $this
             ->getMockBuilder(FileCache::class)
@@ -88,7 +85,7 @@ class FileCacheTest extends \Doctrine\Tests\DoctrineTestCase
         $this->assertGreaterThan(0, $stats[Cache::STATS_MEMORY_USAGE]);
     }
 
-    public function testNonIntUmaskThrowsInvalidArgumentException()
+    public function testNonIntUmaskThrowsInvalidArgumentException() : void
     {
         $this->expectException(InvalidArgumentException::class);
 
@@ -99,7 +96,7 @@ class FileCacheTest extends \Doctrine\Tests\DoctrineTestCase
             ->getMock();
     }
 
-    public function testGetDirectoryReturnsRealpathDirectoryString()
+    public function testGetDirectoryReturnsRealpathDirectoryString() : void
     {
         $directory = __DIR__ . '/../';
 
@@ -117,7 +114,7 @@ class FileCacheTest extends \Doctrine\Tests\DoctrineTestCase
         $this->assertEquals($expectedDirectory, $actualDirectory);
     }
 
-    public function testGetExtensionReturnsExtensionString()
+    public function testGetExtensionReturnsExtensionString() : void
     {
         $directory = __DIR__ . '/../';
         $extension = DIRECTORY_SEPARATOR . basename(__FILE__);
@@ -137,7 +134,7 @@ class FileCacheTest extends \Doctrine\Tests\DoctrineTestCase
 
     const WIN_MAX_PATH_LEN = 258;
 
-    public static function getBasePathForWindowsPathLengthTests($pathLength)
+    public static function getBasePathForWindowsPathLengthTests(int $pathLength) : string
     {
         // Not using __DIR__ because it can get screwed up when xdebug debugger is attached.
         $basePath = realpath(sys_get_temp_dir()) . '/' . uniqid('doctrine-cache', true);
@@ -171,13 +168,7 @@ class FileCacheTest extends \Doctrine\Tests\DoctrineTestCase
         return $basePath;
     }
 
-    /**
-     * @param int    $length
-     * @param string $basePath
-     *
-     * @return array
-     */
-    public static function getKeyAndPathFittingLength($length, $basePath)
+    public static function getKeyAndPathFittingLength(int $length, string $basePath) : array
     {
         $baseDirLength = strlen($basePath);
         $extensionLength = strlen('.doctrine.cache');
@@ -205,7 +196,7 @@ class FileCacheTest extends \Doctrine\Tests\DoctrineTestCase
         return [$key, $keyPath, $hashedKeyPath];
     }
 
-    public function getPathLengthsToTest()
+    public function getPathLengthsToTest() : array
     {
         // Windows officially supports 260 bytes including null terminator
         // 259 characters is too large due to PHP bug (https://bugs.php.net/bug.php?id=70943)
@@ -222,11 +213,8 @@ class FileCacheTest extends \Doctrine\Tests\DoctrineTestCase
      * @dataProvider getPathLengthsToTest
      *
      * @covers \Doctrine\Common\Cache\FileCache::getFilename
-     *
-     * @param int  $length
-     * @param bool $pathShouldBeHashed
      */
-    public function testWindowsPathLengthLimitationsAreCorrectlyRespected($length, $pathShouldBeHashed)
+    public function testWindowsPathLengthLimitationsAreCorrectlyRespected(int $length, bool $pathShouldBeHashed) : void
     {
         if (! defined('PHP_WINDOWS_VERSION_BUILD')) {
             define('PHP_WINDOWS_VERSION_BUILD', 'Yes, this is the "usual suspect", with the usual limitations');

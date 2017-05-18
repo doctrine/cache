@@ -3,6 +3,7 @@
 namespace Doctrine\Tests\Common\Cache;
 
 use Doctrine\Common\Cache\Cache;
+use Doctrine\Common\Cache\CacheProvider;
 use Doctrine\Common\Cache\MongoDBCache;
 use MongoClient;
 use MongoCollection;
@@ -18,7 +19,7 @@ class MongoDBCacheTest extends CacheTest
      */
     private $collection;
 
-    protected function setUp()
+    protected function setUp() : void
     {
         try {
             $mongo = new MongoClient();
@@ -30,14 +31,14 @@ class MongoDBCacheTest extends CacheTest
         $this->collection = $mongo->selectCollection('doctrine_common_cache', 'test');
     }
 
-    protected function tearDown()
+    protected function tearDown() : void
     {
         if ($this->collection instanceof MongoCollection) {
             $this->collection->drop();
         }
     }
 
-    public function testGetStats()
+    public function testGetStats() : void
     {
         $cache = $this->_getCacheDriver();
         $stats = $cache->getStats();
@@ -52,7 +53,7 @@ class MongoDBCacheTest extends CacheTest
     /**
      * @group 108
      */
-    public function testMongoCursorExceptionsDoNotBubbleUp()
+    public function testMongoCursorExceptionsDoNotBubbleUp() : void
     {
         /* @var $collection \MongoCollection|\PHPUnit_Framework_MockObject_MockObject */
         $collection = $this
@@ -67,7 +68,7 @@ class MongoDBCacheTest extends CacheTest
         self::assertFalse($cache->save('foo', 'bar'));
     }
 
-    protected function _getCacheDriver()
+    protected function _getCacheDriver() : CacheProvider
     {
         return new MongoDBCache($this->collection);
     }

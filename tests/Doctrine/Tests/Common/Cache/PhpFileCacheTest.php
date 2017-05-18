@@ -3,6 +3,7 @@
 namespace Doctrine\Tests\Common\Cache;
 
 use Doctrine\Common\Cache\Cache;
+use Doctrine\Common\Cache\CacheProvider;
 use Doctrine\Common\Cache\PhpFileCache;
 
 /**
@@ -10,7 +11,7 @@ use Doctrine\Common\Cache\PhpFileCache;
  */
 class PhpFileCacheTest extends BaseFileCacheTest
 {
-    public function provideDataToCache()
+    public function provideDataToCache() : array
     {
         $data = parent::provideDataToCache();
 
@@ -23,7 +24,7 @@ class PhpFileCacheTest extends BaseFileCacheTest
         return $data;
     }
 
-    public function testImplementsSetState()
+    public function testImplementsSetState() : void
     {
         $cache = $this->_getCacheDriver();
 
@@ -35,7 +36,7 @@ class PhpFileCacheTest extends BaseFileCacheTest
 
         // Test fetch
         $value = $cache->fetch('test_set_state');
-        $this->assertInstanceOf('Doctrine\Tests\Common\Cache\SetStateClass', $value);
+        $this->assertInstanceOf(SetStateClass::class, $value);
         $this->assertEquals([1,2,3], $value->getValue());
 
         //Test __set_state call
@@ -48,7 +49,7 @@ class PhpFileCacheTest extends BaseFileCacheTest
     /**
      * @group 154
      */
-    public function testNotImplementsSetState()
+    public function testNotImplementsSetState() : void
     {
         $cache = $this->_getCacheDriver();
 
@@ -59,7 +60,7 @@ class PhpFileCacheTest extends BaseFileCacheTest
     /**
      * @group 154
      */
-    public function testNotImplementsSetStateInArray()
+    public function testNotImplementsSetStateInArray() : void
     {
         $cache = $this->_getCacheDriver();
 
@@ -68,7 +69,7 @@ class PhpFileCacheTest extends BaseFileCacheTest
         $this->assertTrue($cache->contains('test_not_set_state_in_array'));
     }
 
-    public function testGetStats()
+    public function testGetStats() : void
     {
         $cache = $this->_getCacheDriver();
         $stats = $cache->getStats();
@@ -80,7 +81,7 @@ class PhpFileCacheTest extends BaseFileCacheTest
         $this->assertGreaterThan(0, $stats[Cache::STATS_MEMORY_AVAILABLE]);
     }
 
-    protected function _getCacheDriver()
+    protected function _getCacheDriver() : CacheProvider
     {
         return new PhpFileCache($this->directory);
     }
