@@ -5,6 +5,7 @@ namespace Doctrine\Tests\Common\Cache;
 use Riak\Bucket;
 use Riak\Connection;
 use Riak\Exception;
+use Doctrine\Common\Cache\CacheProvider;
 use Doctrine\Common\Cache\RiakCache;
 
 /**
@@ -25,7 +26,7 @@ class RiakCacheTest extends CacheTest
      */
     private $bucket;
 
-    protected function setUp()
+    protected function setUp() : void
     {
         try {
             $this->connection = new Connection('127.0.0.1', 8087);
@@ -38,7 +39,7 @@ class RiakCacheTest extends CacheTest
     /**
      * {@inheritdoc}
      */
-    public function testGetStats()
+    public function testGetStats() : void
     {
         $cache = $this->_getCacheDriver();
         $stats = $cache->getStats();
@@ -48,10 +49,8 @@ class RiakCacheTest extends CacheTest
 
     /**
      * Retrieve RiakCache instance.
-     *
-     * @return \Doctrine\Common\Cache\RiakCache
      */
-    protected function _getCacheDriver()
+    protected function _getCacheDriver() : CacheProvider
     {
         return new RiakCache($this->bucket);
     }

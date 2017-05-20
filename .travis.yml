@@ -7,9 +7,8 @@ cache:
         - $HOME/.composer/cache
 
 php:
-    - 5.6
-    - 7.0
     - 7.1
+    - nightly
 
 services:
     - riak
@@ -19,20 +18,21 @@ services:
 
 before_install:
     - pecl channel-update pecl.php.net
-    - if [[ $TRAVIS_PHP_VERSION = '5.6' ]]; then pecl install riak-beta; fi;
-    - if [[ $TRAVIS_PHP_VERSION = '5.6' ]] ; then echo yes | pecl install apcu-4.0.10; fi;
-    - if [[ $TRAVIS_PHP_VERSION = 7.* ]] ; then pecl config-set preferred_state beta; echo yes | pecl upgrade apcu; fi;
+    - pecl config-set preferred_state beta
+    - echo yes | pecl upgrade apcu
     - phpenv config-add ./tests/travis/php.ini
-    - if [[ $TRAVIS_PHP_VERSION = '5.6' ]]; then PHPUNIT_FLAGS="--coverage-clover clover.xml"; fi
+    - if [[ $TRAVIS_PHP_VERSION = '7.1' ]]; then PHPUNIT_FLAGS="--coverage-clover clover.xml"; fi
 
 install:
     - travis_retry composer install
 
 script:
-    - ./vendor/bin/phpunit -c ./tests/travis/phpunit.travis.xml -v $PHPUNIT_FLAGS
+    - ./vendor/bin/phpunit --exclude-group performance $PHPUNIT_FLAGS
 
 after_script:
-    - if [[ $TRAVIS_PHP_VERSION = '5.6' ]]; then wget https://scrutinizer-ci.com/ocular.phar && php ocular.phar code-coverage:upload --format=php-clover clover.xml; fi
+    - if [[ -f clover.xml ]]; then wget https://scrutinizer-ci.com/ocular.phar && php ocular.phar code-coverage:upload --format=php-clover clover.xml; fi
 
 matrix:
     fast_finish: true
+    allow_failures:
+        - php: nightly

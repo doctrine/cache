@@ -2,6 +2,7 @@
 
 namespace Doctrine\Tests\Common\Cache;
 
+use Doctrine\Common\Cache\CacheProvider;
 use Doctrine\Common\Cache\MemcacheCache;
 use Memcache;
 
@@ -12,7 +13,7 @@ class MemcacheCacheTest extends CacheTest
 {
     private $memcache;
 
-    protected function setUp()
+    protected function setUp() : void
     {
         $this->memcache = new Memcache();
 
@@ -22,7 +23,7 @@ class MemcacheCacheTest extends CacheTest
         }
     }
 
-    protected function tearDown()
+    protected function tearDown() : void
     {
         if ($this->memcache instanceof Memcache) {
             $this->memcache->flush();
@@ -34,7 +35,7 @@ class MemcacheCacheTest extends CacheTest
      *
      * Memcache does not support " " and null byte as key so we remove them from the tests.
      */
-    public function provideCacheIds()
+    public function provideCacheIds() : array
     {
         $ids = parent::provideCacheIds();
         unset($ids[21], $ids[22]);
@@ -42,7 +43,7 @@ class MemcacheCacheTest extends CacheTest
         return $ids;
     }
 
-    public function testGetMemcacheReturnsInstanceOfMemcache()
+    public function testGetMemcacheReturnsInstanceOfMemcache() : void
     {
         $this->assertInstanceOf('Memcache', $this->_getCacheDriver()->getMemcache());
     }
@@ -50,7 +51,7 @@ class MemcacheCacheTest extends CacheTest
     /**
      * {@inheritDoc}
      */
-    protected function _getCacheDriver()
+    protected function _getCacheDriver() : CacheProvider
     {
         $driver = new MemcacheCache();
         $driver->setMemcache($this->memcache);

@@ -3,12 +3,14 @@
 namespace Doctrine\Tests\Common\Cache;
 
 use Doctrine\Common\Cache\Cache;
+use Doctrine\Common\Cache\CacheProvider;
 use Doctrine\Common\Cache\MongoDBCache;
 use MongoClient;
 use MongoCollection;
+use MongoConnectionException;
 
 /**
- * @requires extension mongo
+ * @requires extension mongodb
  */
 class MongoDBCacheTest extends CacheTest
 {
@@ -17,24 +19,26 @@ class MongoDBCacheTest extends CacheTest
      */
     private $collection;
 
-    protected function setUp()
+    protected function setUp() : void
     {
-        if ( ! version_compare(phpversion('mongo'), '1.3.0', '>=')) {
-            $this->markTestSkipped('Mongo >= 1.3.0 is required.');
+        try {
+            $mongo = new MongoClient();
+            $mongo->listDBs();
+        } catch (MongoConnectionException $e) {
+            $this->markTestSkipped('Cannot connect to MongoDB because of: ' . $e);
         }
 
-        $mongo = new MongoClient();
         $this->collection = $mongo->selectCollection('doctrine_common_cache', 'test');
     }
 
-    protected function tearDown()
+    protected function tearDown() : void
     {
         if ($this->collection instanceof MongoCollection) {
             $this->collection->drop();
         }
     }
 
-    public function testGetStats()
+    public function testGetStats() : void
     {
         $cache = $this->_getCacheDriver();
         $stats = $cache->getStats();
@@ -49,7 +53,7 @@ class MongoDBCacheTest extends CacheTest
     /**
      * @group 108
      */
-    public function testMongoCursorExceptionsDoNotBubbleUp()
+    public function testMongoCursorExceptionsDoNotBubbleUp() : void
     {
         /* @var $collection \MongoCollection|\PHPUnit_Framework_MockObject_MockObject */
         $collection = $this
@@ -64,7 +68,7 @@ class MongoDBCacheTest extends CacheTest
         self::assertFalse($cache->save('foo', 'bar'));
     }
 
-    protected function _getCacheDriver()
+    protected function _getCacheDriver() : CacheProvider
     {
         return new MongoDBCache($this->collection);
     }

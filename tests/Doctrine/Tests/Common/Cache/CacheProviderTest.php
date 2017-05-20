@@ -6,11 +6,11 @@ use Doctrine\Common\Cache\CacheProvider;
 
 class CacheProviderTest extends \Doctrine\Tests\DoctrineTestCase
 {
-    public function testFetchMultiWillFilterNonRequestedKeys()
+    public function testFetchMultiWillFilterNonRequestedKeys() : void
     {
         /* @var $cache \Doctrine\Common\Cache\CacheProvider|\PHPUnit_Framework_MockObject_MockObject */
         $cache = $this->getMockForAbstractClass(
-            'Doctrine\Common\Cache\CacheProvider',
+            CacheProvider::class,
             [],
             '',
             true,
@@ -34,11 +34,11 @@ class CacheProviderTest extends \Doctrine\Tests\DoctrineTestCase
         );
     }
 
-    public function testFailedDeleteAllDoesNotChangeNamespaceVersion()
+    public function testFailedDeleteAllDoesNotChangeNamespaceVersion() : void
     {
         /* @var $cache \Doctrine\Common\Cache\CacheProvider|\PHPUnit_Framework_MockObject_MockObject */
         $cache = $this->getMockForAbstractClass(
-            'Doctrine\Common\Cache\CacheProvider',
+            CacheProvider::class,
             [],
             '',
             true,
@@ -72,11 +72,11 @@ class CacheProviderTest extends \Doctrine\Tests\DoctrineTestCase
         $cache->contains('key');
     }
 
-    public function testSaveMultipleNoFail()
+    public function testSaveMultipleNoFail() : void
     {
         /* @var $cache \Doctrine\Common\Cache\CacheProvider|\PHPUnit_Framework_MockObject_MockObject */
         $cache = $this->getMockForAbstractClass(
-            'Doctrine\Common\Cache\CacheProvider',
+            CacheProvider::class,
             [],
             '',
             true,
@@ -103,7 +103,7 @@ class CacheProviderTest extends \Doctrine\Tests\DoctrineTestCase
         ]);
     }
 
-    public function testDeleteMultipleNoFail()
+    public function testDeleteMultipleNoFail() : void
     {
         /* @var $cache \Doctrine\Common\Cache\CacheProvider|\PHPUnit_Framework_MockObject_MockObject */
         $cache = $this
