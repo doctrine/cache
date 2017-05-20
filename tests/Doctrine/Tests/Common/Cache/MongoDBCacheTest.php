@@ -6,6 +6,7 @@ use Doctrine\Common\Cache\Cache;
 use Doctrine\Common\Cache\MongoDBCache;
 use MongoClient;
 use MongoCollection;
+use MongoConnectionException;
 
 /**
  * @requires extension mongodb
@@ -19,7 +20,13 @@ class MongoDBCacheTest extends CacheTest
 
     protected function setUp()
     {
-        $mongo = new MongoClient();
+        try {
+            $mongo = new MongoClient();
+            $mongo->listDBs();
+        } catch (MongoConnectionException $e) {
+            $this->markTestSkipped('Cannot connect to MongoDB because of: ' . $e);
+        }
+
         $this->collection = $mongo->selectCollection('doctrine_common_cache', 'test');
     }
 
