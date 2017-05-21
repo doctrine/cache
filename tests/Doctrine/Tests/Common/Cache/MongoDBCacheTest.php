@@ -50,6 +50,29 @@ class MongoDBCacheTest extends CacheTest
         $this->assertNull($stats[Cache::STATS_MEMORY_AVAILABLE]);
     }
 
+    public function testIndexCreated()
+    {
+        $indexInfo = $this->collection->getIndexInfo();
+        $this->assertEmpty($indexInfo, 'No indices should be defined for the MongoCollection yet');
+        $this->_getCacheDriver();
+        $indexInfo = $this->collection->getIndexInfo();
+        $this->assertNotEmpty($indexInfo, 'Indices should be defined for the MongoCollection after initializing the CacheDriver');
+        $this->assertArrayHasKey(0, $indexInfo, 'First index is expected to be set on the ID field');
+        $this->assertArrayHasKey(1, $indexInfo, 'Second index is expected to set in the ExpireField');
+
+        $expirationFieldIndex = $indexInfo[1];
+        $this->assertArrayHasKey('key', $expirationFieldIndex);
+        $keyInfo = $expirationFieldIndex['key'];
+        $this->assertArrayHasKey(MongoDBCache::EXPIRATION_FIELD, $keyInfo);
+        $this->assertEquals($keyInfo[MongoDBCache::EXPIRATION_FIELD], 1);
+
+        $this->assertArrayHasKey('background', $expirationFieldIndex);
+        $this->assertEquals($expirationFieldIndex['background'], true);
+
+        $this->assertArrayHasKey('expireAfterSeconds', $expirationFieldIndex);
+        $this->assertEquals($expirationFieldIndex['expireAfterSeconds'], 0);
+    }
+
     /**
      * @group 108
      */
