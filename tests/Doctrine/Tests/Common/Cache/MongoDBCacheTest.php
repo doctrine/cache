@@ -68,6 +68,17 @@ class MongoDBCacheTest extends CacheTest
         self::assertFalse($cache->save('foo', 'bar'));
     }
 
+    public function testLifetime() : void
+    {
+        $cache = $this->_getCacheDriver();
+        $cache->save('expire', 'value', 1);
+        $this->assertCount(1, $this->collection->getIndexInfo());
+        $this->assertTrue($cache->contains('expire'), 'Data should not be expired yet');
+        sleep(2);
+        $this->assertFalse($cache->contains('expire'), 'Data should be expired');
+        $this->assertCount(2, $this->collection->getIndexInfo());
+    }
+
     protected function _getCacheDriver() : CacheProvider
     {
         return new MongoDBCache($this->collection);
