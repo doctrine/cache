@@ -88,14 +88,14 @@ class RedisCache extends CacheProvider
     /**
      * {@inheritdoc}
      */
-    protected function doSaveMultiple(array $keysAndValues, $lifetime = 0)
+    protected function doSaveMultiple(array $keysAndValues, $lifeTime = 0)
     {
-        if ($lifetime) {
+        if ($lifeTime > 0) {
             $success = true;
 
             // Keys have lifetime, use SETEX for each of them
             foreach ($keysAndValues as $key => $value) {
-                if (!$this->redis->setex($key, $lifetime, $value)) {
+                if (!$this->redis->setex($key, $lifeTime, $value)) {
                     $success = false;
                 }
             }
