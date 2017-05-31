@@ -4,6 +4,7 @@ namespace Doctrine\Tests\Common\Cache;
 
 use Doctrine\Common\Cache\Cache;
 use Doctrine\Common\Cache\CacheProvider;
+use Doctrine\Common\Cache\LegacyMongoDBCache;
 use Doctrine\Common\Cache\MongoDBCache;
 use MongoClient;
 use MongoCollection;
@@ -12,7 +13,7 @@ use MongoConnectionException;
 /**
  * @requires extension mongodb
  */
-class MongoDBCacheTest extends CacheTest
+class LegacyMongoDBCacheTest extends CacheTest
 {
     /**
      * @var MongoCollection
@@ -63,7 +64,7 @@ class MongoDBCacheTest extends CacheTest
 
         $collection->expects(self::once())->method('update')->willThrowException(new \MongoCursorException());
 
-        $cache = new MongoDBCache($collection);
+        $cache = new LegacyMongoDBCache($collection);
 
         self::assertFalse($cache->save('foo', 'bar'));
     }
