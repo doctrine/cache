@@ -60,6 +60,11 @@ class MongoDBCache extends CacheProvider
     private $collection;
 
     /**
+     * @var bool
+     */
+    private $expirationIndexCreated = false;
+
+    /**
      * Constructor.
      *
      * This provider will default to the write concern and read preference
@@ -89,6 +94,7 @@ class MongoDBCache extends CacheProvider
         }
 
         if ($this->isExpired($document)) {
+            $this->createExpirationIndex();
             $this->doDelete($id);
             return false;
         }
@@ -108,6 +114,7 @@ class MongoDBCache extends CacheProvider
         }
 
         if ($this->isExpired($document)) {
+            $this->createExpirationIndex();
             $this->doDelete($id);
             return false;
         }
@@ -193,5 +200,15 @@ class MongoDBCache extends CacheProvider
         return isset($document[self::EXPIRATION_FIELD]) &&
             $document[self::EXPIRATION_FIELD] instanceof MongoDate &&
             $document[self::EXPIRATION_FIELD]->sec < time();
+    }
+
+    private function createExpirationIndex(): void
+    {
+        if ($this->expirationIndexCreated) {
+            return;
+        }
+
+        $this->expirationIndexCreated = true;
+        $this->collection->createIndex([self::EXPIRATION_FIELD => 1], ['background' => true, 'expireAfterSeconds' => 0]);
     }
 }
