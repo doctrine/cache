@@ -51,14 +51,15 @@ abstract class CacheProvider implements Cache, FlushableCache, ClearableCache, M
     /**
      * Sets the namespace to prefix all cache ids with.
      *
-     * @param string $namespace
+     * @param string       $namespace
+     * @param null|integer $version
      *
      * @return void
      */
-    public function setNamespace($namespace)
+    public function setNamespace($namespace, $version = null)
     {
         $this->namespace        = (string) $namespace;
-        $this->namespaceVersion = null;
+        $this->namespaceVersion = $version;
     }
 
     /**
