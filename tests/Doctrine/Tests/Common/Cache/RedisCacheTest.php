@@ -49,13 +49,23 @@ class RedisCacheTest extends CacheTest
         );
     }
 
+    public function testSettingExplicitlySerializerOption() : void
+    {
+        $driver = $this->_getCacheDriver(Redis::SERIALIZER_NONE);
+
+        $this->assertEquals(
+            Redis::SERIALIZER_NONE,
+            $driver->getRedis()->getOption(Redis::OPT_SERIALIZER)
+        );
+    }
+
     /**
      * {@inheritDoc}
      */
-    protected function _getCacheDriver() : CacheProvider
+    protected function _getCacheDriver($serializer = null) : CacheProvider
     {
         $driver = new RedisCache();
-        $driver->setRedis($this->_redis);
+        $driver->setRedis($this->_redis, $serializer);
         return $driver;
     }
 }

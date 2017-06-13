@@ -36,14 +36,21 @@ class RedisCache extends CacheProvider
     private $redis;
 
     /**
+     * @var int|null
+     */
+    private $serializer;
+
+    /**
      * Sets the redis instance to use.
      *
      * @param Redis $redis
+     * @param int|null $serializer
      *
      * @return void
      */
-    public function setRedis(Redis $redis)
+    public function setRedis(Redis $redis, $serializer = null)
     {
+        $this->setSerializerValue($serializer);
         $redis->setOption(Redis::OPT_SERIALIZER, $this->getSerializerValue());
         $this->redis = $redis;
     }
@@ -167,6 +174,16 @@ class RedisCache extends CacheProvider
     }
 
     /**
+     * Force a specific serializer constant to use.
+     *
+     * @param int $serializer
+     */
+    protected function setSerializerValue($serializer)
+    {
+        $this->serializer = $serializer;
+    }
+
+    /**
      * Returns the serializer constant to use. If Redis is compiled with
      * igbinary support, that is used. Otherwise the default PHP serializer is
      * used.
@@ -175,6 +192,10 @@ class RedisCache extends CacheProvider
      */
     protected function getSerializerValue()
     {
+        if (null !== $this->serializer) {
+            return $this->serializer;
+        }
+
         if (defined('Redis::SERIALIZER_IGBINARY') && extension_loaded('igbinary')) {
             return Redis::SERIALIZER_IGBINARY;
         }
