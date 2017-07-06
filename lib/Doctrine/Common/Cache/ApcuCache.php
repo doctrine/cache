@@ -29,6 +29,16 @@ namespace Doctrine\Common\Cache;
 class ApcuCache extends CacheProvider
 {
     /**
+     * Throws an error if APCu is not installed
+     */
+    public function __construct()
+    {
+        if (! function_exists('apcu_fetch')) {
+            throw new RuntimeException('APCu is not installed: please install APCu (i.e. "pecl install apcu") before using the APCu cache');
+        }
+    }
+    
+    /**
      * {@inheritdoc}
      */
     protected function doFetch($id)
