@@ -252,6 +252,7 @@ abstract class FileCache extends CacheProvider
         @chmod($tmpFile, 0666 & (~$this->umask));
 
         if (file_put_contents($tmpFile, $content) !== false) {
+            @chmod($tmpFile, 0666 & (~$this->umask));
             if (@rename($tmpFile, $filename)) {
                 return true;
             }
