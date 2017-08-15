@@ -27,6 +27,8 @@ use \Couchbase;
  * @link   www.doctrine-project.org
  * @since  2.4
  * @author Michael Nitschinger <michael@nitschinger.at>
+ * @deprecated Couchbase SDK 1.x is now deprecated. Use \Doctrine\Common\Cache\CouchbaseBucketCache instead.
+ * https://developer.couchbase.com/documentation/server/current/sdk/php/compatibility-versions-features.html
  */
 class CouchbaseCache extends CacheProvider
 {

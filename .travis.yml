@@ -16,12 +16,14 @@ services:
     - mongodb
     - memcached
     - redis-server
+    - docker
 
 before_install:
     - pecl channel-update pecl.php.net
     - pecl config-set preferred_state beta
     - echo yes | pecl upgrade apcu
     - mv ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini{,.disabled} || echo "xdebug not available"
+    - ./tests/travis/Couchbase.sh
     - phpenv config-add ./tests/travis/php.ini
 
 install:

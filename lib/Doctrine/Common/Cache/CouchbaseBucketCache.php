@@ -1,0 +1,241 @@
+<?php
+/*
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+ * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+ * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+ * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ * This software consists of voluntary contributions made by many individuals
+ * and is licensed under the MIT license. For more information, see
+ * <http://www.doctrine-project.org>.
+ */
+
+namespace Doctrine\Common\Cache;
+
+use Couchbase\Bucket;
+use Couchbase\Document;
+use Couchbase\Exception;
+
+/**
+ * Couchbase ^2.3.0 cache provider.
+ */
+class CouchbaseBucketCache extends CacheProvider
+{
+    /**
+     * @var Bucket
+     */
+    private $bucket;
+
+    /**
+     * CouchbaseCache constructor.
+     * @param Bucket $bucket
+     */
+    public function __construct(Bucket $bucket)
+    {
+        $this->bucket = $bucket;
+
+        if (!is_callable([$bucket, 'manager'])) {
+            // Manager is required to flush cache and pull stats.
+            throw new \RuntimeException('ext-couchbase:^2.3.0 is required.');
+        }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function doFetch($id)
+    {
+        $id = $this->normalizeKey($id);
+
+        try {
+            $document = $this->bucket->get($id);
+        } catch (Exception $e) {
+            // TODO Log exception.
+            return false;
+        }
+
+        if ($document instanceof Document && $document->value !== false) {
+            return $this->decode($document->value);
+        }
+
+        return false;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function doContains($id)
+    {
+        $id = $this->normalizeKey($id);
+
+        try {
+            $document = $this->bucket->get($id);
+        } catch (Exception $e) {
+            // TODO Log exception.
+            return false;
+        }
+
+        if ($document instanceof Document) {
+            return !$document->error;
+        }
+
+        return false;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function doSave($id, $data, $lifeTime = 0)
+    {
+        $id = $this->normalizeKey($id);
+
+        if ($lifeTime > 30 * 24 * 3600) {
+            $lifeTime = time() + $lifeTime;
+        }
+
+        try {
+            $encoded = $this->encode($data);
+
+            $document = $this->bucket->upsert($id, $encoded, [
+                'expiry' => (int) $lifeTime,
+            ]);
+        } catch (Exception $e) {
+            // TODO Log exception.
+            return false;
+        }
+
+        if ($document instanceof Document) {
+            return !$document->error;
+        }
+
+        return false;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function doDelete($id)
+    {
+        $id = $this->normalizeKey($id);
+
+        try {
+            $document = $this->bucket->remove($id);
+        } catch (Exception $e) {
+            if ($e->getCode() === 13) {
+                return true;
+            }
+
+            // TODO Log exception.
+            return false;
+        }
+
+        if ($document instanceof Document) {
+            return !$document->error;
+        }
+
+        return false;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function doFlush()
+    {
+        $manager = $this->bucket->manager();
+
+        // Flush does not return with success or failure, and must be enabled per bucket on the server.
+        // Store a marker item so that we will know if it was successful.
+        $this->doSave(__METHOD__, true, 60);
+
+        $manager->flush();
+
+        if ($this->doContains(__METHOD__)) {
+            $this->doDelete(__METHOD__);
+
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function doGetStats()
+    {
+        $manager = $this->bucket->manager();
+        $stats   = $manager->info();
+        $nodes = $stats['nodes'];
+        $node = $nodes[0]; // TODO Support more than 1 node.
+        $interestingStats = $node['interestingStats'];
+
+        return [
+            Cache::STATS_HITS   => $interestingStats['get_hits'],
+            Cache::STATS_MISSES => $interestingStats['cmd_get'] - $interestingStats['get_hits'],
+            Cache::STATS_UPTIME => $node['uptime'],
+            Cache::STATS_MEMORY_USAGE     => $interestingStats['mem_used'],
+            Cache::STATS_MEMORY_AVAILABLE => $node['memoryFree'],
+        ];
+    }
+
+    /**
+     * @param $id
+     * @return bool|string
+     */
+    private function normalizeKey($id)
+    {
+        $normalized = substr($id, 0, 250);
+
+        if ($normalized === false) {
+            // TODO Log it?
+            return $id;
+        }
+
+        return $normalized;
+    }
+
+    /**
+     * @param mixed $value
+     * @return mixed
+     */
+    private function encode($value)
+    {
+        if (is_array($value) || is_object($value) || is_numeric($value)) {
+            return serialize($value);
+        }
+
+        if (is_string($value) && $value) {
+            return $value;
+        }
+
+        return json_encode($value);
+    }
+
+    /**
+     * @param mixed $value
+     * @return mixed
+     */
+    private function decode($value)
+    {
+        $decoded = @unserialize($value);
+
+        if ($decoded !== false) {
+            return $decoded;
+        }
+
+        $decoded = json_decode($value);
+
+        if (json_last_error() === JSON_ERROR_NONE) {
+            return $decoded;
+        }
+
+        return $value;
+    }
+}
