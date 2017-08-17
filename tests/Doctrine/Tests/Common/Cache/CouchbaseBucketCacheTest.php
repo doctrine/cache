@@ -17,12 +17,8 @@ class CouchbaseBucketCacheTest extends CacheTest
 
     protected function setUp() : void
     {
-        try {
-            $cluster = new Cluster('couchbase://localhost?detailed_errcodes=1');
-            $this->bucket = $cluster->openBucket('default');
-        } catch(\Exception $ex) {
-            $this->markTestSkipped('Could not instantiate the Couchbase cache because of: ' . $ex);
-        }
+        $cluster = new Cluster('couchbase://localhost?detailed_errcodes=1');
+        $this->bucket = $cluster->openBucket('default');
     }
 
     protected function _getCacheDriver() : CacheProvider

@@ -26,8 +26,12 @@ use Couchbase\Exception;
 /**
  * Couchbase ^2.3.0 cache provider.
  */
-class CouchbaseBucketCache extends CacheProvider
+final class CouchbaseBucketCache extends CacheProvider
 {
+    private CONST KEY_NOT_FOUND = 13;
+
+    private CONST MAX_KEY_LENGTH = 250;
+
     /**
      * @var Bucket
      */
@@ -57,7 +61,6 @@ class CouchbaseBucketCache extends CacheProvider
         try {
             $document = $this->bucket->get($id);
         } catch (Exception $e) {
-            // TODO Log exception.
             return false;
         }
 
@@ -78,7 +81,6 @@ class CouchbaseBucketCache extends CacheProvider
         try {
             $document = $this->bucket->get($id);
         } catch (Exception $e) {
-            // TODO Log exception.
             return false;
         }
 
@@ -107,7 +109,6 @@ class CouchbaseBucketCache extends CacheProvider
                 'expiry' => (int) $lifeTime,
             ]);
         } catch (Exception $e) {
-            // TODO Log exception.
             return false;
         }
 
@@ -128,12 +129,7 @@ class CouchbaseBucketCache extends CacheProvider
         try {
             $document = $this->bucket->remove($id);
         } catch (Exception $e) {
-            if ($e->getCode() === 13) {
-                return true;
-            }
-
-            // TODO Log exception.
-            return false;
+            return $e->getCode() === self::KEY_NOT_FOUND;
         }
 
         if ($document instanceof Document) {
@@ -173,7 +169,7 @@ class CouchbaseBucketCache extends CacheProvider
         $manager = $this->bucket->manager();
         $stats   = $manager->info();
         $nodes = $stats['nodes'];
-        $node = $nodes[0]; // TODO Support more than 1 node.
+        $node = $nodes[0];
         $interestingStats = $node['interestingStats'];
 
         return [
@@ -186,15 +182,14 @@ class CouchbaseBucketCache extends CacheProvider
     }
 
     /**
-     * @param $id
-     * @return bool|string
+     * @param string $id
+     * @return string
      */
-    private function normalizeKey($id)
+    private function normalizeKey(string $id)
     {
-        $normalized = substr($id, 0, 250);
+        $normalized = substr($id, 0, self::MAX_KEY_LENGTH);
 
         if ($normalized === false) {
-            // TODO Log it?
             return $id;
         }
 
@@ -203,39 +198,19 @@ class CouchbaseBucketCache extends CacheProvider
 
     /**
      * @param mixed $value
-     * @return mixed
+     * @return string
      */
-    private function encode($value)
+    private function encode($value) :string
     {
-        if (is_array($value) || is_object($value) || is_numeric($value)) {
-            return serialize($value);
-        }
-
-        if (is_string($value) && $value) {
-            return $value;
-        }
-
-        return json_encode($value);
+        return serialize($value);
     }
 
     /**
-     * @param mixed $value
+     * @param string $value
      * @return mixed
      */
-    private function decode($value)
+    private function decode(string $value)
     {
-        $decoded = @unserialize($value);
-
-        if ($decoded !== false) {
-            return $decoded;
-        }
-
-        $decoded = json_decode($value);
-
-        if (json_last_error() === JSON_ERROR_NONE) {
-            return $decoded;
-        }
-
-        return $value;
+        return unserialize($value);
     }
 }
