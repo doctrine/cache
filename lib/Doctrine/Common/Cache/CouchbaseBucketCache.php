@@ -32,6 +32,8 @@ final class CouchbaseBucketCache extends CacheProvider
 
     private CONST MAX_KEY_LENGTH = 250;
 
+    private CONST THIRTY_DAYS_IN_SECONDS = 2592000;
+
     /**
      * @var Bucket
      */
@@ -98,9 +100,7 @@ final class CouchbaseBucketCache extends CacheProvider
     {
         $id = $this->normalizeKey($id);
 
-        if ($lifeTime > 30 * 24 * 3600) {
-            $lifeTime = time() + $lifeTime;
-        }
+        $lifeTime = $this->normalizeExpiry($lifeTime);
 
         try {
             $encoded = $this->encode($data);
@@ -185,7 +185,7 @@ final class CouchbaseBucketCache extends CacheProvider
      * @param string $id
      * @return string
      */
-    private function normalizeKey(string $id)
+    private function normalizeKey(string $id) : string
     {
         $normalized = substr($id, 0, self::MAX_KEY_LENGTH);
 
@@ -200,7 +200,7 @@ final class CouchbaseBucketCache extends CacheProvider
      * @param mixed $value
      * @return string
      */
-    private function encode($value) :string
+    private function encode($value) : string
     {
         return serialize($value);
     }
@@ -212,5 +212,21 @@ final class CouchbaseBucketCache extends CacheProvider
     private function decode(string $value)
     {
         return unserialize($value);
+    }
+
+    /**
+     * Expiry treated as a unix timestamp instead of an offset if expiry is greater than 30 days.
+     * @src https://developer.couchbase.com/documentation/server/4.1/developer-guide/expiry.html
+     *
+     * @param int $expiry
+     * @return int
+     */
+    private function normalizeExpiry($expiry) : int
+    {
+        if ($expiry > self::THIRTY_DAYS_IN_SECONDS) {
+            return time() + $expiry;
+        }
+
+        return $expiry;
     }
 }
