@@ -1,9 +1,10 @@
 # Doctrine Cache
 
-[![Build Status](https://secure.travis-ci.org/doctrine/cache.png?branch=master)](http://travis-ci.org/doctrine/cache) 
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/doctrine/cache/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/doctrine/cache/?branch=master) 
-[![Code Coverage](https://scrutinizer-ci.com/g/doctrine/cache/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/doctrine/cache/?branch=master)
+[![Build Status](https://img.shields.io/travis/doctrine/cache/master.svg?style=flat-square)](http://travis-ci.org/doctrine/cache) 
+[![Scrutinizer Code Quality](https://img.shields.io/scrutinizer/g/doctrine/cache/master.svg?style=flat-square)](https://scrutinizer-ci.com/g/doctrine/cache/?branch=master) 
+[![Code Coverage](https://img.shields.io/scrutinizer/coverage/g/doctrine/cache/master.svg?style=flat-square)](https://scrutinizer-ci.com/g/doctrine/cache/?branch=master)
 
-[![Latest Stable Version](https://poser.pugx.org/doctrine/cache/v/stable.png)](https://packagist.org/packages/doctrine/cache) [![Total Downloads](https://poser.pugx.org/doctrine/cache/downloads.png)](https://packagist.org/packages/doctrine/cache)
+[![Latest Stable Version](https://img.shields.io/packagist/v/doctrine/cache.svg?style=flat-square)](https://packagist.org/packages/doctrine/cache)
+[![Total Downloads](https://img.shields.io/packagist/dt/doctrine/cache.svg?style=flat-square)](https://packagist.org/packages/doctrine/cache)
 
 Cache component extracted from the Doctrine Common project. [Documentation](http://doctrine-orm.readthedocs.io/projects/doctrine-orm/en/latest/reference/caching.html)
