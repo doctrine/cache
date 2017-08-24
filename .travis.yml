@@ -34,6 +34,10 @@ jobs:
     - php: nightly
 
   include:
+    - stage: Coding standard
+      script:
+        - ./vendor/bin/phpcs
+
     - stage: Coverage
       before_script:
         - mv ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini{.disabled,}
