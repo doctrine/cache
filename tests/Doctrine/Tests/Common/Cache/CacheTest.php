@@ -89,7 +89,7 @@ abstract class CacheTest extends \Doctrine\Tests\DoctrineTestCase
             'Testing fetchMultiple with a single key'
         );
 
-        $keysWithNonExisting = [];
+        $keysWithNonExisting   = [];
         $keysWithNonExisting[] = 'non_existing1';
         $keysWithNonExisting[] = $keys[0];
         $keysWithNonExisting[] = 'non_existing2';
@@ -128,9 +128,9 @@ abstract class CacheTest extends \Doctrine\Tests\DoctrineTestCase
 
     public function provideDataToCache() : array
     {
-        $obj = new \stdClass();
-        $obj->foo = 'bar';
-        $obj2 = new \stdClass();
+        $obj       = new \stdClass();
+        $obj->foo  = 'bar';
+        $obj2      = new \stdClass();
         $obj2->bar = 'foo';
         $obj2->obj = $obj;
         $obj->obj2 = $obj2;
@@ -139,7 +139,7 @@ abstract class CacheTest extends \Doctrine\Tests\DoctrineTestCase
             'array' => [['one', 2, 3.01]],
             'string' => ['value'],
             'string_invalid_utf8' => ["\xc3\x28"],
-            'string_null_byte' => ['with'."\0".'null char'],
+            'string_null_byte' => ['with' . "\0" . 'null char'],
             'integer' => [1],
             'float' => [1.5],
             'object' => [new ArrayObject(['one', 2, 3.01])],

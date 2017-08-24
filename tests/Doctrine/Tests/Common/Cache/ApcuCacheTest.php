@@ -12,7 +12,7 @@ class ApcuCacheTest extends CacheTest
 {
     protected function setUp() : void
     {
-        if (!ini_get('apc.enable_cli')) {
+        if ( ! ini_get('apc.enable_cli')) {
             $this->markTestSkipped('APC must be enabled for the CLI with the ini setting apc.enable_cli=1');
         }
     }

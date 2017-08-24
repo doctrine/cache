@@ -37,5 +37,5 @@ interface MultiGetCache
      * @return mixed[] Array of retrieved values, indexed by the specified keys.
      *                 Values that couldn't be retrieved are not contained in this array.
      */
-    function fetchMultiple(array $keys);
+    public function fetchMultiple(array $keys);
 }

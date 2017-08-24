@@ -88,7 +88,7 @@ class SQLite3Cache extends CacheProvider
     {
         $item = $this->findById($id);
 
-        if (!$item) {
+        if ( ! $item) {
             return false;
         }
 
@@ -167,7 +167,7 @@ class SQLite3Cache extends CacheProvider
     {
         list($idField) = $fields = $this->getFields();
 
-        if (!$includeData) {
+        if ( ! $includeData) {
             $key = array_search(static::DATA_FIELD, $fields);
             unset($fields[$key]);
         }

@@ -15,7 +15,7 @@ class PredisCacheTest extends CacheTest
 
     protected function setUp() : void
     {
-        if (!class_exists(Client::class)) {
+        if ( ! class_exists(Client::class)) {
             $this->markTestSkipped('Predis\Client is missing. Make sure to "composer install" to have all dev dependencies.');
         }
 

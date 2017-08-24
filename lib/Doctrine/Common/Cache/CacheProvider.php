@@ -191,7 +191,7 @@ abstract class CacheProvider implements Cache, FlushableCache, ClearableCache, M
      */
     private function getNamespacedId(string $id) : string
     {
-        $namespaceVersion  = $this->getNamespaceVersion();
+        $namespaceVersion = $this->getNamespaceVersion();
 
         return sprintf('%s[%s][%s]', $this->namespace, $id, $namespaceVersion);
     }
@@ -274,7 +274,7 @@ abstract class CacheProvider implements Cache, FlushableCache, ClearableCache, M
         $success = true;
 
         foreach ($keysAndValues as $key => $value) {
-            if (!$this->doSave($key, $value, $lifetime)) {
+            if ( ! $this->doSave($key, $value, $lifetime)) {
                 $success = false;
             }
         }
@@ -306,7 +306,7 @@ abstract class CacheProvider implements Cache, FlushableCache, ClearableCache, M
         $success = true;
 
         foreach ($keys as $key) {
-            if (! $this->doDelete($key)) {
+            if ( ! $this->doDelete($key)) {
                 $success = false;
             }
         }

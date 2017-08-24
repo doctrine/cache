@@ -134,8 +134,7 @@ abstract class FileCache extends CacheProvider
         $hash = hash('sha256', $id);
 
         // This ensures that the filename is unique and that there are no invalid chars in it.
-        if (
-            '' === $id
+        if ('' === $id
             || ((strlen($id) * 2 + $this->extensionStringLength) > 255)
             || ($this->isRunningOnWindows && ($this->directoryStringLength + 4 + strlen($id) * 2 + $this->extensionStringLength) > 258)
         ) {
@@ -195,7 +194,7 @@ abstract class FileCache extends CacheProvider
     {
         $usage = 0;
         foreach ($this->getIterator() as $name => $file) {
-            if (! $file->isDir() && $this->isFilenameEndingWithExtension($name)) {
+            if ( ! $file->isDir() && $this->isFilenameEndingWithExtension($name)) {
                 $usage += $file->getSize();
             }
         }
@@ -220,7 +219,7 @@ abstract class FileCache extends CacheProvider
     private function createPathIfNeeded(string $path) : bool
     {
         if ( ! is_dir($path)) {
-            if (false === @mkdir($path, 0777 & (~$this->umask), true) && !is_dir($path)) {
+            if (false === @mkdir($path, 0777 & (~$this->umask), true) && ! is_dir($path)) {
                 return false;
             }
         }

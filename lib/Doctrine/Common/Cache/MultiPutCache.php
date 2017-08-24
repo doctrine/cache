@@ -39,5 +39,5 @@ interface MultiPutCache
      *
      * @return bool TRUE if the operation was successful, FALSE if it wasn't.
      */
-    function saveMultiple(array $keysAndValues, $lifetime = 0);
+    public function saveMultiple(array $keysAndValues, $lifetime = 0);
 }

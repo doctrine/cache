@@ -37,5 +37,5 @@ interface MultiDeleteCache
      *
      * @return bool TRUE if the operation was successful, FALSE if it wasn't.
      */
-    function deleteMultiple(array $keys);
+    public function deleteMultiple(array $keys);
 }

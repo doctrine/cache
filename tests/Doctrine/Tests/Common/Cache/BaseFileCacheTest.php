@@ -13,7 +13,7 @@ abstract class BaseFileCacheTest extends CacheTest
     protected function setUp() : void
     {
         do {
-            $this->directory = sys_get_temp_dir() . '/doctrine_cache_'. uniqid();
+            $this->directory = sys_get_temp_dir() . '/doctrine_cache_' . uniqid();
         } while (file_exists($this->directory));
     }
 
@@ -76,17 +76,17 @@ abstract class BaseFileCacheTest extends CacheTest
 
     private static function getKeyAndPathFittingLength(int $length, string $basePath) : array
     {
-        $baseDirLength = strlen($basePath);
-        $extensionLength = strlen('.doctrine.cache');
-        $directoryLength = strlen(DIRECTORY_SEPARATOR . 'aa' . DIRECTORY_SEPARATOR);
+        $baseDirLength             = strlen($basePath);
+        $extensionLength           = strlen('.doctrine.cache');
+        $directoryLength           = strlen(DIRECTORY_SEPARATOR . 'aa' . DIRECTORY_SEPARATOR);
         $namespaceAndBracketLength = strlen(bin2hex("[][1]"));
-        $keyLength = $length
+        $keyLength                 = $length
             - ($baseDirLength
                 + $extensionLength
                 + $directoryLength
                 + $namespaceAndBracketLength);
 
-        $key = str_repeat('a', floor($keyLength / 2));
+        $key           = str_repeat('a', floor($keyLength / 2));
         $namespacedKey = '[' . $key . '][1]';
 
         $keyHash = hash('sha256', $namespacedKey);
@@ -125,7 +125,7 @@ abstract class BaseFileCacheTest extends CacheTest
 
         // Trick it into thinking this is windows.
         $reflClass = new \ReflectionClass(FileCache::class);
-        $reflProp = $reflClass->getProperty('isRunningOnWindows');
+        $reflProp  = $reflClass->getProperty('isRunningOnWindows');
         $reflProp->setAccessible(true);
         $reflProp->setValue($cache, true);
         $reflProp->setAccessible(false);
