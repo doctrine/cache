@@ -28,11 +28,11 @@ class ArrayCacheTest extends CacheTest
         $cache->fetch('test3');
 
         $stats = $cache->getStats();
-        $this->assertEquals(2, $stats[Cache::STATS_HITS]);
-        $this->assertEquals(5, $stats[Cache::STATS_MISSES]); // +1 for internal call to DoctrineNamespaceCacheKey
-        $this->assertNotNull($stats[Cache::STATS_UPTIME]);
-        $this->assertNull($stats[Cache::STATS_MEMORY_USAGE]);
-        $this->assertNull($stats[Cache::STATS_MEMORY_AVAILABLE]);
+        self::assertEquals(2, $stats[Cache::STATS_HITS]);
+        self::assertEquals(5, $stats[Cache::STATS_MISSES]); // +1 for internal call to DoctrineNamespaceCacheKey
+        self::assertNotNull($stats[Cache::STATS_UPTIME]);
+        self::assertNull($stats[Cache::STATS_MEMORY_USAGE]);
+        self::assertNull($stats[Cache::STATS_MEMORY_AVAILABLE]);
 
         $cache->delete('test1');
         $cache->delete('test2');
@@ -42,8 +42,8 @@ class ArrayCacheTest extends CacheTest
         $cache->fetch('test3');
 
         $stats = $cache->getStats();
-        $this->assertEquals(2, $stats[Cache::STATS_HITS]);
-        $this->assertEquals(8, $stats[Cache::STATS_MISSES]); // +1 for internal call to DoctrineNamespaceCacheKey
+        self::assertEquals(2, $stats[Cache::STATS_HITS]);
+        self::assertEquals(8, $stats[Cache::STATS_MISSES]); // +1 for internal call to DoctrineNamespaceCacheKey
     }
 
     protected function isSharedStorage() : bool

@@ -33,8 +33,8 @@ class PredisCacheTest extends CacheTest
         $cache = $this->_getCacheDriver();
         $stats = $cache->getStats();
 
-        $this->assertNotNull($stats[Cache::STATS_HITS]);
-        $this->assertNotNull($stats[Cache::STATS_MISSES]);
+        self::assertNotNull($stats[Cache::STATS_HITS]);
+        self::assertNotNull($stats[Cache::STATS_MISSES]);
     }
 
     /**
@@ -84,6 +84,6 @@ class PredisCacheTest extends CacheTest
         /* @var $predisClient ClientInterface */
         $predisClient = $this->createMock(ClientInterface::class);
 
-        $this->assertInstanceOf(PredisCache::class, new PredisCache($predisClient));
+        self::assertInstanceOf(PredisCache::class, new PredisCache($predisClient));
     }
 }

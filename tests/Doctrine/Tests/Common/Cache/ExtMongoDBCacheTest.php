@@ -45,22 +45,22 @@ class ExtMongoDBCacheTest extends CacheTest
         $this->collection->find([]);
         $stats = $cache->getStats();
 
-        $this->assertNull($stats[Cache::STATS_HITS]);
-        $this->assertNull($stats[Cache::STATS_MISSES]);
-        $this->assertGreaterThan(0, $stats[Cache::STATS_UPTIME]);
-        $this->assertEquals(0, $stats[Cache::STATS_MEMORY_USAGE]);
-        $this->assertNull($stats[Cache::STATS_MEMORY_AVAILABLE]);
+        self::assertNull($stats[Cache::STATS_HITS]);
+        self::assertNull($stats[Cache::STATS_MISSES]);
+        self::assertGreaterThan(0, $stats[Cache::STATS_UPTIME]);
+        self::assertEquals(0, $stats[Cache::STATS_MEMORY_USAGE]);
+        self::assertNull($stats[Cache::STATS_MEMORY_AVAILABLE]);
     }
 
     public function testLifetime() : void
     {
         $cache = $this->_getCacheDriver();
         $cache->save('expire', 'value', 1);
-        $this->assertCount(1, $this->collection->listIndexes());
-        $this->assertTrue($cache->contains('expire'), 'Data should not be expired yet');
+        self::assertCount(1, $this->collection->listIndexes());
+        self::assertTrue($cache->contains('expire'), 'Data should not be expired yet');
         sleep(2);
-        $this->assertFalse($cache->contains('expire'), 'Data should be expired');
-        $this->assertCount(2, $this->collection->listIndexes());
+        self::assertFalse($cache->contains('expire'), 'Data should be expired');
+        self::assertCount(2, $this->collection->listIndexes());
     }
 
     protected function _getCacheDriver() : CacheProvider

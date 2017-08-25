@@ -16,18 +16,18 @@ abstract class CacheTest extends \Doctrine\Tests\DoctrineTestCase
         $cache = $this->_getCacheDriver();
 
         // Test saving a value, checking if it exists, and fetching it back
-        $this->assertTrue($cache->save('key', $value));
-        $this->assertTrue($cache->contains('key'));
+        self::assertTrue($cache->save('key', $value));
+        self::assertTrue($cache->contains('key'));
         if (is_object($value)) {
-            $this->assertEquals($value, $cache->fetch('key'), 'Objects retrieved from the cache must be equal but not necessarily the same reference');
+            self::assertEquals($value, $cache->fetch('key'), 'Objects retrieved from the cache must be equal but not necessarily the same reference');
         } else {
-            $this->assertSame($value, $cache->fetch('key'), 'Scalar and array data retrieved from the cache must be the same as the original, e.g. same type');
+            self::assertSame($value, $cache->fetch('key'), 'Scalar and array data retrieved from the cache must be the same as the original, e.g. same type');
         }
 
         // Test deleting a value
-        $this->assertTrue($cache->delete('key'));
-        $this->assertFalse($cache->contains('key'));
-        $this->assertFalse($cache->fetch('key'));
+        self::assertTrue($cache->delete('key'));
+        self::assertFalse($cache->contains('key'));
+        self::assertFalse($cache->fetch('key'));
     }
 
     /**
@@ -37,15 +37,15 @@ abstract class CacheTest extends \Doctrine\Tests\DoctrineTestCase
     {
         $cache = $this->_getCacheDriver();
 
-        $this->assertTrue($cache->save('key', 'old-value'));
-        $this->assertTrue($cache->contains('key'));
+        self::assertTrue($cache->save('key', 'old-value'));
+        self::assertTrue($cache->contains('key'));
 
-        $this->assertTrue($cache->save('key', $value));
-        $this->assertTrue($cache->contains('key'));
+        self::assertTrue($cache->save('key', $value));
+        self::assertTrue($cache->contains('key'));
         if (is_object($value)) {
-            $this->assertEquals($value, $cache->fetch('key'), 'Objects retrieved from the cache must be equal but not necessarily the same reference');
+            self::assertEquals($value, $cache->fetch('key'), 'Objects retrieved from the cache must be equal but not necessarily the same reference');
         } else {
-            $this->assertSame($value, $cache->fetch('key'), 'Scalar and array data retrieved from the cache must be the same as the original, e.g. same type');
+            self::assertSame($value, $cache->fetch('key'), 'Scalar and array data retrieved from the cache must be the same as the original, e.g. same type');
         }
     }
 
@@ -53,15 +53,15 @@ abstract class CacheTest extends \Doctrine\Tests\DoctrineTestCase
     {
         $cache = $this->_getCacheDriver();
 
-        $this->assertTrue($cache->save('key', 'value'));
-        $this->assertTrue($cache->contains('key'));
-        $this->assertSame('value', $cache->fetch('key'));
+        self::assertTrue($cache->save('key', 'value'));
+        self::assertTrue($cache->contains('key'));
+        self::assertSame('value', $cache->fetch('key'));
 
-        $this->assertFalse($cache->contains('KEY'));
-        $this->assertFalse($cache->fetch('KEY'));
+        self::assertFalse($cache->contains('KEY'));
+        self::assertFalse($cache->fetch('KEY'));
 
         $cache->delete('KEY');
-        $this->assertTrue($cache->contains('key'), 'Deleting cache item with different case must not affect other cache item');
+        self::assertTrue($cache->contains('key'), 'Deleting cache item with different case must not affect other cache item');
     }
 
     public function testFetchMultiple() : void
@@ -78,12 +78,12 @@ abstract class CacheTest extends \Doctrine\Tests\DoctrineTestCase
 
         $keys = array_keys($saved);
 
-        $this->assertEquals(
+        self::assertEquals(
             $saved,
             $cache->fetchMultiple($keys),
             'Testing fetchMultiple with different data types'
         );
-        $this->assertEquals(
+        self::assertEquals(
             array_slice($saved, 0, 1),
             $cache->fetchMultiple(array_slice($keys, 0, 1)),
             'Testing fetchMultiple with a single key'
@@ -96,7 +96,7 @@ abstract class CacheTest extends \Doctrine\Tests\DoctrineTestCase
         $keysWithNonExisting[] = $keys[1];
         $keysWithNonExisting[] = 'non_existing3';
 
-        $this->assertEquals(
+        self::assertEquals(
             array_slice($saved, 0, 2),
             $cache->fetchMultiple($keysWithNonExisting),
             'Testing fetchMultiple with a subset of keys and mixed with non-existing ones'
@@ -107,7 +107,7 @@ abstract class CacheTest extends \Doctrine\Tests\DoctrineTestCase
     {
         $cache = $this->_getCacheDriver();
 
-        $this->assertSame([], $cache->fetchMultiple([]));
+        self::assertSame([], $cache->fetchMultiple([]));
     }
 
     public function testSaveMultiple() : void
@@ -119,11 +119,11 @@ abstract class CacheTest extends \Doctrine\Tests\DoctrineTestCase
             return $value[0];
         }, $this->provideDataToCache());
 
-        $this->assertTrue($cache->saveMultiple($data));
+        self::assertTrue($cache->saveMultiple($data));
 
         $keys = array_keys($data);
 
-        $this->assertEquals($data, $cache->fetchMultiple($keys));
+        self::assertEquals($data, $cache->fetchMultiple($keys));
     }
 
     public function provideDataToCache() : array
@@ -161,31 +161,31 @@ abstract class CacheTest extends \Doctrine\Tests\DoctrineTestCase
         $cache = $this->_getCacheDriver();
 
         $cache->delete('key');
-        $this->assertFalse($cache->contains('key'));
-        $this->assertTrue($cache->delete('key'));
+        self::assertFalse($cache->contains('key'));
+        self::assertTrue($cache->delete('key'));
     }
 
     public function testDeleteAll() : void
     {
         $cache = $this->_getCacheDriver();
 
-        $this->assertTrue($cache->save('key1', 1));
-        $this->assertTrue($cache->save('key2', 2));
-        $this->assertTrue($cache->deleteAll());
-        $this->assertFalse($cache->contains('key1'));
-        $this->assertFalse($cache->contains('key2'));
+        self::assertTrue($cache->save('key1', 1));
+        self::assertTrue($cache->save('key2', 2));
+        self::assertTrue($cache->deleteAll());
+        self::assertFalse($cache->contains('key1'));
+        self::assertFalse($cache->contains('key2'));
     }
 
     public function testDeleteMulti() : void
     {
         $cache = $this->_getCacheDriver();
 
-        $this->assertTrue($cache->save('key1', 1));
-        $this->assertTrue($cache->save('key2', 1));
-        $this->assertTrue($cache->deleteMultiple(['key1', 'key2', 'key3']));
-        $this->assertFalse($cache->contains('key1'));
-        $this->assertFalse($cache->contains('key2'));
-        $this->assertFalse($cache->contains('key3'));
+        self::assertTrue($cache->save('key1', 1));
+        self::assertTrue($cache->save('key2', 1));
+        self::assertTrue($cache->deleteMultiple(['key1', 'key2', 'key3']));
+        self::assertFalse($cache->contains('key1'));
+        self::assertFalse($cache->contains('key2'));
+        self::assertFalse($cache->contains('key3'));
     }
 
     /**
@@ -195,13 +195,13 @@ abstract class CacheTest extends \Doctrine\Tests\DoctrineTestCase
     {
         $cache = $this->_getCacheDriver();
 
-        $this->assertTrue($cache->save($id, 'value'));
-        $this->assertTrue($cache->contains($id));
-        $this->assertEquals('value', $cache->fetch($id));
+        self::assertTrue($cache->save($id, 'value'));
+        self::assertTrue($cache->contains($id));
+        self::assertEquals('value', $cache->fetch($id));
 
-        $this->assertTrue($cache->delete($id));
-        $this->assertFalse($cache->contains($id));
-        $this->assertFalse($cache->fetch($id));
+        self::assertTrue($cache->delete($id));
+        self::assertFalse($cache->contains($id));
+        self::assertFalse($cache->fetch($id));
     }
 
     public function testNoCacheIdCollisions() : void
@@ -218,7 +218,7 @@ abstract class CacheTest extends \Doctrine\Tests\DoctrineTestCase
         // then check value of each cache id
         foreach ($ids as $index => $id) {
             $value = $cache->fetch($id[0]);
-            $this->assertNotFalse($value, sprintf('Failed to retrieve data for cache id "%s".', $id[0]));
+            self::assertNotFalse($value, sprintf('Failed to retrieve data for cache id "%s".', $id[0]));
             if ($index !== $value) {
                 $this->fail(sprintf('Cache id "%s" collides with id "%s".', $id[0], $ids[$value][0]));
             }
@@ -267,10 +267,10 @@ abstract class CacheTest extends \Doctrine\Tests\DoctrineTestCase
     {
         $cache = $this->_getCacheDriver();
         $cache->save('expire', 'value', 1);
-        $this->assertTrue($cache->contains('expire'), 'Data should not be expired yet');
+        self::assertTrue($cache->contains('expire'), 'Data should not be expired yet');
         // @TODO should more TTL-based tests pop up, so then we should mock the `time` API instead
         sleep(2);
-        $this->assertFalse($cache->contains('expire'), 'Data should be expired');
+        self::assertFalse($cache->contains('expire'), 'Data should be expired');
     }
 
     public function testNoExpire() : void
@@ -279,14 +279,14 @@ abstract class CacheTest extends \Doctrine\Tests\DoctrineTestCase
         $cache->save('noexpire', 'value', 0);
         // @TODO should more TTL-based tests pop up, so then we should mock the `time` API instead
         sleep(1);
-        $this->assertTrue($cache->contains('noexpire'), 'Data with lifetime of zero should not expire');
+        self::assertTrue($cache->contains('noexpire'), 'Data with lifetime of zero should not expire');
     }
 
     public function testLongLifetime() : void
     {
         $cache = $this->_getCacheDriver();
         $cache->save('longlifetime', 'value', 30 * 24 * 3600 + 1);
-        $this->assertTrue($cache->contains('longlifetime'), 'Data with lifetime > 30 days should be accepted');
+        self::assertTrue($cache->contains('longlifetime'), 'Data with lifetime > 30 days should be accepted');
     }
 
     public function testDeleteAllAndNamespaceVersioningBetweenCaches() : void
@@ -298,45 +298,45 @@ abstract class CacheTest extends \Doctrine\Tests\DoctrineTestCase
         $cache1 = $this->_getCacheDriver();
         $cache2 = $this->_getCacheDriver();
 
-        $this->assertTrue($cache1->save('key1', 1));
-        $this->assertTrue($cache2->save('key2', 2));
+        self::assertTrue($cache1->save('key1', 1));
+        self::assertTrue($cache2->save('key2', 2));
 
         /* Both providers are initialized with the same namespace version, so
          * they can see entries set by each other.
          */
-        $this->assertTrue($cache1->contains('key1'));
-        $this->assertTrue($cache1->contains('key2'));
-        $this->assertTrue($cache2->contains('key1'));
-        $this->assertTrue($cache2->contains('key2'));
+        self::assertTrue($cache1->contains('key1'));
+        self::assertTrue($cache1->contains('key2'));
+        self::assertTrue($cache2->contains('key1'));
+        self::assertTrue($cache2->contains('key2'));
 
         /* Deleting all entries through one provider will only increment the
          * namespace version on that object (and in the cache itself, which new
          * instances will use to initialize). The second provider will retain
          * its original version and still see stale data.
          */
-        $this->assertTrue($cache1->deleteAll());
-        $this->assertFalse($cache1->contains('key1'));
-        $this->assertFalse($cache1->contains('key2'));
-        $this->assertTrue($cache2->contains('key1'));
-        $this->assertTrue($cache2->contains('key2'));
+        self::assertTrue($cache1->deleteAll());
+        self::assertFalse($cache1->contains('key1'));
+        self::assertFalse($cache1->contains('key2'));
+        self::assertTrue($cache2->contains('key1'));
+        self::assertTrue($cache2->contains('key2'));
 
         /* A new cache provider should not see the deleted entries, since its
          * namespace version will be initialized.
          */
         $cache3 = $this->_getCacheDriver();
-        $this->assertFalse($cache3->contains('key1'));
-        $this->assertFalse($cache3->contains('key2'));
+        self::assertFalse($cache3->contains('key1'));
+        self::assertFalse($cache3->contains('key2'));
     }
 
     public function testFlushAll() : void
     {
         $cache = $this->_getCacheDriver();
 
-        $this->assertTrue($cache->save('key1', 1));
-        $this->assertTrue($cache->save('key2', 2));
-        $this->assertTrue($cache->flushAll());
-        $this->assertFalse($cache->contains('key1'));
-        $this->assertFalse($cache->contains('key2'));
+        self::assertTrue($cache->save('key1', 1));
+        self::assertTrue($cache->save('key2', 2));
+        self::assertTrue($cache->flushAll());
+        self::assertFalse($cache->contains('key1'));
+        self::assertFalse($cache->contains('key2'));
     }
 
     public function testFlushAllAndNamespaceVersioningBetweenCaches() : void
@@ -352,45 +352,45 @@ abstract class CacheTest extends \Doctrine\Tests\DoctrineTestCase
          * namespace version before saving the first entry.
          */
         $cache1->deleteAll();
-        $this->assertTrue($cache1->save('key1', 1));
+        self::assertTrue($cache1->save('key1', 1));
 
         /* The second provider will be initialized with the same namespace
          * version upon its first save operation.
          */
-        $this->assertTrue($cache2->save('key2', 2));
+        self::assertTrue($cache2->save('key2', 2));
 
         /* Both providers have the same namespace version and can see entries
          * set by each other.
          */
-        $this->assertTrue($cache1->contains('key1'));
-        $this->assertTrue($cache1->contains('key2'));
-        $this->assertTrue($cache2->contains('key1'));
-        $this->assertTrue($cache2->contains('key2'));
+        self::assertTrue($cache1->contains('key1'));
+        self::assertTrue($cache1->contains('key2'));
+        self::assertTrue($cache2->contains('key1'));
+        self::assertTrue($cache2->contains('key2'));
 
         /* Flushing all entries through one cache will remove all entries from
          * the cache but leave their namespace version as-is.
          */
-        $this->assertTrue($cache1->flushAll());
-        $this->assertFalse($cache1->contains('key1'));
-        $this->assertFalse($cache1->contains('key2'));
-        $this->assertFalse($cache2->contains('key1'));
-        $this->assertFalse($cache2->contains('key2'));
+        self::assertTrue($cache1->flushAll());
+        self::assertFalse($cache1->contains('key1'));
+        self::assertFalse($cache1->contains('key2'));
+        self::assertFalse($cache2->contains('key1'));
+        self::assertFalse($cache2->contains('key2'));
 
         /* Inserting a new entry will use the same, incremented namespace
          * version, and it will be visible to both providers.
          */
-        $this->assertTrue($cache1->save('key1', 1));
-        $this->assertTrue($cache1->contains('key1'));
-        $this->assertTrue($cache2->contains('key1'));
+        self::assertTrue($cache1->save('key1', 1));
+        self::assertTrue($cache1->contains('key1'));
+        self::assertTrue($cache2->contains('key1'));
 
         /* A new cache provider will be initialized with the original namespace
          * version and not share any visibility with the first two providers.
          */
         $cache3 = $this->_getCacheDriver();
-        $this->assertFalse($cache3->contains('key1'));
-        $this->assertFalse($cache3->contains('key2'));
-        $this->assertTrue($cache3->save('key3', 3));
-        $this->assertTrue($cache3->contains('key3'));
+        self::assertFalse($cache3->contains('key1'));
+        self::assertFalse($cache3->contains('key2'));
+        self::assertTrue($cache3->save('key3', 3));
+        self::assertTrue($cache3->contains('key3'));
     }
 
     public function testNamespace() : void
@@ -399,12 +399,12 @@ abstract class CacheTest extends \Doctrine\Tests\DoctrineTestCase
 
         $cache->setNamespace('ns1_');
 
-        $this->assertTrue($cache->save('key1', 1));
-        $this->assertTrue($cache->contains('key1'));
+        self::assertTrue($cache->save('key1', 1));
+        self::assertTrue($cache->contains('key1'));
 
         $cache->setNamespace('ns2_');
 
-        $this->assertFalse($cache->contains('key1'));
+        self::assertFalse($cache->contains('key1'));
     }
 
     public function testDeleteAllNamespace() : void
@@ -412,24 +412,24 @@ abstract class CacheTest extends \Doctrine\Tests\DoctrineTestCase
         $cache = $this->_getCacheDriver();
 
         $cache->setNamespace('ns1');
-        $this->assertFalse($cache->contains('key1'));
+        self::assertFalse($cache->contains('key1'));
         $cache->save('key1', 'test');
-        $this->assertTrue($cache->contains('key1'));
+        self::assertTrue($cache->contains('key1'));
 
         $cache->setNamespace('ns2');
-        $this->assertFalse($cache->contains('key1'));
+        self::assertFalse($cache->contains('key1'));
         $cache->save('key1', 'test');
-        $this->assertTrue($cache->contains('key1'));
+        self::assertTrue($cache->contains('key1'));
 
         $cache->setNamespace('ns1');
-        $this->assertTrue($cache->contains('key1'));
+        self::assertTrue($cache->contains('key1'));
         $cache->deleteAll();
-        $this->assertFalse($cache->contains('key1'));
+        self::assertFalse($cache->contains('key1'));
 
         $cache->setNamespace('ns2');
-        $this->assertTrue($cache->contains('key1'));
+        self::assertTrue($cache->contains('key1'));
         $cache->deleteAll();
-        $this->assertFalse($cache->contains('key1'));
+        self::assertFalse($cache->contains('key1'));
     }
 
     /**
@@ -440,19 +440,19 @@ abstract class CacheTest extends \Doctrine\Tests\DoctrineTestCase
         $cache = $this->_getCacheDriver();
         $stats = $cache->getStats();
 
-        $this->assertArrayHasKey(Cache::STATS_HITS, $stats);
-        $this->assertArrayHasKey(Cache::STATS_MISSES, $stats);
-        $this->assertArrayHasKey(Cache::STATS_UPTIME, $stats);
-        $this->assertArrayHasKey(Cache::STATS_MEMORY_USAGE, $stats);
-        $this->assertArrayHasKey(Cache::STATS_MEMORY_AVAILABLE, $stats);
+        self::assertArrayHasKey(Cache::STATS_HITS, $stats);
+        self::assertArrayHasKey(Cache::STATS_MISSES, $stats);
+        self::assertArrayHasKey(Cache::STATS_UPTIME, $stats);
+        self::assertArrayHasKey(Cache::STATS_MEMORY_USAGE, $stats);
+        self::assertArrayHasKey(Cache::STATS_MEMORY_AVAILABLE, $stats);
     }
 
     public function testSaveReturnsTrueWithAndWithoutTTlSet() : void
     {
         $cache = $this->_getCacheDriver();
         $cache->deleteAll();
-        $this->assertTrue($cache->save('without_ttl', 'without_ttl'));
-        $this->assertTrue($cache->save('with_ttl', 'with_ttl', 3600));
+        self::assertTrue($cache->save('without_ttl', 'without_ttl'));
+        self::assertTrue($cache->save('with_ttl', 'with_ttl', 3600));
     }
 
     public function testValueThatIsFalseBooleanIsProperlyRetrieved()
@@ -460,9 +460,9 @@ abstract class CacheTest extends \Doctrine\Tests\DoctrineTestCase
         $cache = $this->_getCacheDriver();
         $cache->deleteAll();
 
-        $this->assertTrue($cache->save('key1', false));
-        $this->assertTrue($cache->contains('key1'));
-        $this->assertFalse($cache->fetch('key1'));
+        self::assertTrue($cache->save('key1', false));
+        self::assertTrue($cache->contains('key1'));
+        self::assertFalse($cache->fetch('key1'));
     }
 
     /**

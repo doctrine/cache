@@ -37,7 +37,7 @@ class FileCacheTest extends \Doctrine\Tests\DoctrineTestCase
         $path    = $method->invoke($cache, $key);
         $dirname = pathinfo($path, PATHINFO_DIRNAME);
 
-        $this->assertEquals(DIRECTORY_SEPARATOR . $expectedDir, $dirname);
+        self::assertEquals(DIRECTORY_SEPARATOR . $expectedDir, $dirname);
     }
 
     public function testFileExtensionCorrectlyEscaped() : void
@@ -61,8 +61,8 @@ class FileCacheTest extends \Doctrine\Tests\DoctrineTestCase
         $stats1 = $doGetStats->invoke($driver1);
         $stats2 = $doGetStats->invoke($driver2);
 
-        $this->assertSame(0, $stats1[Cache::STATS_MEMORY_USAGE]);
-        $this->assertGreaterThan(0, $stats2[Cache::STATS_MEMORY_USAGE]);
+        self::assertSame(0, $stats1[Cache::STATS_MEMORY_USAGE]);
+        self::assertGreaterThan(0, $stats2[Cache::STATS_MEMORY_USAGE]);
     }
 
     /**
@@ -82,7 +82,7 @@ class FileCacheTest extends \Doctrine\Tests\DoctrineTestCase
 
         $stats = $doGetStats->invoke($driver);
 
-        $this->assertGreaterThan(0, $stats[Cache::STATS_MEMORY_USAGE]);
+        self::assertGreaterThan(0, $stats[Cache::STATS_MEMORY_USAGE]);
     }
 
     public function testNonIntUmaskThrowsInvalidArgumentException() : void
@@ -111,7 +111,7 @@ class FileCacheTest extends \Doctrine\Tests\DoctrineTestCase
         $actualDirectory   = $doGetDirectory->invoke($driver);
         $expectedDirectory = realpath($directory);
 
-        $this->assertEquals($expectedDirectory, $actualDirectory);
+        self::assertEquals($expectedDirectory, $actualDirectory);
     }
 
     public function testGetExtensionReturnsExtensionString() : void
@@ -129,7 +129,7 @@ class FileCacheTest extends \Doctrine\Tests\DoctrineTestCase
 
         $actualExtension = $doGetExtension->invoke($driver);
 
-        $this->assertEquals($extension, $actualExtension);
+        self::assertEquals($extension, $actualExtension);
     }
 
     const WIN_MAX_PATH_LEN = 258;
@@ -233,7 +233,7 @@ class FileCacheTest extends \Doctrine\Tests\DoctrineTestCase
 
         $getFileName->setAccessible(true);
 
-        $this->assertEquals(
+        self::assertEquals(
             $length,
             strlen($keyPath),
             sprintf('Path expected to be %d characters long is %d characters long', $length, strlen($keyPath))
@@ -244,13 +244,13 @@ class FileCacheTest extends \Doctrine\Tests\DoctrineTestCase
         }
 
         if ($pathShouldBeHashed) {
-            $this->assertSame(
+            self::assertSame(
                 $hashedKeyPath,
                 $getFileName->invoke($fileCache, $key),
                 'Keys should be hashed correctly if they are over the limit.'
             );
         } else {
-            $this->assertSame(
+            self::assertSame(
                 $keyPath,
                 $getFileName->invoke($fileCache, $key),
                 'Keys below limit of the allowed length are used directly, unhashed'

@@ -47,7 +47,7 @@ class MemcachedCacheTest extends CacheTest
 
     public function testGetMemcachedReturnsInstanceOfMemcached() : void
     {
-        $this->assertInstanceOf('Memcached', $this->_getCacheDriver()->getMemcached());
+        self::assertInstanceOf('Memcached', $this->_getCacheDriver()->getMemcached());
     }
 
     public function testContainsWithKeyWithFalseAsValue()
@@ -60,8 +60,8 @@ class MemcachedCacheTest extends CacheTest
         $testKeyNS = $method->invokeArgs($driver, [$testKey]);
         $this->memcached->set($testKeyNS, false);
 
-        $this->assertTrue($driver->contains($testKey), sprintf('Expected key "%s" to be found in cache.', $testKey));
-        $this->assertFalse($driver->contains($testKey . '1'), 'No set key should not be found.');
+        self::assertTrue($driver->contains($testKey), sprintf('Expected key "%s" to be found in cache.', $testKey));
+        self::assertFalse($driver->contains($testKey . '1'), 'No set key should not be found.');
     }
 
     public function testContainsWithKeyOnNonReachableCache()
@@ -72,7 +72,7 @@ class MemcachedCacheTest extends CacheTest
         $driver = new MemcachedCache();
         $driver->setMemcached($memcached);
 
-        $this->assertFalse($driver->contains($testKey), sprintf('Expected key "%s" not to be found in cache.', $testKey));
+        self::assertFalse($driver->contains($testKey), sprintf('Expected key "%s" not to be found in cache.', $testKey));
     }
 
     /**
