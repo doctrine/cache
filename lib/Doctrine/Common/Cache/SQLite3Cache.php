@@ -70,15 +70,20 @@ class SQLite3Cache extends CacheProvider
         $this->sqlite = $sqlite;
         $this->table  = (string) $table;
 
-        list($id, $data, $exp) = $this->getFields();
+        $this->ensureTableExists();
+    }
 
-        return $this->sqlite->exec(sprintf(
-            'CREATE TABLE IF NOT EXISTS %s(%s TEXT PRIMARY KEY NOT NULL, %s BLOB, %s INTEGER)',
-            $table,
-            $id,
-            $data,
-            $exp
-        ));
+    private function ensureTableExists() : void
+    {
+        $this->sqlite->exec(
+            sprintf(
+                'CREATE TABLE IF NOT EXISTS %s(%s TEXT PRIMARY KEY NOT NULL, %s BLOB, %s INTEGER)',
+                $this->table,
+                static::ID_FIELD,
+                static::DATA_FIELD,
+                static::EXPIRATION_FIELD
+            )
+        );
     }
 
     /**
