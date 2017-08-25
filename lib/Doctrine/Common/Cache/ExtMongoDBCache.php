@@ -68,7 +68,7 @@ class ExtMongoDBCache extends CacheProvider
     {
         // Ensure there is no typemap set - we want to use our own
         $this->collection = $collection->withOptions(['typeMap' => null]);
-        $this->database = new Database($collection->getManager(), $collection->getDatabaseName());
+        $this->database   = new Database($collection->getManager(), $collection->getDatabaseName());
     }
 
     /**
@@ -166,7 +166,7 @@ class ExtMongoDBCache extends CacheProvider
      */
     protected function doGetStats()
     {
-        $uptime = null;
+        $uptime      = null;
         $memoryUsage = null;
 
         try {
@@ -177,12 +177,12 @@ class ExtMongoDBCache extends CacheProvider
                 'recordStats' => 0,
                 'repl' => 0,
             ])->toArray()[0];
-            $uptime = $serverStatus['uptime'] ?? null;
+            $uptime       = $serverStatus['uptime'] ?? null;
         } catch (Exception $e) {
         }
 
         try {
-            $collStats = $this->database->command(['collStats' => $this->collection->getCollectionName()])->toArray()[0];
+            $collStats   = $this->database->command(['collStats' => $this->collection->getCollectionName()])->toArray()[0];
             $memoryUsage = $collStats['size'] ?? null;
         } catch (Exception $e) {
         }
@@ -203,14 +203,14 @@ class ExtMongoDBCache extends CacheProvider
      *
      * @return bool
      */
-    private function isExpired(BSONDocument $document): bool
+    private function isExpired(BSONDocument $document) : bool
     {
         return isset($document[MongoDBCache::EXPIRATION_FIELD]) &&
             $document[MongoDBCache::EXPIRATION_FIELD] instanceof UTCDateTime &&
             $document[MongoDBCache::EXPIRATION_FIELD]->toDateTime() < new \DateTime();
     }
 
-    private function createExpirationIndex(): void
+    private function createExpirationIndex() : void
     {
         if ($this->expirationIndexCreated) {
             return;

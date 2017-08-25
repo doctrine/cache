@@ -19,7 +19,7 @@ class ExtMongoDBCacheTest extends CacheTest
      */
     private $collection;
 
-    protected function setUp(): void
+    protected function setUp() : void
     {
         try {
             $mongo = new Client();
@@ -31,14 +31,14 @@ class ExtMongoDBCacheTest extends CacheTest
         $this->collection = $mongo->selectCollection('doctrine_common_cache', 'test');
     }
 
-    protected function tearDown(): void
+    protected function tearDown() : void
     {
         if ($this->collection instanceof Collection) {
             $this->collection->drop();
         }
     }
 
-    public function testGetStats(): void
+    public function testGetStats() : void
     {
         $cache = $this->_getCacheDriver();
         // Run a query to create the collection
@@ -63,7 +63,7 @@ class ExtMongoDBCacheTest extends CacheTest
         $this->assertCount(2, $this->collection->listIndexes());
     }
 
-    protected function _getCacheDriver(): CacheProvider
+    protected function _getCacheDriver() : CacheProvider
     {
         return new MongoDBCache($this->collection);
     }

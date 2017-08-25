@@ -27,15 +27,15 @@ class FileCacheTest extends \Doctrine\Tests\DoctrineTestCase
 
     public function testFilenameShouldCreateThePathWithOneSubDirectory() : void
     {
-        $cache          = $this->driver;
-        $method         = new \ReflectionMethod($cache, 'getFilename');
-        $key            = 'item-key';
-        $expectedDir    = '84';
+        $cache       = $this->driver;
+        $method      = new \ReflectionMethod($cache, 'getFilename');
+        $key         = 'item-key';
+        $expectedDir = '84';
 
         $method->setAccessible(true);
 
-        $path       = $method->invoke($cache, $key);
-        $dirname    = pathinfo($path, PATHINFO_DIRNAME);
+        $path    = $method->invoke($cache, $key);
+        $dirname = pathinfo($path, PATHINFO_DIRNAME);
 
         $this->assertEquals(DIRECTORY_SEPARATOR . $expectedDir, $dirname);
     }
@@ -108,7 +108,7 @@ class FileCacheTest extends \Doctrine\Tests\DoctrineTestCase
 
         $doGetDirectory = new \ReflectionMethod($driver, 'getDirectory');
 
-        $actualDirectory = $doGetDirectory->invoke($driver);
+        $actualDirectory   = $doGetDirectory->invoke($driver);
         $expectedDirectory = realpath($directory);
 
         $this->assertEquals($expectedDirectory, $actualDirectory);
@@ -152,7 +152,7 @@ class FileCacheTest extends \Doctrine\Tests\DoctrineTestCase
         // len(desired) = len(base path) + len(slash . bin2hex($key))
         //          odd = even           + odd
         //         even = odd            + odd
-        $basePathLengthShouldBeOdd = !$desiredPathLengthIsOdd;
+        $basePathLengthShouldBeOdd = ! $desiredPathLengthIsOdd;
 
         $basePathLengthIsOdd = (strlen($basePath) % 2) == 1;
 
@@ -170,10 +170,10 @@ class FileCacheTest extends \Doctrine\Tests\DoctrineTestCase
 
     public static function getKeyAndPathFittingLength(int $length, string $basePath) : array
     {
-        $baseDirLength = strlen($basePath);
+        $baseDirLength   = strlen($basePath);
         $extensionLength = strlen('.doctrine.cache');
         $directoryLength = strlen(DIRECTORY_SEPARATOR . 'aa' . DIRECTORY_SEPARATOR);
-        $keyLength = $length - ($baseDirLength + $extensionLength + $directoryLength); // - 1 because of slash
+        $keyLength       = $length - ($baseDirLength + $extensionLength + $directoryLength); // - 1 because of slash
 
         $key = str_repeat('a', floor($keyLength / 2));
 
@@ -216,7 +216,7 @@ class FileCacheTest extends \Doctrine\Tests\DoctrineTestCase
      */
     public function testWindowsPathLengthLimitationsAreCorrectlyRespected(int $length, bool $pathShouldBeHashed) : void
     {
-        if (! defined('PHP_WINDOWS_VERSION_BUILD')) {
+        if ( ! defined('PHP_WINDOWS_VERSION_BUILD')) {
             define('PHP_WINDOWS_VERSION_BUILD', 'Yes, this is the "usual suspect", with the usual limitations');
         }
 

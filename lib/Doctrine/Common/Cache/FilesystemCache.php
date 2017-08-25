@@ -103,8 +103,8 @@ class FilesystemCache extends FileCache
             $lifeTime = time() + $lifeTime;
         }
 
-        $data      = serialize($data);
-        $filename  = $this->getFilename($id);
+        $data     = serialize($data);
+        $filename = $this->getFilename($id);
 
         return $this->writeFile($filename, $lifeTime . PHP_EOL . $data);
     }

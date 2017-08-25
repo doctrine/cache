@@ -182,7 +182,7 @@ class LegacyMongoDBCache extends CacheProvider
     }
 
 
-    private function createExpirationIndex(): void
+    private function createExpirationIndex() : void
     {
         if ($this->expirationIndexCreated) {
             return;

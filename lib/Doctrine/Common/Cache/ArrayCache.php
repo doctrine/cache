@@ -65,7 +65,7 @@ class ArrayCache extends CacheProvider
      */
     protected function doFetch($id)
     {
-        if (! $this->doContains($id)) {
+        if ( ! $this->doContains($id)) {
             $this->missesCount += 1;
 
             return false;
@@ -81,7 +81,7 @@ class ArrayCache extends CacheProvider
      */
     protected function doContains($id)
     {
-        if (! isset($this->data[$id])) {
+        if ( ! isset($this->data[$id])) {
             return false;
         }
 

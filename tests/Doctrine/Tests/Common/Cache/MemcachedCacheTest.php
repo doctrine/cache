@@ -52,21 +52,21 @@ class MemcachedCacheTest extends CacheTest
 
     public function testContainsWithKeyWithFalseAsValue()
     {
-        $testKey = __METHOD__;
-        $driver = $this->_getCacheDriver();
+        $testKey    = __METHOD__;
+        $driver     = $this->_getCacheDriver();
         $reflection = new \ReflectionClass($driver);
-        $method = $reflection->getMethod('getNamespacedId');
+        $method     = $reflection->getMethod('getNamespacedId');
         $method->setAccessible(true);
         $testKeyNS = $method->invokeArgs($driver, [$testKey]);
         $this->memcached->set($testKeyNS, false);
 
         $this->assertTrue($driver->contains($testKey), sprintf('Expected key "%s" to be found in cache.', $testKey));
-        $this->assertFalse($driver->contains($testKey.'1'), 'No set key should not be found.');
+        $this->assertFalse($driver->contains($testKey . '1'), 'No set key should not be found.');
     }
 
     public function testContainsWithKeyOnNonReachableCache()
     {
-        $testKey = __METHOD__;
+        $testKey   = __METHOD__;
         $memcached = new Memcached();
         $memcached->addServer('0.0.0.1', 11211); // fake server is not available
         $driver = new MemcachedCache();

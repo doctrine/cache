@@ -17,8 +17,8 @@ class RedisCacheTest extends CacheTest
     protected function setUp() : void
     {
         $this->_redis = new Redis();
-        $ok = @$this->_redis->connect('127.0.0.1');
-        if (!$ok) {
+        $ok           = @$this->_redis->connect('127.0.0.1');
+        if ( ! $ok) {
             $this->markTestSkipped('Cannot connect to Redis.');
         }
     }

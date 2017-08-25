@@ -88,7 +88,7 @@ class PhpFileCache extends FileCache
             $lifeTime = time() + $lifeTime;
         }
 
-        $filename  = $this->getFilename($id);
+        $filename = $this->getFilename($id);
 
         $value = [
             'lifetime'  => $lifeTime,
@@ -96,11 +96,11 @@ class PhpFileCache extends FileCache
         ];
 
         if (is_object($data) && method_exists($data, '__set_state')) {
-            $value  = var_export($value, true);
-            $code   = sprintf('<?php return %s;', $value);
+            $value = var_export($value, true);
+            $code  = sprintf('<?php return %s;', $value);
         } else {
-            $value  = var_export(serialize($value), true);
-            $code   = sprintf('<?php return unserialize(%s);', $value);
+            $value = var_export(serialize($value), true);
+            $code  = sprintf('<?php return unserialize(%s);', $value);
         }
 
         return $this->writeFile($filename, $code);
@@ -122,7 +122,7 @@ class PhpFileCache extends FileCache
 
         restore_error_handler();
 
-        if (! isset($value['lifetime'])) {
+        if ( ! isset($value['lifetime'])) {
             return null;
         }
 
