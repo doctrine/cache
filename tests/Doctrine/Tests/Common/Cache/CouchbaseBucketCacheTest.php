@@ -17,7 +17,7 @@ class CouchbaseBucketCacheTest extends CacheTest
 
     protected function setUp() : void
     {
-        $cluster = new Cluster('couchbase://localhost?detailed_errcodes=1');
+        $cluster      = new Cluster('couchbase://localhost?detailed_errcodes=1');
         $this->bucket = $cluster->openBucket('default');
     }
 

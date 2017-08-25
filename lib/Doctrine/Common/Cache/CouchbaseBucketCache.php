@@ -30,13 +30,13 @@ use Couchbase\Exception;
  */
 final class CouchbaseBucketCache extends CacheProvider
 {
-    private CONST MINIMUM_VERSION = '2.3.0';
+    private const MINIMUM_VERSION = '2.3.0';
 
-    private CONST KEY_NOT_FOUND = 13;
+    private const KEY_NOT_FOUND = 13;
 
-    private CONST MAX_KEY_LENGTH = 250;
+    private const MAX_KEY_LENGTH = 250;
 
-    private CONST THIRTY_DAYS_IN_SECONDS = 2592000;
+    private const THIRTY_DAYS_IN_SECONDS = 2592000;
 
     /**
      * @var Bucket
@@ -91,7 +91,7 @@ final class CouchbaseBucketCache extends CacheProvider
         }
 
         if ($document instanceof Document) {
-            return !$document->error;
+            return ! $document->error;
         }
 
         return false;
@@ -117,7 +117,7 @@ final class CouchbaseBucketCache extends CacheProvider
         }
 
         if ($document instanceof Document) {
-            return !$document->error;
+            return ! $document->error;
         }
 
         return false;
@@ -137,7 +137,7 @@ final class CouchbaseBucketCache extends CacheProvider
         }
 
         if ($document instanceof Document) {
-            return !$document->error;
+            return ! $document->error;
         }
 
         return false;
@@ -170,10 +170,10 @@ final class CouchbaseBucketCache extends CacheProvider
      */
     protected function doGetStats()
     {
-        $manager = $this->bucket->manager();
-        $stats   = $manager->info();
-        $nodes = $stats['nodes'];
-        $node = $nodes[0];
+        $manager          = $this->bucket->manager();
+        $stats            = $manager->info();
+        $nodes            = $stats['nodes'];
+        $node             = $nodes[0];
         $interestingStats = $node['interestingStats'];
 
         return [
