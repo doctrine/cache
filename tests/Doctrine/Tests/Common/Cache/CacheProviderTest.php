@@ -125,4 +125,22 @@ class CacheProviderTest extends \Doctrine\Tests\DoctrineTestCase
 
         $cache->deleteMultiple(['kerr', 'kok']);
     }
+
+    public function testInvalidNamespaceVersionCacheEntry() : void
+    {
+        /* @var $cache \Doctrine\Common\Cache\CacheProvider|\PHPUnit_Framework_MockObject_MockObject */
+        $cache = $this->getMockForAbstractClass(CacheProvider::class);
+
+        $cache->expects($this->once())
+              ->method('doFetch')
+              ->with('DoctrineNamespaceCacheKey[]')
+              ->willReturn('corruptedStringKey');
+
+        $cache->expects($this->once())
+              ->method('doSave')
+              ->with('DoctrineNamespaceCacheKey[]', 2, 0)
+              ->willReturn(true);
+
+        self::assertTrue($cache->deleteAll());
+    }
 }
