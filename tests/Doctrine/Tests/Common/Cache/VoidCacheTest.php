@@ -7,7 +7,7 @@ use Doctrine\Common\Cache\VoidCache;
 /**
  * @covers \Doctrine\Common\Cache\VoidCache
  */
-class VoidCacheTest extends \PHPUnit_Framework_TestCase
+class VoidCacheTest extends \Doctrine\Tests\DoctrineTestCase
 {
     public function testShouldAlwaysReturnFalseOnContains() : void
     {
