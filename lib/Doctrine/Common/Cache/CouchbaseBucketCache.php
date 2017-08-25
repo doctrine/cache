@@ -17,6 +17,8 @@
  * <http://www.doctrine-project.org>.
  */
 
+declare(strict_types=1);
+
 namespace Doctrine\Common\Cache;
 
 use Couchbase\Bucket;
@@ -28,6 +30,8 @@ use Couchbase\Exception;
  */
 final class CouchbaseBucketCache extends CacheProvider
 {
+    private CONST MINIMUM_VERSION = '2.3.0';
+
     private CONST KEY_NOT_FOUND = 13;
 
     private CONST MAX_KEY_LENGTH = 250;
@@ -45,12 +49,12 @@ final class CouchbaseBucketCache extends CacheProvider
      */
     public function __construct(Bucket $bucket)
     {
-        $this->bucket = $bucket;
-
-        if (!is_callable([$bucket, 'manager'])) {
+        if (version_compare(phpversion('couchbase'), self::MINIMUM_VERSION) < 0) {
             // Manager is required to flush cache and pull stats.
-            throw new \RuntimeException('ext-couchbase:^2.3.0 is required.');
+            throw new \RuntimeException(sprintf('ext-couchbase:^%s is required.', self::MINIMUM_VERSION));
         }
+
+        $this->bucket = $bucket;
     }
 
     /**
@@ -67,7 +71,7 @@ final class CouchbaseBucketCache extends CacheProvider
         }
 
         if ($document instanceof Document && $document->value !== false) {
-            return $this->decode($document->value);
+            return unserialize($document->value);
         }
 
         return false;
@@ -103,7 +107,7 @@ final class CouchbaseBucketCache extends CacheProvider
         $lifeTime = $this->normalizeExpiry($lifeTime);
 
         try {
-            $encoded = $this->encode($data);
+            $encoded = serialize($data);
 
             $document = $this->bucket->upsert($id, $encoded, [
                 'expiry' => (int) $lifeTime,
@@ -197,31 +201,13 @@ final class CouchbaseBucketCache extends CacheProvider
     }
 
     /**
-     * @param mixed $value
-     * @return string
-     */
-    private function encode($value) : string
-    {
-        return serialize($value);
-    }
-
-    /**
-     * @param string $value
-     * @return mixed
-     */
-    private function decode(string $value)
-    {
-        return unserialize($value);
-    }
-
-    /**
      * Expiry treated as a unix timestamp instead of an offset if expiry is greater than 30 days.
      * @src https://developer.couchbase.com/documentation/server/4.1/developer-guide/expiry.html
      *
      * @param int $expiry
      * @return int
      */
-    private function normalizeExpiry($expiry) : int
+    private function normalizeExpiry(int $expiry) : int
     {
         if ($expiry > self::THIRTY_DAYS_IN_SECONDS) {
             return time() + $expiry;
