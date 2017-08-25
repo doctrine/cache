@@ -29,7 +29,7 @@ class SQLite3CacheTest extends CacheTest
 
     public function testGetStats() : void
     {
-        $this->assertNull($this->_getCacheDriver()->getStats());
+        self::assertNull($this->_getCacheDriver()->getStats());
     }
 
     /**

@@ -40,13 +40,13 @@ abstract class BaseFileCacheTest extends CacheTest
     {
         $cache = $this->_getCacheDriver();
 
-        $this->assertTrue($cache->save('key1', 1));
-        $this->assertTrue($cache->save('key2', 2));
-        $this->assertTrue($cache->flushAll());
+        self::assertTrue($cache->save('key1', 1));
+        self::assertTrue($cache->save('key2', 2));
+        self::assertTrue($cache->flushAll());
 
         $iterator = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($this->directory, \FilesystemIterator::SKIP_DOTS), \RecursiveIteratorIterator::CHILD_FIRST);
 
-        $this->assertCount(0, $iterator);
+        self::assertCount(0, $iterator);
     }
 
     protected function isSharedStorage() : bool
@@ -117,7 +117,7 @@ abstract class BaseFileCacheTest extends CacheTest
 
         list($key, $keyPath, $hashedKeyPath) = self::getKeyAndPathFittingLength($length, $this->directory);
 
-        $this->assertEquals($length, strlen($keyPath), 'Unhashed path should be of correct length.');
+        self::assertEquals($length, strlen($keyPath), 'Unhashed path should be of correct length.');
 
         $cacheClass = get_class($this->_getCacheDriver());
         /* @var $cache \Doctrine\Common\Cache\FileCache */
@@ -133,13 +133,13 @@ abstract class BaseFileCacheTest extends CacheTest
         $value = uniqid('value', true);
 
         $cache->save($key, $value);
-        $this->assertEquals($value, $cache->fetch($key));
+        self::assertEquals($value, $cache->fetch($key));
 
         if ($pathShouldBeHashed) {
-            $this->assertFileExists($hashedKeyPath, 'Path generated for key should be hashed.');
+            self::assertFileExists($hashedKeyPath, 'Path generated for key should be hashed.');
             unlink($hashedKeyPath);
         } else {
-            $this->assertFileExists($keyPath, 'Path generated for key should not be hashed.');
+            self::assertFileExists($keyPath, 'Path generated for key should not be hashed.');
             unlink($keyPath);
         }
     }

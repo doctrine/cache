@@ -18,7 +18,7 @@ class ChainCacheTest extends CacheTest
         $cache = $this->_getCacheDriver();
         $stats = $cache->getStats();
 
-        $this->assertInternalType('array', $stats);
+        self::assertInternalType('array', $stats);
     }
 
     public function testOnlyFetchFirstOne() : void
@@ -31,7 +31,7 @@ class ChainCacheTest extends CacheTest
         $chainCache = new ChainCache([$cache1, $cache2]);
         $chainCache->save('id', 'bar');
 
-        $this->assertEquals('bar', $chainCache->fetch('id'));
+        self::assertEquals('bar', $chainCache->fetch('id'));
     }
 
     public function testOnlyFetchFirstCompleteSet() : void
@@ -47,7 +47,7 @@ class ChainCacheTest extends CacheTest
         $chainCache = new ChainCache([$cache1, $cache2]);
         $chainCache->saveMultiple(['bar' => 'Bar', 'foo' => 'Foo']);
 
-        $this->assertEquals(['bar' => 'Bar', 'foo' => 'Foo'], $chainCache->fetchMultiple(['bar', 'foo']));
+        self::assertEquals(['bar' => 'Bar', 'foo' => 'Foo'], $chainCache->fetchMultiple(['bar', 'foo']));
     }
 
     public function testFetchPropagateToFastestCache() : void
@@ -59,12 +59,12 @@ class ChainCacheTest extends CacheTest
 
         $chainCache = new ChainCache([$cache1, $cache2]);
 
-        $this->assertFalse($cache1->contains('bar'));
+        self::assertFalse($cache1->contains('bar'));
 
         $result = $chainCache->fetch('bar');
 
-        $this->assertEquals('value', $result);
-        $this->assertTrue($cache1->contains('bar'));
+        self::assertEquals('value', $result);
+        self::assertTrue($cache1->contains('bar'));
     }
 
     public function testFetchMultiplePropagateToFastestCache() : void
@@ -77,13 +77,13 @@ class ChainCacheTest extends CacheTest
 
         $chainCache = new ChainCache([$cache1, $cache2]);
 
-        $this->assertTrue($cache1->contains('bar'));
-        $this->assertFalse($cache1->contains('foo'));
+        self::assertTrue($cache1->contains('bar'));
+        self::assertFalse($cache1->contains('foo'));
 
         $result = $chainCache->fetchMultiple(['bar', 'foo']);
 
-        $this->assertEquals(['bar' => 'Bar', 'foo' => 'Foo'], $result);
-        $this->assertTrue($cache1->contains('foo'));
+        self::assertEquals(['bar' => 'Bar', 'foo' => 'Foo'], $result);
+        self::assertTrue($cache1->contains('foo'));
     }
 
     public function testNamespaceIsPropagatedToAllProviders() : void
@@ -94,8 +94,8 @@ class ChainCacheTest extends CacheTest
         $chainCache = new ChainCache([$cache1, $cache2]);
         $chainCache->setNamespace('bar');
 
-        $this->assertEquals('bar', $cache1->getNamespace());
-        $this->assertEquals('bar', $cache2->getNamespace());
+        self::assertEquals('bar', $cache1->getNamespace());
+        self::assertEquals('bar', $cache2->getNamespace());
     }
 
     public function testDeleteToAllProviders() : void

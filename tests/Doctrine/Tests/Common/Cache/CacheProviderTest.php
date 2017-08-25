@@ -28,7 +28,7 @@ class CacheProviderTest extends \Doctrine\Tests\DoctrineTestCase
                 '[baz][1]' => 'tab',
             ]));
 
-        $this->assertEquals(
+        self::assertEquals(
             ['foo' => 'bar', 'bar' => 'baz'],
             $cache->fetchMultiple(['foo', 'bar'])
         );
@@ -68,7 +68,7 @@ class CacheProviderTest extends \Doctrine\Tests\DoctrineTestCase
             ->with('[key][1]')
             ->will($this->returnValue(true));
 
-        $this->assertFalse($cache->deleteAll(), 'deleteAll() returns false when saving the namespace version fails');
+        self::assertFalse($cache->deleteAll(), 'deleteAll() returns false when saving the namespace version fails');
         $cache->contains('key');
     }
 

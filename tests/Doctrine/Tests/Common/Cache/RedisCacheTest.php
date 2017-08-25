@@ -28,13 +28,13 @@ class RedisCacheTest extends CacheTest
         $cache = $this->_getCacheDriver();
         $stats = $cache->getStats();
 
-        $this->assertNotNull($stats[Cache::STATS_HITS]);
-        $this->assertNotNull($stats[Cache::STATS_MISSES]);
+        self::assertNotNull($stats[Cache::STATS_HITS]);
+        self::assertNotNull($stats[Cache::STATS_MISSES]);
     }
 
     public function testGetRedisReturnsInstanceOfRedis() : void
     {
-        $this->assertInstanceOf(Redis::class, $this->_getCacheDriver()->getRedis());
+        self::assertInstanceOf(Redis::class, $this->_getCacheDriver()->getRedis());
     }
 
     public function testSerializerOptionWithOutIgbinaryExtension() : void
@@ -43,7 +43,7 @@ class RedisCacheTest extends CacheTest
             $this->markTestSkipped('Extension igbinary is loaded.');
         }
 
-        $this->assertEquals(
+        self::assertEquals(
             Redis::SERIALIZER_PHP,
             $this->_getCacheDriver()->getRedis()->getOption(Redis::OPT_SERIALIZER)
         );
