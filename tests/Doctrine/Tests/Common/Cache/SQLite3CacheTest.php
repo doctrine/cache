@@ -7,7 +7,7 @@ use Doctrine\Common\Cache\SQLite3Cache;
 use SQLite3;
 
 /**
- * @requires extension sqlite3
+ * @requires extension sqlite3 >= 3
  */
 class SQLite3CacheTest extends CacheTest
 {
