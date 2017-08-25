@@ -7,7 +7,8 @@ use Doctrine\Common\Cache\CacheProvider;
 use Doctrine\Common\Cache\CouchbaseCache;
 
 /**
- * @requires extension couchbase
+ * @requires extension couchbase >=1.0
+ * @requires extension couchbase <2.0
  */
 class CouchbaseCacheTest extends CacheTest
 {
