@@ -28,7 +28,7 @@ use Basho\Riak\Object;
  * Riak cache provider.
  *
  * @link   www.doctrine-project.org
- * @since  1.7
+ * @since  1.7.2
  * @author Anthon Pang <apang@softwaredevelopment.ca>
  */
 class BashoRiakCache extends CacheProvider
@@ -87,13 +87,13 @@ class BashoRiakCache extends CacheProvider
                 : $response->getObject();
 
             // Check for expired object
-            if ($this->isExpired($object)) {
+            if ($object && $this->isExpired($object)) {
                 try {
                     $command = (new Command\Builder\DeleteObject($this->riak))
                         ->buildLocation($id, $this->bucketName)
                         ->build();
 
-                    $response = $command->execute();
+                    $command->execute();
                 } catch (RiakException $e) {
                     // Do nothing
                 }
@@ -134,13 +134,13 @@ class BashoRiakCache extends CacheProvider
             $object = $response->getObject();
 
             // Check for expired object
-            if ($this->isExpired($object)) {
+            if ($object && $this->isExpired($object)) {
                 try {
                     $command = (new Command\Builder\DeleteObject($this->riak))
                         ->buildLocation($id, $this->bucketName)
                         ->build();
 
-                    $response = $command->execute();
+                    $command->execute();
                 } catch (RiakException $e) {
                     // Do nothing
                 }
@@ -174,7 +174,7 @@ class BashoRiakCache extends CacheProvider
                 $object->setMetaDataValue(self::EXPIRES_HEADER, (string) (time() + $lifeTime));
             }
 
-            $response = $command->execute();
+            $command->execute();
 
             return true;
         } catch (RiakException $e) {
@@ -196,7 +196,7 @@ class BashoRiakCache extends CacheProvider
                 ->buildLocation($id, $this->bucketName)
                 ->build();
 
-            $response = $command->execute();
+            $command->execute();
 
             return true;
         } catch (RiakException $e) {
@@ -231,7 +231,7 @@ class BashoRiakCache extends CacheProvider
                         ->atLocation($location)
                         ->build();
 
-                    $response = $command->execute();
+                    $command->execute();
                 } catch (RiakException $e) {
                     // Do nothing
                 }
@@ -261,8 +261,6 @@ class BashoRiakCache extends CacheProvider
         } catch (RiakException $e) {
             // Do nothing
         }
-
-        return false;
     }
 
     /**
@@ -299,7 +297,7 @@ class BashoRiakCache extends CacheProvider
      * @param string   $expires
      * @param Object[] $objectList
      *
-     * @return \Basho\Riak\Object
+     * @return \Basho\Riak\Object|null
      */
     protected function resolveConflict($id, $vClock, $expires, array $objectList)
     {
@@ -319,11 +317,11 @@ class BashoRiakCache extends CacheProvider
                 $mergedObject->setMetaDataValue(self::EXPIRES_HEADER, $expires);
             }
 
-            $response = $command->execute();
+            $command->execute();
+
+            return $mergedObject;
         } catch (RiakException $e) {
             // Do nothing
         }
-
-        return $mergedObject;
     }
 }

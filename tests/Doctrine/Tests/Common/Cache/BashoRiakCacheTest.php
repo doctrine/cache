@@ -5,7 +5,7 @@ namespace Doctrine\Tests\Common\Cache;
 use Basho\Riak;
 use Basho\Riak\Exception as RiakException;
 use Basho\Riak\Node;
-use Basho\Riak\Object;
+use Basho\Riak\Object as BashoRiakObject;
 use Doctrine\Common\Cache\BashoRiakCache;
 
 /**
@@ -44,7 +44,7 @@ class BashoRiakCacheTest extends CacheTest
     /**
      * {@inheritdoc}
      */
-    public function testGetStats()
+    public function testGetStats() : void
     {
         $cache = $this->_getCacheDriver();
         $stats = $cache->getStats();
@@ -65,7 +65,7 @@ class BashoRiakCacheTest extends CacheTest
         $id = '1';
         $vClock = 'a';
         $expires = (string) (time() + 5);
-        $objectList = [new Object('a'), new Object('b')];
+        $objectList = [new BashoRiakObject('a'), new BashoRiakObject('b')];
 
         $object = $reflection->invoke($cache, $id, $vClock, $expires, $objectList);
 
@@ -78,7 +78,7 @@ class BashoRiakCacheTest extends CacheTest
      *
      * @return \Doctrine\Common\Cache\BashoRiakCache
      */
-    protected function _getCacheDriver()
+    protected function _getCacheDriver() : CacheProvider
     {
         return new BashoRiakCache($this->riak, $this->namespace);
     }
