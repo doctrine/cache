@@ -21,8 +21,7 @@
         "phpunit/phpunit": "^6.3",
         "predis/predis":   "~1.0",
         "squizlabs/php_codesniffer": "^3.0",
-        "doctrine/coding-standard": "^1.0",
-        "rocket-labs/bloom-filter": "dev-master"
+        "doctrine/coding-standard": "^1.0"
     },
     "suggest": {
         "alcaeus/mongo-php-adapter": "Required to use legacy MongoDB driver"
@@ -31,7 +30,10 @@
         "doctrine/common": ">2.2,<2.4"
     },
     "autoload": {
-        "psr-4": { "Doctrine\\Common\\Cache\\": "lib/Doctrine/Common/Cache" }
+        "psr-4": {
+            "Doctrine\\Common\\Cache\\": "lib/Doctrine/Common/Cache",
+            "Doctrine\\Common\\Filter\\": "lib/Doctrine/Common/Filter"
+        }
     },
     "autoload-dev": {
         "psr-4": { "Doctrine\\Tests\\": "tests/Doctrine/Tests" }

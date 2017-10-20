@@ -22,5 +22,6 @@ namespace Doctrine\Common\Cache;
 /**
  * @author Igor Veremchuk igor.veremchuk@gmail.com
  */
-class NotSupportedException extends \BadMethodCallException
-{}
+class UnsupportedMethod extends \BadMethodCallException
+{
+}

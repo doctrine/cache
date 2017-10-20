@@ -19,7 +19,9 @@
 
 namespace Doctrine\Common\Cache;
 
-use RocketLabs\BloomFilter\BloomFilterAbstract;
+use Doctrine\Common\Filter\DeletableFilter;
+use Doctrine\Common\Filter\Filter;
+use Doctrine\Common\Filter\ResetableFilter;
 
 
 /**
@@ -29,17 +31,17 @@ use RocketLabs\BloomFilter\BloomFilterAbstract;
  */
 class BloomChainCache extends ChainCache
 {
-    /** @var BloomFilterAbstract */
+    /** @var Filter */
     protected $bloomFilter;
 
     /**
-     * @param BloomFilterAbstract $bloomFilter
-     * @param array $cacheProviders
+     * @param Filter $bloomFilter
+     * @param CacheProvider[] ...$cacheProviders
      */
-    public function __construct(BloomFilterAbstract $bloomFilter , $cacheProviders = [])
+    public function __construct(Filter $bloomFilter, CacheProvider ...$cacheProviders)
     {
-       parent::__construct($cacheProviders);
-       $this->bloomFilter = $bloomFilter;
+        parent::__construct($cacheProviders);
+        $this->bloomFilter = $bloomFilter;
     }
 
     /**
@@ -96,10 +98,15 @@ class BloomChainCache extends ChainCache
      */
     protected function doDelete($id)
     {
-        throw new NotSupportedException(
+        if ($this->bloomFilter instanceof DeletableFilter) {
+            $this->bloomFilter->delete($id);
+
+            return parent::doDelete($id);
+        }
+
+        throw new UnsupportedMethod(
             'Bloom Filter does not support deleting. In case of using delete functionality please use "Counting Bloom Filter"'
         );
-        //return parent::doDelete($id);
     }
 
     /**
@@ -107,10 +114,15 @@ class BloomChainCache extends ChainCache
      */
     protected function doDeleteMultiple(array $keys)
     {
-        throw new NotSupportedException(
+        if ($this->bloomFilter instanceof DeletableFilter) {
+            $this->bloomFilter->deleteBulk($keys);
+
+            return parent::doDeleteMultiple($keys);
+        }
+
+        throw new UnsupportedMethod(
             'Bloom Filter does not support deleting. In case of using delete functionality please use "Counting Bloom Filter"'
         );
-        //return parent::doDeleteMultiple($keys);
     }
 
     /**
@@ -118,9 +130,15 @@ class BloomChainCache extends ChainCache
      */
     protected function doFlush()
     {
-        $this->bloomFilter->reset();
+        if ($this->bloomFilter instanceof ResetableFilter) {
+            $this->bloomFilter->reset();
 
-        return parent::doFlush();
+            return parent::doFlush();
+        }
+
+        throw new UnsupportedMethod(
+            'Method is not supported.'
+        );
     }
 
 }
