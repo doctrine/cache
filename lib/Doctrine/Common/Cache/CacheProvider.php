@@ -216,9 +216,14 @@ abstract class CacheProvider implements Cache, FlushableCache, ClearableCache, M
         if (null !== $this->namespaceVersion) {
             return $this->namespaceVersion;
         }
+        
+        $namespaceCacheKey = $this->getNamespaceCacheKey();
+        if($this->doContains($namespaceCacheKey)){
+            return $this->namespaceVersion = (int) $this->doFetch($namespaceCacheKey);
+        }
 
-        $namespaceCacheKey      = $this->getNamespaceCacheKey();
-        $this->namespaceVersion = (int) $this->doFetch($namespaceCacheKey) ?: 1;
+        $this->namespaceVersion = 1;
+        $this->doSave($namespaceCacheKey, $this->namespaceVersion);
 
         return $this->namespaceVersion;
     }
