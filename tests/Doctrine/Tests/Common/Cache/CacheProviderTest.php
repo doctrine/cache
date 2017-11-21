@@ -143,4 +143,22 @@ class CacheProviderTest extends \Doctrine\Tests\DoctrineTestCase
 
         self::assertTrue($cache->deleteAll());
     }
+
+    public function testFetchWillNotResultInMissingCacheKeyAfterFirstTry(): void
+    {
+        /* @var $cache \Doctrine\Common\Cache\CacheProvider|\PHPUnit_Framework_MockObject_MockObject */
+        $cache = $this->getMockForAbstractClass(CacheProvider::class);
+
+        $cache->expects($this->once())
+              ->method('doContains')
+              ->willReturn(false);
+
+        $cache->expects($this->exactly(2))
+              ->method('doFetch')
+              ->with('[missing_key][1]')
+              ->willReturn(null);
+
+        $cache->fetch('missing_key');
+        $cache->fetch('missing_key');
+    }
 }
