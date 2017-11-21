@@ -144,7 +144,7 @@ class CacheProviderTest extends \Doctrine\Tests\DoctrineTestCase
         self::assertTrue($cache->deleteAll());
     }
 
-    public function testFetchWillNotResultInMissingCacheKeyAfterFirstTry(): void
+    public function testDoContainsOnlyCalledOnceForNamespaceCacheKey(): void
     {
         /* @var $cache \Doctrine\Common\Cache\CacheProvider|\PHPUnit_Framework_MockObject_MockObject */
         $cache = $this->getMockForAbstractClass(CacheProvider::class);
