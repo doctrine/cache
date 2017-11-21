@@ -151,12 +151,13 @@ class CacheProviderTest extends \Doctrine\Tests\DoctrineTestCase
 
         $cache->expects($this->once())
               ->method('doContains')
+              ->with('DoctrineNamespaceCacheKey[]')
               ->willReturn(false);
 
         $cache->expects($this->exactly(2))
               ->method('doFetch')
               ->with('[missing_key][1]')
-              ->willReturn(null);
+              ->willReturn(false);
 
         $cache->fetch('missing_key');
         $cache->fetch('missing_key');
