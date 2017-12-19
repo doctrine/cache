@@ -143,4 +143,21 @@ class CacheProviderTest extends \Doctrine\Tests\DoctrineTestCase
 
         self::assertTrue($cache->deleteAll());
     }
+
+    public function testDoContainsOnlyCalledOnceForNamespaceCacheKey(): void
+    {
+        /* @var $cache \Doctrine\Common\Cache\CacheProvider|\PHPUnit_Framework_MockObject_MockObject */
+        $cache = $this->getMockForAbstractClass(CacheProvider::class);
+
+        $cache->expects($this->exactly(2))
+              ->method('doFetch')
+              ->with('[missing_key][1]');
+
+        $cache->expects($this->once())
+              ->method('doContains')
+              ->with('DoctrineNamespaceCacheKey[]');
+
+        $cache->fetch('missing_key');
+        $cache->fetch('missing_key');
+    }
 }
