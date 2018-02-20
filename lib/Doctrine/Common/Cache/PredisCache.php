@@ -76,6 +76,44 @@ class PredisCache extends CacheProvider
 
         return (string) $response == 'OK';
     }
+    
+      
+      /**
+     * Deletes all cache entries beginning with the given string.
+     *
+     * @param string $prefix
+     * @return array An array of deleted cache ids
+     */
+    public function deleteByPrefix($prefix)
+    {
+        $deleted = array ();
+        $deleted = $this->getIds($prefix);
+        if ($deleted) {
+            foreach ( $deleted as $id ) {
+                $this->doDelete($id);
+            }
+        }
+        return $deleted;
+    }
+
+
+    /**
+     * Returns an array of cache ids.
+     *
+     * @param string $prefix
+     *        	Optional id prefix
+     * @return array An array of cache ids
+     */
+    public function getIds($prefix = null)
+    {
+        if ($prefix) {
+            return $this->client
+                ->keys('\[' . $prefix . '*');
+        } else {
+            return $this->client
+                ->keys('*');
+        }
+    }
 
     /**
      * {@inheritdoc}
