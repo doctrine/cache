@@ -225,6 +225,42 @@ abstract class CacheProvider implements Cache, FlushableCache, ClearableCache, M
         return $returnValues;
     }
 
+    
+        /**
+     * @param $prefix
+     * @return array
+     */
+    public function deleteByPrefix($prefix)
+    {
+        $prefix = $this->getNamespacedIdDelete($prefix);
+        $ids = $this->getIds();
+        $deleted = array();
+
+        if ($ids)
+        {
+            foreach ($ids as $id) {
+    
+                if (strpos($id, $prefix) !== false) {
+                    $this->doDelete($id);
+    
+    
+                    $deleted[] = $id;
+                }
+            }
+        }
+        return $deleted;
+    }
+
+    /**
+     * @param $id
+     * @return string
+     */
+    private function getNamespacedIdDelete($id)
+    {
+        $namespaceVersion = $this->getNamespaceVersion();
+        return sprintf('%s[%s', $this->namespace, $id, $namespaceVersion);
+    }
+    
     /**
      * Fetches an entry from the cache.
      *
