@@ -7,6 +7,13 @@ namespace Doctrine\Common\Cache;
 use Couchbase\Bucket;
 use Couchbase\Document;
 use Couchbase\Exception;
+use function phpversion;
+use function serialize;
+use function sprintf;
+use function substr;
+use function time;
+use function unserialize;
+use function version_compare;
 
 /**
  * Couchbase ^2.3.0 cache provider.
@@ -21,15 +28,9 @@ final class CouchbaseBucketCache extends CacheProvider
 
     private const THIRTY_DAYS_IN_SECONDS = 2592000;
 
-    /**
-     * @var Bucket
-     */
+    /** @var Bucket */
     private $bucket;
 
-    /**
-     * CouchbaseCache constructor.
-     * @param Bucket $bucket
-     */
     public function __construct(Bucket $bucket)
     {
         if (version_compare(phpversion('couchbase'), self::MINIMUM_VERSION) < 0) {
@@ -168,10 +169,6 @@ final class CouchbaseBucketCache extends CacheProvider
         ];
     }
 
-    /**
-     * @param string $id
-     * @return string
-     */
     private function normalizeKey(string $id) : string
     {
         $normalized = substr($id, 0, self::MAX_KEY_LENGTH);
@@ -186,9 +183,6 @@ final class CouchbaseBucketCache extends CacheProvider
     /**
      * Expiry treated as a unix timestamp instead of an offset if expiry is greater than 30 days.
      * @src https://developer.couchbase.com/documentation/server/4.1/developer-guide/expiry.html
-     *
-     * @param int $expiry
-     * @return int
      */
     private function normalizeExpiry(int $expiry) : int
     {

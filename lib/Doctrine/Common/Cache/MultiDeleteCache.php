@@ -6,9 +6,6 @@ namespace Doctrine\Common\Cache;
  * Interface for cache drivers that allows to put many items at once.
  *
  * @link   www.doctrine-project.org
- * @since  1.7
- * @author Benoit Burnichon <bburnichon@gmail.com>
- *
  * @deprecated
  */
 interface MultiDeleteCache

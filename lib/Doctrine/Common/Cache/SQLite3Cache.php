@@ -4,48 +4,47 @@ namespace Doctrine\Common\Cache;
 
 use SQLite3;
 use SQLite3Result;
+use const SQLITE3_ASSOC;
+use const SQLITE3_BLOB;
+use const SQLITE3_TEXT;
+use function array_search;
+use function implode;
+use function serialize;
+use function sprintf;
+use function time;
+use function unserialize;
 
 /**
  * SQLite3 cache provider.
- *
- * @since  1.4
- * @author Jake Bell <jake@theunraveler.com>
  */
 class SQLite3Cache extends CacheProvider
 {
     /**
      * The ID field will store the cache key.
      */
-    const ID_FIELD = 'k';
+    public const ID_FIELD = 'k';
 
     /**
      * The data field will store the serialized PHP value.
      */
-    const DATA_FIELD = 'd';
+    public const DATA_FIELD = 'd';
 
     /**
      * The expiration field will store a date value indicating when the
      * cache entry should expire.
      */
-    const EXPIRATION_FIELD = 'e';
+    public const EXPIRATION_FIELD = 'e';
 
-    /**
-     * @var SQLite3
-     */
+    /** @var SQLite3 */
     private $sqlite;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     private $table;
 
     /**
-     * Constructor.
-     *
      * Calling the constructor will ensure that the database file and table
      * exist and will create both if they don't.
      *
-     * @param SQLite3 $sqlite
      * @param string $table
      */
     public function __construct(SQLite3 $sqlite, $table)
@@ -76,7 +75,7 @@ class SQLite3Cache extends CacheProvider
     {
         $item = $this->findById($id);
 
-        if ( ! $item) {
+        if (! $item) {
             return false;
         }
 
@@ -88,7 +87,7 @@ class SQLite3Cache extends CacheProvider
      */
     protected function doContains($id)
     {
-        return null !== $this->findById($id, false);
+        return $this->findById($id, false) !== null;
     }
 
     /**
@@ -147,7 +146,6 @@ class SQLite3Cache extends CacheProvider
      * Find a single row by ID.
      *
      * @param mixed $id
-     * @param bool $includeData
      *
      * @return array|null
      */
@@ -155,7 +153,7 @@ class SQLite3Cache extends CacheProvider
     {
         list($idField) = $fields = $this->getFields();
 
-        if ( ! $includeData) {
+        if (! $includeData) {
             $key = array_search(static::DATA_FIELD, $fields);
             unset($fields[$key]);
         }
@@ -198,8 +196,6 @@ class SQLite3Cache extends CacheProvider
      * Check if the item is expired.
      *
      * @param array $item
-     *
-     * @return bool
      */
     private function isExpired(array $item) : bool
     {

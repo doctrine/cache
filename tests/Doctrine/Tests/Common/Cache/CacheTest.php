@@ -2,11 +2,21 @@
 
 namespace Doctrine\Tests\Common\Cache;
 
-use Doctrine\Common\Cache\Cache;
 use ArrayObject;
+use Doctrine\Common\Cache\Cache;
 use Doctrine\Common\Cache\CacheProvider;
+use Doctrine\Tests\DoctrineTestCase;
+use function array_keys;
+use function array_map;
+use function array_slice;
+use function is_object;
+use function restore_error_handler;
+use function set_error_handler;
+use function sleep;
+use function sprintf;
+use function str_repeat;
 
-abstract class CacheTest extends \Doctrine\Tests\DoctrineTestCase
+abstract class CacheTest extends DoctrineTestCase
 {
     /**
      * @dataProvider provideDataToCache
@@ -219,9 +229,11 @@ abstract class CacheTest extends \Doctrine\Tests\DoctrineTestCase
         foreach ($ids as $index => $id) {
             $value = $cache->fetch($id[0]);
             self::assertNotFalse($value, sprintf('Failed to retrieve data for cache id "%s".', $id[0]));
-            if ($index !== $value) {
-                $this->fail(sprintf('Cache id "%s" collides with id "%s".', $id[0], $ids[$value][0]));
+            if ($index === $value) {
+                continue;
             }
+
+            $this->fail(sprintf('Cache id "%s" collides with id "%s".', $id[0], $ids[$value][0]));
         }
     }
 
@@ -291,7 +303,7 @@ abstract class CacheTest extends \Doctrine\Tests\DoctrineTestCase
 
     public function testDeleteAllAndNamespaceVersioningBetweenCaches() : void
     {
-        if ( ! $this->isSharedStorage()) {
+        if (! $this->isSharedStorage()) {
             $this->markTestSkipped('The cache storage needs to be shared.');
         }
 
@@ -341,7 +353,7 @@ abstract class CacheTest extends \Doctrine\Tests\DoctrineTestCase
 
     public function testFlushAllAndNamespaceVersioningBetweenCaches() : void
     {
-        if ( ! $this->isSharedStorage()) {
+        if (! $this->isSharedStorage()) {
             $this->markTestSkipped('The cache storage needs to be shared.');
         }
 

@@ -2,13 +2,15 @@
 
 namespace Doctrine\Common\Cache;
 
+use function zend_shm_cache_clear;
+use function zend_shm_cache_delete;
+use function zend_shm_cache_fetch;
+use function zend_shm_cache_store;
+
 /**
  * Zend Data Cache cache driver.
  *
  * @link   www.doctrine-project.org
- * @since  2.0
- * @author Ralph Schindler <ralph.schindler@zend.com>
- * @author Guilherme Blanco <guilhermeblanco@hotmail.com>
  */
 class ZendDataCache extends CacheProvider
 {
@@ -25,7 +27,7 @@ class ZendDataCache extends CacheProvider
      */
     protected function doContains($id)
     {
-        return (false !== zend_shm_cache_fetch($id));
+        return zend_shm_cache_fetch($id) !== false;
     }
 
     /**

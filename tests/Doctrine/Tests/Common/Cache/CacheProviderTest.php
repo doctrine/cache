@@ -3,8 +3,9 @@
 namespace Doctrine\Tests\Common\Cache;
 
 use Doctrine\Common\Cache\CacheProvider;
+use Doctrine\Tests\DoctrineTestCase;
 
-class CacheProviderTest extends \Doctrine\Tests\DoctrineTestCase
+class CacheProviderTest extends DoctrineTestCase
 {
     public function testFetchMultiWillFilterNonRequestedKeys() : void
     {

@@ -9,8 +9,6 @@ namespace Doctrine\Common\Cache;
  * global "flushing", see {@see FlushableCache}.
  *
  * @link   www.doctrine-project.org
- * @since  1.4
- * @author Adirelle <adirelle@gmail.com>
  */
 interface ClearableCache
 {

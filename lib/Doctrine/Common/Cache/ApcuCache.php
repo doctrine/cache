@@ -2,12 +2,19 @@
 
 namespace Doctrine\Common\Cache;
 
+use function apcu_cache_info;
+use function apcu_clear_cache;
+use function apcu_delete;
+use function apcu_exists;
+use function apcu_fetch;
+use function apcu_sma_info;
+use function apcu_store;
+use function count;
+
 /**
  * APCu cache provider.
  *
  * @link   www.doctrine-project.org
- * @since  1.6
- * @author Kévin Dunglas <dunglas@gmail.com>
  */
 class ApcuCache extends CacheProvider
 {
@@ -51,7 +58,7 @@ class ApcuCache extends CacheProvider
     {
         $result = apcu_delete($keys);
 
-        return false !== $result && count($result) !== count($keys);
+        return $result !== false && count($result) !== count($keys);
     }
 
     /**

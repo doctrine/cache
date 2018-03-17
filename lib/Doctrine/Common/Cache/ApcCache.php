@@ -2,17 +2,20 @@
 
 namespace Doctrine\Common\Cache;
 
+use const PHP_VERSION_ID;
+use function apc_cache_info;
+use function apc_clear_cache;
+use function apc_delete;
+use function apc_exists;
+use function apc_fetch;
+use function apc_sma_info;
+use function apc_store;
+
 /**
  * APC cache provider.
  *
  * @link       www.doctrine-project.org
  * @deprecated since version 1.6, use ApcuCache instead
- * @since      2.0
- * @author     Benjamin Eberlei <kontakt@beberlei.de>
- * @author     Guilherme Blanco <guilhermeblanco@hotmail.com>
- * @author     Jonathan Wage <jonwage@gmail.com>
- * @author     Roman Borschel <roman@code-factory.org>
- * @author     David Abdemoulaie <dave@hobodave.com>
  */
 class ApcCache extends CacheProvider
 {
@@ -85,9 +88,9 @@ class ApcCache extends CacheProvider
 
         // @TODO - Temporary fix @see https://github.com/krakjoe/apcu/pull/42
         if (PHP_VERSION_ID >= 50500) {
-            $info['num_hits']   = isset($info['num_hits'])   ? $info['num_hits']   : $info['nhits'];
-            $info['num_misses'] = isset($info['num_misses']) ? $info['num_misses'] : $info['nmisses'];
-            $info['start_time'] = isset($info['start_time']) ? $info['start_time'] : $info['stime'];
+            $info['num_hits']   = $info['num_hits'] ?? $info['nhits'];
+            $info['num_misses'] = $info['num_misses'] ?? $info['nmisses'];
+            $info['start_time'] = $info['start_time'] ?? $info['stime'];
         }
 
         return [

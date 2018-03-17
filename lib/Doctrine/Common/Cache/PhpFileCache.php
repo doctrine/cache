@@ -2,15 +2,21 @@
 
 namespace Doctrine\Common\Cache;
 
+use function is_object;
+use function method_exists;
+use function restore_error_handler;
+use function serialize;
+use function set_error_handler;
+use function sprintf;
+use function time;
+use function var_export;
+
 /**
  * Php file cache driver.
- *
- * @since  2.3
- * @author Fabio B. Silva <fabio.bat.silva@gmail.com>
  */
 class PhpFileCache extends FileCache
 {
-    const EXTENSION = '.doctrinecache.php';
+    public const EXTENSION = '.doctrinecache.php';
 
     /**
      * @var callable
@@ -75,7 +81,7 @@ class PhpFileCache extends FileCache
 
         $value = [
             'lifetime'  => $lifeTime,
-            'data'      => $data
+            'data'      => $data,
         ];
 
         if (is_object($data) && method_exists($data, '__set_state')) {
@@ -90,8 +96,6 @@ class PhpFileCache extends FileCache
     }
 
     /**
-     * @param string $id
-     *
      * @return array|null
      */
     private function includeFileForId(string $id) : ?array
@@ -105,7 +109,7 @@ class PhpFileCache extends FileCache
 
         restore_error_handler();
 
-        if ( ! isset($value['lifetime'])) {
+        if (! isset($value['lifetime'])) {
             return null;
         }
 

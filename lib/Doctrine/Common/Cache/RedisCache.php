@@ -3,25 +3,22 @@
 namespace Doctrine\Common\Cache;
 
 use Redis;
+use function array_combine;
+use function defined;
+use function extension_loaded;
 
 /**
  * Redis cache provider.
  *
  * @link   www.doctrine-project.org
- * @since  2.2
- * @author Osman Ungur <osmanungur@gmail.com>
  */
 class RedisCache extends CacheProvider
 {
-    /**
-     * @var Redis|null
-     */
+    /** @var Redis|null */
     private $redis;
 
     /**
      * Sets the redis instance to use.
-     *
-     * @param Redis $redis
      *
      * @return void
      */
@@ -60,9 +57,11 @@ class RedisCache extends CacheProvider
         $foundItems = [];
 
         foreach ($fetchedItems as $key => $value) {
-            if (false !== $value || $this->redis->exists($key)) {
-                $foundItems[$key] = $value;
+            if ($value === false && ! $this->redis->exists($key)) {
+                continue;
             }
+
+            $foundItems[$key] = $value;
         }
 
         return $foundItems;
@@ -78,9 +77,11 @@ class RedisCache extends CacheProvider
 
             // Keys have lifetime, use SETEX for each of them
             foreach ($keysAndValues as $key => $value) {
-                if ( ! $this->redis->setex($key, $lifetime, $value)) {
-                    $success = false;
+                if ($this->redis->setex($key, $lifetime, $value)) {
+                    continue;
                 }
+
+                $success = false;
             }
 
             return $success;
@@ -145,7 +146,7 @@ class RedisCache extends CacheProvider
             Cache::STATS_MISSES => $info['keyspace_misses'],
             Cache::STATS_UPTIME => $info['uptime_in_seconds'],
             Cache::STATS_MEMORY_USAGE      => $info['used_memory'],
-            Cache::STATS_MEMORY_AVAILABLE  => false
+            Cache::STATS_MEMORY_AVAILABLE  => false,
         ];
     }
 
@@ -154,7 +155,7 @@ class RedisCache extends CacheProvider
      * igbinary support, that is used. Otherwise the default PHP serializer is
      * used.
      *
-     * @return integer One of the Redis::SERIALIZER_* constants
+     * @return int One of the Redis::SERIALIZER_* constants
      */
     protected function getSerializerValue()
     {

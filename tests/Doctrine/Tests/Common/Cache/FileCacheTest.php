@@ -4,16 +4,32 @@ namespace Doctrine\Tests\Common\Cache;
 
 use Doctrine\Common\Cache\Cache;
 use Doctrine\Common\Cache\FileCache;
+use Doctrine\Tests\DoctrineTestCase;
 use InvalidArgumentException;
+use const DIRECTORY_SEPARATOR;
+use const PATHINFO_DIRNAME;
+use function basename;
+use function bin2hex;
+use function define;
+use function defined;
+use function floor;
+use function hash;
+use function mkdir;
+use function pathinfo;
+use function realpath;
+use function sprintf;
+use function str_repeat;
+use function strlen;
+use function substr;
+use function sys_get_temp_dir;
+use function uniqid;
 
 /**
  * @group DCOM-101
  */
-class FileCacheTest extends \Doctrine\Tests\DoctrineTestCase
+class FileCacheTest extends DoctrineTestCase
 {
-    /**
-     * @var \Doctrine\Common\Cache\FileCache
-     */
+    /** @var FileCache */
     private $driver;
 
     protected function setUp() : void
@@ -132,7 +148,7 @@ class FileCacheTest extends \Doctrine\Tests\DoctrineTestCase
         self::assertEquals($extension, $actualExtension);
     }
 
-    const WIN_MAX_PATH_LEN = 258;
+    public const WIN_MAX_PATH_LEN = 258;
 
     public static function getBasePathForWindowsPathLengthTests(int $pathLength) : string
     {
@@ -162,7 +178,7 @@ class FileCacheTest extends \Doctrine\Tests\DoctrineTestCase
         // a path that is exactly the length we want to test IF the path length limit
         // were not in place in FileCache.
         if ($basePathLengthIsOdd != $basePathLengthShouldBeOdd) {
-            $basePath .= DIRECTORY_SEPARATOR . "aa";
+            $basePath .= DIRECTORY_SEPARATOR . 'aa';
         }
 
         return $basePath;
@@ -205,7 +221,7 @@ class FileCacheTest extends \Doctrine\Tests\DoctrineTestCase
             [257, false],
             [258, false],
             [259, true],
-            [260, true]
+            [260, true],
         ];
     }
 
@@ -216,7 +232,7 @@ class FileCacheTest extends \Doctrine\Tests\DoctrineTestCase
      */
     public function testWindowsPathLengthLimitationsAreCorrectlyRespected(int $length, bool $pathShouldBeHashed) : void
     {
-        if ( ! defined('PHP_WINDOWS_VERSION_BUILD')) {
+        if (! defined('PHP_WINDOWS_VERSION_BUILD')) {
             define('PHP_WINDOWS_VERSION_BUILD', 'Yes, this is the "usual suspect", with the usual limitations');
         }
 

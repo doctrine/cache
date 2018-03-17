@@ -2,37 +2,25 @@
 
 namespace Doctrine\Common\Cache;
 
+use function time;
+
 /**
  * Array cache driver.
  *
  * @link   www.doctrine-project.org
- * @since  2.0
- * @author Benjamin Eberlei <kontakt@beberlei.de>
- * @author Guilherme Blanco <guilhermeblanco@hotmail.com>
- * @author Jonathan Wage <jonwage@gmail.com>
- * @author Roman Borschel <roman@code-factory.org>
- * @author David Abdemoulaie <dave@hobodave.com>
  */
 class ArrayCache extends CacheProvider
 {
-    /**
-     * @var array[] $data each element being a tuple of [$data, $expiration], where the expiration is int|bool
-     */
+    /** @var array[] $data each element being a tuple of [$data, $expiration], where the expiration is int|bool */
     private $data = [];
 
-    /**
-     * @var int
-     */
+    /** @var int */
     private $hitsCount = 0;
 
-    /**
-     * @var int
-     */
+    /** @var int */
     private $missesCount = 0;
 
-    /**
-     * @var int
-     */
+    /** @var int */
     private $upTime;
 
     /**
@@ -48,7 +36,7 @@ class ArrayCache extends CacheProvider
      */
     protected function doFetch($id)
     {
-        if ( ! $this->doContains($id)) {
+        if (! $this->doContains($id)) {
             $this->missesCount += 1;
 
             return false;
@@ -64,7 +52,7 @@ class ArrayCache extends CacheProvider
      */
     protected function doContains($id)
     {
-        if ( ! isset($this->data[$id])) {
+        if (! isset($this->data[$id])) {
             return false;
         }
 

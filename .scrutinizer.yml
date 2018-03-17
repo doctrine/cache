@@ -3,29 +3,23 @@ build:
         php:
             version: 7.1.0
 
-before_commands:
-    - "composer install --no-dev --prefer-source"
+    tests:
+        override:
+            - php-scrutinizer-run
+            - phpcs-run
+
+    dependencies:
+        override:
+            - composer install --no-interaction --prefer-dist
 
 tools:
     external_code_coverage:
         timeout: 1800
     php_code_coverage:
         enabled: true
-    php_code_sniffer:
-        enabled: true
-        config:
-            standard: PSR2
-        filter:
-            paths: ["lib/*", "tests/*"]
     php_cpd:
         enabled: true
         excluded_dirs: ["vendor"]
-    php_cs_fixer:
-        enabled: true
-        config:
-            level: all
-        filter:
-            paths: ["lib/*", "tests/*"]
     php_loc:
         enabled: true
         excluded_dirs: ["vendor"]
