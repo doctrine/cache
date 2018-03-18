@@ -6,28 +6,26 @@ use MongoBinData;
 use MongoCollection;
 use MongoCursorException;
 use MongoDate;
+use const E_USER_DEPRECATED;
+use function serialize;
+use function time;
+use function trigger_error;
+use function unserialize;
 
 /**
  * MongoDB cache provider.
  *
- * @author Jeremy Mikola <jmikola@gmail.com>
  * @internal Do not use - will be removed in 2.0. Use MongoDBCache instead
  */
 class LegacyMongoDBCache extends CacheProvider
 {
-    /**
-     * @var MongoCollection
-     */
+    /** @var MongoCollection */
     private $collection;
 
-    /**
-     * @var bool
-     */
+    /** @var bool */
     private $expirationIndexCreated = false;
 
     /**
-     * Constructor.
-     *
      * This provider will default to the write concern and read preference
      * options set on the MongoCollection instance (or inherited from MongoDB or
      * MongoClient). Using an unacknowledged write concern (< 1) may make the
@@ -36,7 +34,6 @@ class LegacyMongoDBCache extends CacheProvider
      *
      * @see http://www.php.net/manual/en/mongo.readpreferences.php
      * @see http://www.php.net/manual/en/mongo.writeconcerns.php
-     * @param MongoCollection $collection
      */
     public function __construct(MongoCollection $collection)
     {
@@ -92,10 +89,12 @@ class LegacyMongoDBCache extends CacheProvider
         try {
             $result = $this->collection->update(
                 ['_id' => $id],
-                ['$set' => [
-                    MongoDBCache::EXPIRATION_FIELD => ($lifeTime > 0 ? new MongoDate(time() + $lifeTime) : null),
-                    MongoDBCache::DATA_FIELD => new MongoBinData(serialize($data), MongoBinData::BYTE_ARRAY),
-                ]],
+                [
+                    '$set' => [
+                        MongoDBCache::EXPIRATION_FIELD => ($lifeTime > 0 ? new MongoDate(time() + $lifeTime) : null),
+                        MongoDBCache::DATA_FIELD => new MongoBinData(serialize($data), MongoBinData::BYTE_ARRAY),
+                    ],
+                ],
                 ['upsert' => true, 'multiple' => false]
             );
         } catch (MongoCursorException $e) {
@@ -154,8 +153,6 @@ class LegacyMongoDBCache extends CacheProvider
      * Check if the document is expired.
      *
      * @param array $document
-     *
-     * @return bool
      */
     private function isExpired(array $document) : bool
     {

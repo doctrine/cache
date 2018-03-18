@@ -11,6 +11,9 @@ use MongoDB\Collection;
 use MongoDB\Database;
 use MongoDB\Driver\Exception\Exception;
 use MongoDB\Model\BSONDocument;
+use function serialize;
+use function time;
+use function unserialize;
 
 /**
  * MongoDB cache provider for ext-mongodb
@@ -19,24 +22,16 @@ use MongoDB\Model\BSONDocument;
  */
 class ExtMongoDBCache extends CacheProvider
 {
-    /**
-     * @var Database
-     */
+    /** @var Database */
     private $database;
 
-    /**
-     * @var Collection
-     */
+    /** @var Collection */
     private $collection;
 
-    /**
-     * @var bool
-     */
+    /** @var bool */
     private $expirationIndexCreated = false;
 
     /**
-     * Constructor.
-     *
      * This provider will default to the write concern and read preference
      * options set on the Database instance (or inherited from MongoDB or
      * Client). Using an unacknowledged write concern (< 1) may make the return
@@ -45,7 +40,6 @@ class ExtMongoDBCache extends CacheProvider
      *
      * @see http://www.php.net/manual/en/mongo.readpreferences.php
      * @see http://www.php.net/manual/en/mongo.writeconcerns.php
-     * @param Collection $collection
      */
     public function __construct(Collection $collection)
     {
@@ -102,10 +96,12 @@ class ExtMongoDBCache extends CacheProvider
         try {
             $this->collection->updateOne(
                 ['_id' => $id],
-                ['$set' => [
-                    MongoDBCache::EXPIRATION_FIELD => ($lifeTime > 0 ? new UTCDateTime((time() + $lifeTime) * 1000): null),
-                    MongoDBCache::DATA_FIELD => new Binary(serialize($data), Binary::TYPE_GENERIC),
-                ]],
+                [
+                    '$set' => [
+                        MongoDBCache::EXPIRATION_FIELD => ($lifeTime > 0 ? new UTCDateTime((time() + $lifeTime) * 1000): null),
+                        MongoDBCache::DATA_FIELD => new Binary(serialize($data), Binary::TYPE_GENERIC),
+                    ],
+                ],
                 ['upsert' => true]
             );
         } catch (Exception $e) {
@@ -181,10 +177,6 @@ class ExtMongoDBCache extends CacheProvider
 
     /**
      * Check if the document is expired.
-     *
-     * @param BSONDocument $document
-     *
-     * @return bool
      */
     private function isExpired(BSONDocument $document) : bool
     {

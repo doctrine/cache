@@ -3,30 +3,28 @@
 namespace Doctrine\Common\Cache;
 
 use Riak\Bucket;
-use Riak\Input;
 use Riak\Exception;
+use Riak\Input;
 use Riak\Object;
+use function count;
+use function serialize;
+use function time;
+use function unserialize;
 
 /**
  * Riak cache provider.
  *
  * @link   www.doctrine-project.org
- * @since  1.1
- * @author Guilherme Blanco <guilhermeblanco@hotmail.com>
  */
 class RiakCache extends CacheProvider
 {
-    const EXPIRES_HEADER = 'X-Riak-Meta-Expires';
+    public const EXPIRES_HEADER = 'X-Riak-Meta-Expires';
 
-    /**
-     * @var \Riak\Bucket
-     */
+    /** @var Bucket */
     private $bucket;
 
     /**
      * Sets the riak bucket instance to use.
-     *
-     * @param \Riak\Bucket $bucket
      */
     public function __construct(Bucket $bucket)
     {
@@ -42,7 +40,7 @@ class RiakCache extends CacheProvider
             $response = $this->bucket->get($id);
 
             // No objects found
-            if ( ! $response->hasObject()) {
+            if (! $response->hasObject()) {
                 return false;
             }
 
@@ -84,7 +82,7 @@ class RiakCache extends CacheProvider
             $response = $this->bucket->get($id, $input);
 
             // No objects found
-            if ( ! $response->hasObject()) {
+            if (! $response->hasObject()) {
                 return false;
             }
 
@@ -181,10 +179,6 @@ class RiakCache extends CacheProvider
 
     /**
      * Check if a given Riak Object have expired.
-     *
-     * @param \Riak\Object $object
-     *
-     * @return bool
      */
     private function isExpired(Object $object) : bool
     {
@@ -212,7 +206,7 @@ class RiakCache extends CacheProvider
      * @param string $vClock
      * @param array  $objectList
      *
-     * @return \Riak\Object
+     * @return Object
      */
     protected function resolveConflict($id, $vClock, array $objectList)
     {

@@ -4,6 +4,7 @@ namespace Doctrine\Tests\Common\Cache;
 
 use Doctrine\Common\Cache\ApcCache;
 use Doctrine\Common\Cache\CacheProvider;
+use function ini_get;
 
 /**
  * @requires extension apc
@@ -12,9 +13,11 @@ class ApcCacheTest extends CacheTest
 {
     protected function setUp() : void
     {
-        if ( ! ini_get('apc.enable_cli')) {
-            $this->markTestSkipped('APC must be enabled for the CLI with the ini setting apc.enable_cli=1');
+        if (ini_get('apc.enable_cli')) {
+            return;
         }
+
+        $this->markTestSkipped('APC must be enabled for the CLI with the ini setting apc.enable_cli=1');
     }
 
     protected function _getCacheDriver() : CacheProvider

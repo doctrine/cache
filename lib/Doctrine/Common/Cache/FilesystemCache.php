@@ -2,15 +2,21 @@
 
 namespace Doctrine\Common\Cache;
 
+use const PHP_EOL;
+use function fclose;
+use function fgets;
+use function fopen;
+use function is_file;
+use function serialize;
+use function time;
+use function unserialize;
+
 /**
  * Filesystem cache driver.
- *
- * @since  2.3
- * @author Fabio B. Silva <fabio.bat.silva@gmail.com>
  */
 class FilesystemCache extends FileCache
 {
-    const EXTENSION = '.doctrinecache.data';
+    public const EXTENSION = '.doctrinecache.data';
 
     /**
      * {@inheritdoc}
@@ -29,13 +35,14 @@ class FilesystemCache extends FileCache
         $lifetime = -1;
         $filename = $this->getFilename($id);
 
-        if ( ! is_file($filename)) {
+        if (! is_file($filename)) {
             return false;
         }
 
-        $resource = fopen($filename, "r");
+        $resource = fopen($filename, 'r');
+        $line     = fgets($resource);
 
-        if (false !== ($line = fgets($resource))) {
+        if ($line !== false) {
             $lifetime = (int) $line;
         }
 
@@ -45,7 +52,7 @@ class FilesystemCache extends FileCache
             return false;
         }
 
-        while (false !== ($line = fgets($resource))) {
+        while (($line = fgets($resource)) !== false) {
             $data .= $line;
         }
 
@@ -62,13 +69,14 @@ class FilesystemCache extends FileCache
         $lifetime = -1;
         $filename = $this->getFilename($id);
 
-        if ( ! is_file($filename)) {
+        if (! is_file($filename)) {
             return false;
         }
 
-        $resource = fopen($filename, "r");
+        $resource = fopen($filename, 'r');
+        $line     = fgets($resource);
 
-        if (false !== ($line = fgets($resource))) {
+        if ($line !== false) {
             $lifetime = (int) $line;
         }
 

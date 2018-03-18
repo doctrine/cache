@@ -124,8 +124,8 @@ class ChainCacheTest extends CacheTest
         $cache1->expects($this->once())->method('doDeleteMultiple')->willReturn(true);
         $cache2->expects($this->once())->method('doDeleteMultiple')->willReturn(true);
 
-        $chainCache = new ChainCache(array($cache1, $cache2));
-        $chainCache->deleteMultiple(array('bar', 'foo'));
+        $chainCache = new ChainCache([$cache1, $cache2]);
+        $chainCache->deleteMultiple(['bar', 'foo']);
     }
 
     public function testFlushToAllProviders() : void
@@ -143,7 +143,6 @@ class ChainCacheTest extends CacheTest
     /**
      * @group 155
      *
-     * @return void
      */
     public function testChainCacheAcceptsArrayIteratorsAsDependency() : void
     {

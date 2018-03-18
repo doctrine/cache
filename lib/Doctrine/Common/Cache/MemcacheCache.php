@@ -2,30 +2,21 @@
 
 namespace Doctrine\Common\Cache;
 
-use \Memcache;
+use Memcache;
+use function time;
 
 /**
  * Memcache cache provider.
  *
  * @link   www.doctrine-project.org
- * @since  2.0
- * @author Benjamin Eberlei <kontakt@beberlei.de>
- * @author Guilherme Blanco <guilhermeblanco@hotmail.com>
- * @author Jonathan Wage <jonwage@gmail.com>
- * @author Roman Borschel <roman@code-factory.org>
- * @author David Abdemoulaie <dave@hobodave.com>
  */
 class MemcacheCache extends CacheProvider
 {
-    /**
-     * @var Memcache|null
-     */
+    /** @var Memcache|null */
     private $memcache;
 
     /**
      * Sets the memcache instance to use.
-     *
-     * @param Memcache $memcache
      *
      * @return void
      */
@@ -59,9 +50,9 @@ class MemcacheCache extends CacheProvider
     {
         $flags = null;
         $this->memcache->get($id, $flags);
-        
+
         //if memcache has changed the value of "flags", it means the value exists
-        return ($flags !== null);
+        return $flags !== null;
     }
 
     /**

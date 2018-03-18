@@ -2,21 +2,19 @@
 
 namespace Doctrine\Common\Cache;
 
+use function array_values;
+use function count;
+use function iterator_to_array;
+
 /**
  * Cache provider that allows to easily chain multiple cache providers
- *
- * @author Michaël Gallego <mic.gallego@gmail.com>
  */
 class ChainCache extends CacheProvider
 {
-    /**
-     * @var CacheProvider[]
-     */
+    /** @var CacheProvider[] */
     private $cacheProviders = [];
 
     /**
-     * Constructor
-     *
      * @param CacheProvider[] $cacheProviders
      */
     public function __construct($cacheProviders = [])

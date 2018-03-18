@@ -2,11 +2,11 @@
 
 namespace Doctrine\Tests\Common\Cache;
 
+use Doctrine\Common\Cache\CacheProvider;
+use Doctrine\Common\Cache\RiakCache;
 use Riak\Bucket;
 use Riak\Connection;
 use Riak\Exception;
-use Doctrine\Common\Cache\CacheProvider;
-use Doctrine\Common\Cache\RiakCache;
 
 /**
  * RiakCache test
@@ -16,14 +16,10 @@ use Doctrine\Common\Cache\RiakCache;
  */
 class RiakCacheTest extends CacheTest
 {
-    /**
-     * @var \Riak\Connection
-     */
+    /** @var Connection */
     private $connection;
 
-    /**
-     * @var \Riak\Bucket
-     */
+    /** @var Bucket */
     private $bucket;
 
     protected function setUp() : void

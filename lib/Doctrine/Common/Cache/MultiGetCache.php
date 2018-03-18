@@ -6,9 +6,6 @@ namespace Doctrine\Common\Cache;
  * Interface for cache drivers that allows to get many items at once.
  *
  * @link   www.doctrine-project.org
- * @since  1.4
- * @author Asmir Mustafic <goetas@gmail.com>
- *
  * @deprecated
  */
 interface MultiGetCache

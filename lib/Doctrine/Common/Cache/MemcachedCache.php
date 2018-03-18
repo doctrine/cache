@@ -2,30 +2,21 @@
 
 namespace Doctrine\Common\Cache;
 
-use \Memcached;
+use Memcached;
+use function time;
 
 /**
  * Memcached cache provider.
  *
  * @link   www.doctrine-project.org
- * @since  2.2
- * @author Benjamin Eberlei <kontakt@beberlei.de>
- * @author Guilherme Blanco <guilhermeblanco@hotmail.com>
- * @author Jonathan Wage <jonwage@gmail.com>
- * @author Roman Borschel <roman@code-factory.org>
- * @author David Abdemoulaie <dave@hobodave.com>
  */
 class MemcachedCache extends CacheProvider
 {
-    /**
-     * @var Memcached|null
-     */
+    /** @var Memcached|null */
     private $memcached;
 
     /**
      * Sets the memcache instance to use.
-     *
-     * @param Memcached $memcached
      *
      * @return void
      */

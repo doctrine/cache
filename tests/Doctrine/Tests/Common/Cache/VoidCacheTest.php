@@ -3,11 +3,12 @@
 namespace Doctrine\Tests\Common\Cache;
 
 use Doctrine\Common\Cache\VoidCache;
+use Doctrine\Tests\DoctrineTestCase;
 
 /**
  * @covers \Doctrine\Common\Cache\VoidCache
  */
-class VoidCacheTest extends \Doctrine\Tests\DoctrineTestCase
+class VoidCacheTest extends DoctrineTestCase
 {
     public function testShouldAlwaysReturnFalseOnContains() : void
     {

@@ -5,6 +5,8 @@ namespace Doctrine\Tests\Common\Cache;
 use Doctrine\Common\Cache\CacheProvider;
 use Doctrine\Common\Cache\SQLite3Cache;
 use SQLite3;
+use function tempnam;
+use function unlink;
 
 /**
  * @requires extension sqlite3 >= 3

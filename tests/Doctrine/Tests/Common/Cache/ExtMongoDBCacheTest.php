@@ -8,15 +8,14 @@ use Doctrine\Common\Cache\MongoDBCache;
 use MongoDB\Client;
 use MongoDB\Collection;
 use MongoDB\Driver\Exception\Exception;
+use function sleep;
 
 /**
  * @requires extension mongodb
  */
 class ExtMongoDBCacheTest extends CacheTest
 {
-    /**
-     * @var Collection
-     */
+    /** @var Collection */
     private $collection;
 
     protected function setUp() : void
@@ -33,9 +32,11 @@ class ExtMongoDBCacheTest extends CacheTest
 
     protected function tearDown() : void
     {
-        if ($this->collection instanceof Collection) {
-            $this->collection->drop();
+        if (! ($this->collection instanceof Collection)) {
+            return;
         }
+
+        $this->collection->drop();
     }
 
     public function testGetStats() : void

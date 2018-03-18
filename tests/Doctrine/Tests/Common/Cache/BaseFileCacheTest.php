@@ -5,6 +5,20 @@ namespace Doctrine\Tests\Common\Cache;
 use Doctrine\Common\Cache\FileCache;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
+use const DIRECTORY_SEPARATOR;
+use function bin2hex;
+use function file_exists;
+use function floor;
+use function get_class;
+use function hash;
+use function is_dir;
+use function rmdir;
+use function str_repeat;
+use function strlen;
+use function substr;
+use function sys_get_temp_dir;
+use function uniqid;
+use function unlink;
 
 abstract class BaseFileCacheTest extends CacheTest
 {
@@ -19,7 +33,7 @@ abstract class BaseFileCacheTest extends CacheTest
 
     protected function tearDown() : void
     {
-        if ( ! is_dir($this->directory)) {
+        if (! is_dir($this->directory)) {
             return;
         }
 
@@ -65,7 +79,7 @@ abstract class BaseFileCacheTest extends CacheTest
             [257, false],
             [258, false],
             [259, true],
-            [260, true]
+            [260, true],
         ];
     }
 
@@ -79,7 +93,7 @@ abstract class BaseFileCacheTest extends CacheTest
         $baseDirLength             = strlen($basePath);
         $extensionLength           = strlen('.doctrine.cache');
         $directoryLength           = strlen(DIRECTORY_SEPARATOR . 'aa' . DIRECTORY_SEPARATOR);
-        $namespaceAndBracketLength = strlen(bin2hex("[][1]"));
+        $namespaceAndBracketLength = strlen(bin2hex('[][1]'));
         $keyLength                 = $length
             - ($baseDirLength
                 + $extensionLength

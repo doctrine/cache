@@ -2,16 +2,20 @@
 
 namespace Doctrine\Common\Cache;
 
+use function count;
+use function is_array;
+use function wincache_ucache_clear;
+use function wincache_ucache_delete;
+use function wincache_ucache_exists;
+use function wincache_ucache_get;
+use function wincache_ucache_info;
+use function wincache_ucache_meminfo;
+use function wincache_ucache_set;
+
 /**
  * WinCache cache provider.
  *
  * @link   www.doctrine-project.org
- * @since  2.2
- * @author Benjamin Eberlei <kontakt@beberlei.de>
- * @author Guilherme Blanco <guilhermeblanco@hotmail.com>
- * @author Jonathan Wage <jonwage@gmail.com>
- * @author Roman Borschel <roman@code-factory.org>
- * @author David Abdemoulaie <dave@hobodave.com>
  */
 class WinCacheCache extends CacheProvider
 {

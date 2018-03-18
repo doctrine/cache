@@ -4,19 +4,18 @@ namespace Doctrine\Common\Cache;
 
 use MongoCollection;
 use MongoDB\Collection;
+use const E_USER_DEPRECATED;
+use function trigger_error;
 
 /**
  * MongoDB cache provider.
- *
- * @since  1.1
- * @author Jeremy Mikola <jmikola@gmail.com>
  */
 class MongoDBCache extends CacheProvider
 {
     /**
      * The data field will store the serialized PHP value.
      */
-    const DATA_FIELD = 'd';
+    public const DATA_FIELD = 'd';
 
     /**
      * The expiration field will store a MongoDate value indicating when the
@@ -33,16 +32,12 @@ class MongoDBCache extends CacheProvider
      *
      * @see http://docs.mongodb.org/manual/tutorial/expire-data/
      */
-    const EXPIRATION_FIELD = 'e';
+    public const EXPIRATION_FIELD = 'e';
 
-    /**
-     * @var CacheProvider
-     */
+    /** @var CacheProvider */
     private $provider;
 
     /**
-     * Constructor.
-     *
      * This provider will default to the write concern and read preference
      * options set on the collection instance (or inherited from MongoDB or
      * MongoClient). Using an unacknowledged write concern (< 1) may make the

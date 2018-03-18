@@ -2,16 +2,21 @@
 
 namespace Doctrine\Common\Cache;
 
+use const XC_TYPE_VAR;
+use function ini_get;
+use function serialize;
+use function unserialize;
+use function xcache_clear_cache;
+use function xcache_get;
+use function xcache_info;
+use function xcache_isset;
+use function xcache_set;
+use function xcache_unset;
+
 /**
  * Xcache cache driver.
  *
  * @link   www.doctrine-project.org
- * @since  2.0
- * @author Benjamin Eberlei <kontakt@beberlei.de>
- * @author Guilherme Blanco <guilhermeblanco@hotmail.com>
- * @author Jonathan Wage <jonwage@gmail.com>
- * @author Roman Borschel <roman@code-factory.org>
- * @author David Abdemoulaie <dave@hobodave.com>
  */
 class XcacheCache extends CacheProvider
 {

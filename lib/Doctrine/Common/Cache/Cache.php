@@ -6,27 +6,20 @@ namespace Doctrine\Common\Cache;
  * Interface for cache drivers.
  *
  * @link   www.doctrine-project.org
- * @since  2.0
- * @author Benjamin Eberlei <kontakt@beberlei.de>
- * @author Guilherme Blanco <guilhermeblanco@hotmail.com>
- * @author Jonathan Wage <jonwage@gmail.com>
- * @author Roman Borschel <roman@code-factory.org>
- * @author Fabio B. Silva <fabio.bat.silva@gmail.com>
- * @author Kévin Dunglas <dunglas@gmail.com>
  */
 interface Cache
 {
-    const STATS_HITS             = 'hits';
-    const STATS_MISSES           = 'misses';
-    const STATS_UPTIME           = 'uptime';
-    const STATS_MEMORY_USAGE     = 'memory_usage';
-    const STATS_MEMORY_AVAILABLE = 'memory_available';
+    public const STATS_HITS             = 'hits';
+    public const STATS_MISSES           = 'misses';
+    public const STATS_UPTIME           = 'uptime';
+    public const STATS_MEMORY_USAGE     = 'memory_usage';
+    public const STATS_MEMORY_AVAILABLE = 'memory_available';
     /**
      * Only for backward compatibility (may be removed in next major release)
      *
      * @deprecated
      */
-    const STATS_MEMORY_AVAILIABLE = 'memory_available';
+    public const STATS_MEMORY_AVAILIABLE = 'memory_available';
 
     /**
      * Fetches an entry from the cache.
@@ -90,8 +83,6 @@ interface Cache
      *
      * - <b>memory_available</b>
      * Memory allowed to use for storage.
-     *
-     * @since 2.2
      *
      * @return array|null An associative array with server's statistics if available, NULL otherwise.
      */

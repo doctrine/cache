@@ -9,15 +9,14 @@ use Doctrine\Common\Cache\MongoDBCache;
 use MongoClient;
 use MongoCollection;
 use MongoConnectionException;
+use function sleep;
 
 /**
  * @requires extension mongodb
  */
 class LegacyMongoDBCacheTest extends CacheTest
 {
-    /**
-     * @var MongoCollection
-     */
+    /** @var MongoCollection */
     private $collection;
 
     protected function setUp() : void
@@ -34,9 +33,11 @@ class LegacyMongoDBCacheTest extends CacheTest
 
     protected function tearDown() : void
     {
-        if ($this->collection instanceof MongoCollection) {
-            $this->collection->drop();
+        if (! ($this->collection instanceof MongoCollection)) {
+            return;
         }
+
+        $this->collection->drop();
     }
 
     public function testGetStats() : void

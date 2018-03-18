@@ -5,6 +5,8 @@ namespace Doctrine\Tests\Common\Cache;
 use Doctrine\Common\Cache\CacheProvider;
 use Doctrine\Common\Cache\MemcachedCache;
 use Memcached;
+use function fsockopen;
+use function sprintf;
 
 /**
  * @requires extension memcached
@@ -19,17 +21,21 @@ class MemcachedCacheTest extends CacheTest
         $this->memcached->setOption(Memcached::OPT_COMPRESSION, false);
         $this->memcached->addServer('127.0.0.1', 11211);
 
-        if (@fsockopen('127.0.0.1', 11211) === false) {
-            unset($this->memcached);
-            $this->markTestSkipped('Cannot connect to Memcached.');
+        if (@fsockopen('127.0.0.1', 11211) !== false) {
+            return;
         }
+
+        unset($this->memcached);
+        $this->markTestSkipped('Cannot connect to Memcached.');
     }
 
     protected function tearDown() : void
     {
-        if ($this->memcached instanceof Memcached) {
-            $this->memcached->flush();
+        if (! ($this->memcached instanceof Memcached)) {
+            return;
         }
+
+        $this->memcached->flush();
     }
 
     /**

@@ -5,6 +5,7 @@ namespace Doctrine\Tests\Common\Cache;
 use Doctrine\Common\Cache\Cache;
 use Doctrine\Common\Cache\CacheProvider;
 use Doctrine\Common\Cache\PhpFileCache;
+use const PHP_VERSION_ID;
 
 /**
  * @group DCOM-101
@@ -29,7 +30,7 @@ class PhpFileCacheTest extends BaseFileCacheTest
         $cache = $this->_getCacheDriver();
 
         // Test save
-        $cache->save('test_set_state', new SetStateClass([1,2,3]));
+        $cache->save('test_set_state', new SetStateClass([1, 2, 3]));
 
         //Test __set_state call
         self::assertCount(0, SetStateClass::$values);
@@ -37,7 +38,7 @@ class PhpFileCacheTest extends BaseFileCacheTest
         // Test fetch
         $value = $cache->fetch('test_set_state');
         self::assertInstanceOf(SetStateClass::class, $value);
-        self::assertEquals([1,2,3], $value->getValue());
+        self::assertEquals([1, 2, 3], $value->getValue());
 
         //Test __set_state call
         self::assertCount(1, SetStateClass::$values);
@@ -53,8 +54,8 @@ class PhpFileCacheTest extends BaseFileCacheTest
     {
         $cache = $this->_getCacheDriver();
 
-        $cache->save('test_not_set_state', new NotSetStateClass([5,6,7]));
-        self::assertEquals(new NotSetStateClass([5,6,7]), $cache->fetch('test_not_set_state'));
+        $cache->save('test_not_set_state', new NotSetStateClass([5, 6, 7]));
+        self::assertEquals(new NotSetStateClass([5, 6, 7]), $cache->fetch('test_not_set_state'));
     }
 
     /**
@@ -64,8 +65,8 @@ class PhpFileCacheTest extends BaseFileCacheTest
     {
         $cache = $this->_getCacheDriver();
 
-        $cache->save('test_not_set_state_in_array', [new NotSetStateClass([4,3,2])]);
-        self::assertEquals([new NotSetStateClass([4,3,2])], $cache->fetch('test_not_set_state_in_array'));
+        $cache->save('test_not_set_state_in_array', [new NotSetStateClass([4, 3, 2])]);
+        self::assertEquals([new NotSetStateClass([4, 3, 2])], $cache->fetch('test_not_set_state_in_array'));
         self::assertTrue($cache->contains('test_not_set_state_in_array'));
     }
 

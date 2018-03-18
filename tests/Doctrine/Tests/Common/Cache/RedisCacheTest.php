@@ -6,6 +6,8 @@ use Doctrine\Common\Cache\Cache;
 use Doctrine\Common\Cache\CacheProvider;
 use Doctrine\Common\Cache\RedisCache;
 use Redis;
+use function defined;
+use function extension_loaded;
 
 /**
  * @requires extension redis
@@ -18,9 +20,11 @@ class RedisCacheTest extends CacheTest
     {
         $this->_redis = new Redis();
         $ok           = @$this->_redis->connect('127.0.0.1');
-        if ( ! $ok) {
-            $this->markTestSkipped('Cannot connect to Redis.');
+        if ($ok) {
+            return;
         }
+
+        $this->markTestSkipped('Cannot connect to Redis.');
     }
 
     public function testHitMissesStatsAreProvided() : void
