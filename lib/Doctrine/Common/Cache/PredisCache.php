@@ -58,7 +58,7 @@ class PredisCache extends CacheProvider
             foreach ($keysAndValues as $key => $value) {
                 $response = (string) $this->client->setex($key, $lifetime, serialize($value));
 
-                if ($response == 'OK') {
+                if ($response === 'OK') {
                     continue;
                 }
 
@@ -73,7 +73,7 @@ class PredisCache extends CacheProvider
             return serialize($value);
         }, $keysAndValues));
 
-        return (string) $response == 'OK';
+        return (string) $response === 'OK';
     }
 
     /**
@@ -96,7 +96,7 @@ class PredisCache extends CacheProvider
             $response = $this->client->set($id, $data);
         }
 
-        return $response === true || $response == 'OK';
+        return $response === true || $response === 'OK';
     }
 
     /**
@@ -122,7 +122,7 @@ class PredisCache extends CacheProvider
     {
         $response = $this->client->flushdb();
 
-        return $response === true || $response == 'OK';
+        return $response === true || $response === 'OK';
     }
 
     /**
