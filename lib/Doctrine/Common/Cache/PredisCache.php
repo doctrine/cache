@@ -58,7 +58,7 @@ class PredisCache extends CacheProvider
             foreach ($keysAndValues as $key => $value) {
                 $response = (string) $this->client->setex($key, $lifetime, serialize($value));
 
-                if ($response === 'OK') {
+                if ($response->payload === 'OK') {
                     continue;
                 }
 
@@ -69,11 +69,11 @@ class PredisCache extends CacheProvider
         }
 
         // No lifetime, use MSET
-        $response = $this->client->mset(array_map(function ($value) {
+        $response = (string) $this->client->mset(array_map(function ($value) {
             return serialize($value);
         }, $keysAndValues));
 
-        return (string) $response === 'OK';
+        return $response->payload === 'OK';
     }
 
     /**
@@ -96,7 +96,7 @@ class PredisCache extends CacheProvider
             $response = $this->client->set($id, $data);
         }
 
-        return $response === true || $response === 'OK';
+        return $response === true || $response->payload === 'OK';
     }
 
     /**
