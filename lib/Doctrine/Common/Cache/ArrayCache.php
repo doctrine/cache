@@ -2,8 +2,6 @@
 
 namespace Doctrine\Common\Cache;
 
-use function time;
-
 /**
  * Array cache driver.
  *

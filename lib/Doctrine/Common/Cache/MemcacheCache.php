@@ -3,7 +3,6 @@
 namespace Doctrine\Common\Cache;
 
 use Memcache;
-use function time;
 
 /**
  * Memcache cache provider.

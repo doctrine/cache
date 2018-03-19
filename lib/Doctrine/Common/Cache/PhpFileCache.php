@@ -8,7 +8,6 @@ use function restore_error_handler;
 use function serialize;
 use function set_error_handler;
 use function sprintf;
-use function time;
 use function var_export;
 
 /**

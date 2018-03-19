@@ -8,7 +8,6 @@ use function fgets;
 use function fopen;
 use function is_file;
 use function serialize;
-use function time;
 use function unserialize;
 
 /**
