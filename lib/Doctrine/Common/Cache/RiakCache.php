@@ -8,7 +8,6 @@ use Riak\Input;
 use Riak\Object;
 use function count;
 use function serialize;
-use function time;
 use function unserialize;
 
 /**

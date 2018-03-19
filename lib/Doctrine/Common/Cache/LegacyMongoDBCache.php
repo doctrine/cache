@@ -8,7 +8,6 @@ use MongoCursorException;
 use MongoDate;
 use const E_USER_DEPRECATED;
 use function serialize;
-use function time;
 use function trigger_error;
 use function unserialize;
 

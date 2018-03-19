@@ -11,7 +11,6 @@ use function phpversion;
 use function serialize;
 use function sprintf;
 use function substr;
-use function time;
 use function unserialize;
 use function version_compare;
 

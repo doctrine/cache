@@ -11,7 +11,6 @@ use function array_search;
 use function implode;
 use function serialize;
 use function sprintf;
-use function time;
 use function unserialize;
 
 /**

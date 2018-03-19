@@ -4,7 +4,6 @@ namespace Doctrine\Common\Cache;
 
 use Couchbase;
 use function explode;
-use function time;
 
 /**
  * Couchbase cache provider.
