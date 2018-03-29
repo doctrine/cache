@@ -211,7 +211,7 @@ class RiakCache extends CacheProvider
     protected function resolveConflict($id, $vClock, array $objectList)
     {
         // Our approach here is last-write wins
-        $winner = $objectList[count($objectList)];
+        $winner = $objectList[count($objectList) - 1];
 
         $putInput = new Input\PutInput();
         $putInput->setVClock($vClock);
