@@ -3,7 +3,7 @@
     "type": "library",
     "description": "Caching library offering an object-oriented API for many cache backends",
     "keywords": ["cache", "caching"],
-    "homepage": "http://www.doctrine-project.org",
+    "homepage": "https://www.doctrine-project.org",
     "license": "MIT",
     "authors": [
         {"name": "Guilherme Blanco", "email": "guilhermeblanco@gmail.com"},
