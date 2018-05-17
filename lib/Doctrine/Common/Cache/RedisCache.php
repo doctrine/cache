@@ -57,8 +57,11 @@ class RedisCache extends CacheProvider
         $foundItems = [];
 
         foreach ($fetchedItems as $key => $value) {
-            if ($value === false && ! $this->redis->exists($key)) {
-                continue;
+            if ($value === false) {
+                if ( ! $this->redis->exists($key)) {
+                    continue;
+                }
+                $value = $this->redis->get($key);
             }
 
             $foundItems[$key] = $value;
