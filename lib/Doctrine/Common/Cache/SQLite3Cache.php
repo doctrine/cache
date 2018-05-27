@@ -46,11 +46,14 @@ class SQLite3Cache extends CacheProvider
      * exist and will create both if they don't.
      *
      * @param string $table
+     * @param int $busyTimeout
      */
-    public function __construct(SQLite3 $sqlite, $table)
+    public function __construct(SQLite3 $sqlite, $table, $busyTimeout = 2000)
     {
         $this->sqlite = $sqlite;
         $this->table  = (string) $table;
+
+        $sqlite->busyTimeout($busyTimeout);
 
         $this->ensureTableExists();
     }
