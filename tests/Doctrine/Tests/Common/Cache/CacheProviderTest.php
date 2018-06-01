@@ -9,7 +9,7 @@ class CacheProviderTest extends DoctrineTestCase
 {
     public function testFetchMultiWillFilterNonRequestedKeys() : void
     {
-        /* @var $cache \Doctrine\Common\Cache\CacheProvider|\PHPUnit_Framework_MockObject_MockObject */
+        /** @var CacheProvider|\PHPUnit_Framework_MockObject_MockObject $cache */
         $cache = $this->getMockForAbstractClass(
             CacheProvider::class,
             [],
@@ -37,7 +37,7 @@ class CacheProviderTest extends DoctrineTestCase
 
     public function testFailedDeleteAllDoesNotChangeNamespaceVersion() : void
     {
-        /* @var $cache \Doctrine\Common\Cache\CacheProvider|\PHPUnit_Framework_MockObject_MockObject */
+        /** @var CacheProvider|\PHPUnit_Framework_MockObject_MockObject $cache */
         $cache = $this->getMockForAbstractClass(
             CacheProvider::class,
             [],
@@ -75,7 +75,7 @@ class CacheProviderTest extends DoctrineTestCase
 
     public function testSaveMultipleNoFail() : void
     {
-        /* @var $cache \Doctrine\Common\Cache\CacheProvider|\PHPUnit_Framework_MockObject_MockObject */
+        /** @var CacheProvider|\PHPUnit_Framework_MockObject_MockObject $cache */
         $cache = $this->getMockForAbstractClass(
             CacheProvider::class,
             [],
@@ -106,7 +106,7 @@ class CacheProviderTest extends DoctrineTestCase
 
     public function testDeleteMultipleNoFail() : void
     {
-        /* @var $cache \Doctrine\Common\Cache\CacheProvider|\PHPUnit_Framework_MockObject_MockObject */
+        /** @var CacheProvider|\PHPUnit_Framework_MockObject_MockObject $cache */
         $cache = $this
             ->getMockBuilder(CacheProvider::class)
             ->setMethods(['doDelete'])
@@ -129,7 +129,7 @@ class CacheProviderTest extends DoctrineTestCase
 
     public function testInvalidNamespaceVersionCacheEntry() : void
     {
-        /* @var $cache \Doctrine\Common\Cache\CacheProvider|\PHPUnit_Framework_MockObject_MockObject */
+        /** @var CacheProvider|\PHPUnit_Framework_MockObject_MockObject $cache */
         $cache = $this->getMockForAbstractClass(CacheProvider::class);
 
         $cache->expects($this->once())

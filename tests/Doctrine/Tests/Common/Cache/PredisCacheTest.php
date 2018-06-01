@@ -82,7 +82,7 @@ class PredisCacheTest extends CacheTest
 
     public function testAllowsGenericPredisClient() : void
     {
-        /* @var $predisClient ClientInterface */
+        /** @var ClientInterface $predisClient */
         $predisClient = $this->createMock(ClientInterface::class);
 
         self::assertInstanceOf(PredisCache::class, new PredisCache($predisClient));

@@ -12,7 +12,8 @@ build:
         before:
             - pecl install mongodb
         override:
-            - composer install --no-interaction --prefer-dist
+            - rm composer.lock
+            - composer update --no-interaction --prefer-dist
 
 tools:
     external_code_coverage:

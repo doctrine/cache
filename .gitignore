@@ -1,7 +1,6 @@
 vendor/
 build/
 phpunit.xml
-composer.lock
 clover.xml
 .phpcs-cache
 phpcs.xml

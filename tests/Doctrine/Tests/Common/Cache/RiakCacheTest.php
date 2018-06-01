@@ -7,6 +7,7 @@ use Doctrine\Common\Cache\RiakCache;
 use Riak\Bucket;
 use Riak\Connection;
 use Riak\Exception;
+use function unserialize;
 
 /**
  * RiakCache test
