@@ -9,6 +9,8 @@ use function time;
  * Memcache cache provider.
  *
  * @link   www.doctrine-project.org
+ *
+ * @deprecated
  */
 class MemcacheCache extends CacheProvider
 {

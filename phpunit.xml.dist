@@ -21,6 +21,13 @@
     <filter>
         <whitelist>
             <directory>./lib/Doctrine/</directory>
+            <exclude>
+                <file>lib/Doctrine/Common/Cache/ApcCache.php</file>
+                <file>lib/Doctrine/Common/Cache/CouchbaseCache.php</file>
+                <file>lib/Doctrine/Common/Cache/MemcacheCache.php</file>
+                <file>lib/Doctrine/Common/Cache/RiakCache.php</file>
+                <file>lib/Doctrine/Common/Cache/XcacheCache.php</file>
+            </exclude>
         </whitelist>
     </filter>
 </phpunit>

@@ -15,6 +15,8 @@ use function unserialize;
  * Riak cache provider.
  *
  * @link   www.doctrine-project.org
+ *
+ * @deprecated
  */
 class RiakCache extends CacheProvider
 {

@@ -17,6 +17,8 @@ use function xcache_unset;
  * Xcache cache driver.
  *
  * @link   www.doctrine-project.org
+ *
+ * @deprecated
  */
 class XcacheCache extends CacheProvider
 {
