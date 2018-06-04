@@ -27,7 +27,8 @@ before_install:
     - phpenv config-add ./tests/travis/php.ini
 
 install:
-    - travis_retry composer install
+    - rm composer.lock
+    - travis_retry composer update --no-interaction --prefer-dist
 
 script: ./vendor/bin/phpunit --exclude-group performance
 
@@ -37,6 +38,8 @@ jobs:
 
   include:
     - stage: Coding standard
+      install:
+          - travis_retry composer install --no-interaction --prefer-dist --ignore-platform-reqs
       script:
         - ./vendor/bin/phpcs
 

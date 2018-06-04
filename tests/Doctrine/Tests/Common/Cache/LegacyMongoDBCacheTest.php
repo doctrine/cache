@@ -57,7 +57,7 @@ class LegacyMongoDBCacheTest extends CacheTest
      */
     public function testMongoCursorExceptionsDoNotBubbleUp() : void
     {
-        /* @var $collection \MongoCollection|\PHPUnit_Framework_MockObject_MockObject */
+        /** @var \MongoCollection|\PHPUnit_Framework_MockObject_MockObject $collection */
         $collection = $this
             ->getMockBuilder(\MongoCollection::class)
             ->disableOriginalConstructor()

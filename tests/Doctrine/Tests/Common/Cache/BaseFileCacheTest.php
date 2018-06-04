@@ -134,7 +134,7 @@ abstract class BaseFileCacheTest extends CacheTest
         self::assertEquals($length, strlen($keyPath), 'Unhashed path should be of correct length.');
 
         $cacheClass = get_class($this->_getCacheDriver());
-        /* @var $cache \Doctrine\Common\Cache\FileCache */
+        /** @var FileCache $cache */
         $cache = new $cacheClass($this->directory, '.doctrine.cache');
 
         // Trick it into thinking this is windows.

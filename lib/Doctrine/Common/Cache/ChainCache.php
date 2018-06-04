@@ -62,7 +62,7 @@ class ChainCache extends CacheProvider
      */
     protected function doFetchMultiple(array $keys)
     {
-        /* @var $traversedProviders CacheProvider[] */
+        /** @var CacheProvider[] $traversedProviders */
         $traversedProviders = [];
         $keysCount          = count($keys);
         $fetchedValues      = [];
