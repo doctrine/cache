@@ -6,6 +6,7 @@ use Redis;
 use function array_combine;
 use function defined;
 use function extension_loaded;
+use function is_bool;
 
 /**
  * Redis cache provider.
@@ -96,7 +97,13 @@ class RedisCache extends CacheProvider
      */
     protected function doContains($id)
     {
-        return $this->redis->exists($id);
+        $exists = $this->redis->exists($id);
+
+        if (is_bool($exists)) {
+            return $exists;
+        }
+
+        return $exists > 0;
     }
 
     /**
