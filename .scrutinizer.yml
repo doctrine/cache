@@ -9,6 +9,8 @@ build:
             - phpcs-run
 
     dependencies:
+        before:
+            - pecl install mongodb
         override:
             - composer install --no-interaction --prefer-dist
 
