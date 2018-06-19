@@ -48,7 +48,7 @@ with PHP so no additional setup is required in order to use it.
 ApcuCache
 ---------
 
-The ``ApcCache`` driver uses the ``apcu_fetch``, ``apcu_exists``, etc. functions that come
+The ``ApcuCache`` driver uses the ``apcu_fetch``, ``apcu_exists``, etc. functions that come
 with PHP so no additional setup is required in order to use it.
 
 .. code-block:: php
