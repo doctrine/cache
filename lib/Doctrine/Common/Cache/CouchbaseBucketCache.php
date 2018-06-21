@@ -18,27 +18,45 @@ use function version_compare;
 /**
  * Couchbase ^2.3.0 cache provider.
  */
-final class CouchbaseBucketCache extends CacheProvider
+class CouchbaseBucketCache extends CacheProvider
 {
-    private const MINIMUM_VERSION = '2.3.0';
+    public const MINIMUM_VERSION = '2.3.0';
 
-    private const KEY_NOT_FOUND = 13;
+    public const KEY_NOT_FOUND = 13;
 
-    private const MAX_KEY_LENGTH = 250;
+    public const MAX_KEY_LENGTH = 250;
 
-    private const THIRTY_DAYS_IN_SECONDS = 2592000;
+    public const THIRTY_DAYS_IN_SECONDS = 2592000;
 
     /** @var Bucket */
     private $bucket;
 
-    public function __construct(Bucket $bucket)
+    public function __construct()
     {
         if (version_compare(phpversion('couchbase'), self::MINIMUM_VERSION) < 0) {
             // Manager is required to flush cache and pull stats.
             throw new \RuntimeException(sprintf('ext-couchbase:^%s is required.', self::MINIMUM_VERSION));
         }
+    }
 
+    /**
+     * Sets the Couchbase Bucket to use
+     *
+     * @param \Couchbase\Bucket $bucket
+     */
+    public function setBucket(Bucket $bucket): void
+    {
         $this->bucket = $bucket;
+    }
+
+    /**
+     * Gets the Couchbase bucket used by the cache
+     *
+     * @return \Couchbase\Bucket
+     */
+    public function getBucket(): Bucket
+    {
+        return $this->bucket;
     }
 
     /**
@@ -169,7 +187,14 @@ final class CouchbaseBucketCache extends CacheProvider
         ];
     }
 
-    private function normalizeKey(string $id) : string
+    /**
+     * Ensure key is less than 250 bytes in length
+     * @see https://developer.couchbase.com/documentation/server/current/clustersetup/server-setup.html under "Limits"
+     *
+     * @param string $id
+     * @return string
+     */
+    protected function normalizeKey(string $id) : string
     {
         $normalized = substr($id, 0, self::MAX_KEY_LENGTH);
 
@@ -183,8 +208,11 @@ final class CouchbaseBucketCache extends CacheProvider
     /**
      * Expiry treated as a unix timestamp instead of an offset if expiry is greater than 30 days.
      * @src https://developer.couchbase.com/documentation/server/4.1/developer-guide/expiry.html
+     *
+     * @param int $expiry
+     * @return int
      */
-    private function normalizeExpiry(int $expiry) : int
+    protected function normalizeExpiry(int $expiry) : int
     {
         if ($expiry > self::THIRTY_DAYS_IN_SECONDS) {
             return time() + $expiry;
