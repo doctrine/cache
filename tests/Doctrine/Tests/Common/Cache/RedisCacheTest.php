@@ -47,9 +47,10 @@ class RedisCacheTest extends CacheTest
             $this->markTestSkipped('Extension igbinary is loaded.');
         }
 
-        self::assertEquals(
-            Redis::SERIALIZER_PHP,
-            $this->_getCacheDriver()->getRedis()->getOption(Redis::OPT_SERIALIZER)
+        self::assertAttributeSame(
+            RedisCache::SERIALIZER_PHP,
+            'serializer',
+            $this->_getCacheDriver()
         );
     }
 
