@@ -101,7 +101,11 @@ class LegacyMongoDBCache extends CacheProvider
             return false;
         }
 
-        return ($result['ok'] ?? 1) == 1;
+        if (! isset($result['ok'])) {
+            return true;
+        }
+
+        return $result['ok'] === 1.0;
     }
 
     /**
@@ -111,7 +115,11 @@ class LegacyMongoDBCache extends CacheProvider
     {
         $result = $this->collection->remove(['_id' => $id]);
 
-        return ($result['ok'] ?? 1) == 1;
+        if (! isset($result['ok'])) {
+            return true;
+        }
+
+        return $result['ok'] === 1.0;
     }
 
     /**
@@ -122,7 +130,11 @@ class LegacyMongoDBCache extends CacheProvider
         // Use remove() in lieu of drop() to maintain any collection indexes
         $result = $this->collection->remove();
 
-        return ($result['ok'] ?? 1) == 1;
+        if (! isset($result['ok'])) {
+            return true;
+        }
+
+        return $result['ok'] === 1.0;
     }
 
     /**

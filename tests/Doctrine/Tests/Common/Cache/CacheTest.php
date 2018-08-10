@@ -485,7 +485,7 @@ abstract class CacheTest extends DoctrineTestCase
     {
         $cache = $this->_getCacheDriver();
 
-        $errorHandler = function () {
+        $errorHandler = function () : void {
             restore_error_handler();
 
             $this->fail('include failure captured');
@@ -497,7 +497,7 @@ abstract class CacheTest extends DoctrineTestCase
 
         self::assertSame(
             $errorHandler,
-            set_error_handler(function () {
+            set_error_handler(function () : void {
             }),
             'The error handler is the one set by this test, and wasn\'t replaced'
         );
