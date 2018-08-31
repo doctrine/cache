@@ -1,0 +1,17 @@
+{
+    "active": true,
+    "name": "Cache",
+    "slug": "cache",
+    "docsSlug": "doctrine-cache",
+    "versions": [
+        {
+            "name": "master",
+            "branchName": "master",
+            "slug": "latest",
+            "aliases": [
+                "current",
+                "stable"
+            ]
+        }
+    ]
+}
