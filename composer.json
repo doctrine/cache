@@ -1,8 +1,19 @@
 {
     "name": "doctrine/cache",
     "type": "library",
-    "description": "Caching library offering an object-oriented API for many cache backends",
-    "keywords": ["cache", "caching"],
+    "description": "PHP Doctrine Cache library is a popular cache implementation that supports many different drivers such as redis, memcache, apc, mongodb and others.",
+    "keywords": [
+        "php",
+        "cache",
+        "caching",
+        "abstraction",
+        "redis",
+        "memcached",
+        "couchdb",
+        "xcache",
+        "apcu",
+        "riak"
+    ],
     "homepage": "https://www.doctrine-project.org",
     "license": "MIT",
     "authors": [
