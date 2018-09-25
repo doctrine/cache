@@ -5,6 +5,7 @@ namespace Doctrine\Tests\Common\Cache;
 use Couchbase;
 use Doctrine\Common\Cache\CacheProvider;
 use Doctrine\Common\Cache\CouchbaseCache;
+use Throwable;
 
 /**
  * @requires extension couchbase >=1.0
@@ -18,7 +19,7 @@ class CouchbaseCacheTest extends CacheTest
     {
         try {
             $this->couchbase = new Couchbase('127.0.0.1', 'Administrator', 'password', 'default');
-        } catch (\Throwable $ex) {
+        } catch (Throwable $ex) {
              $this->markTestSkipped('Could not instantiate the Couchbase cache because of: ' . $ex);
         }
     }

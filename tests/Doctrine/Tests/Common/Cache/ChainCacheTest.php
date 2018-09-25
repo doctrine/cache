@@ -2,6 +2,7 @@
 
 namespace Doctrine\Tests\Common\Cache;
 
+use ArrayIterator;
 use Doctrine\Common\Cache\ArrayCache;
 use Doctrine\Common\Cache\CacheProvider;
 use Doctrine\Common\Cache\ChainCache;
@@ -142,7 +143,6 @@ class ChainCacheTest extends CacheTest
 
     /**
      * @group 155
-     *
      */
     public function testChainCacheAcceptsArrayIteratorsAsDependency() : void
     {
@@ -152,7 +152,7 @@ class ChainCacheTest extends CacheTest
         $cache1->expects($this->once())->method('doFlush');
         $cache2->expects($this->once())->method('doFlush');
 
-        (new ChainCache(new \ArrayIterator([$cache1, $cache2])))->flushAll();
+        (new ChainCache(new ArrayIterator([$cache1, $cache2])))->flushAll();
     }
 
     protected function isSharedStorage() : bool

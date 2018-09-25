@@ -3,8 +3,10 @@
 namespace Doctrine\Tests\Common\Cache;
 
 use Doctrine\Common\Cache\FileCache;
+use FilesystemIterator;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
+use ReflectionClass;
 use const DIRECTORY_SEPARATOR;
 use function bin2hex;
 use function file_exists;
@@ -58,7 +60,7 @@ abstract class BaseFileCacheTest extends CacheTest
         self::assertTrue($cache->save('key2', 2));
         self::assertTrue($cache->flushAll());
 
-        $iterator = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($this->directory, \FilesystemIterator::SKIP_DOTS), \RecursiveIteratorIterator::CHILD_FIRST);
+        $iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($this->directory, FilesystemIterator::SKIP_DOTS), RecursiveIteratorIterator::CHILD_FIRST);
 
         self::assertCount(0, $iterator);
     }
@@ -129,7 +131,7 @@ abstract class BaseFileCacheTest extends CacheTest
     {
         $this->directory = self::getBasePathForWindowsPathLengthTests($length);
 
-        list($key, $keyPath, $hashedKeyPath) = self::getKeyAndPathFittingLength($length, $this->directory);
+        [$key, $keyPath, $hashedKeyPath] = self::getKeyAndPathFittingLength($length, $this->directory);
 
         self::assertEquals($length, strlen($keyPath), 'Unhashed path should be of correct length.');
 
@@ -138,7 +140,7 @@ abstract class BaseFileCacheTest extends CacheTest
         $cache = new $cacheClass($this->directory, '.doctrine.cache');
 
         // Trick it into thinking this is windows.
-        $reflClass = new \ReflectionClass(FileCache::class);
+        $reflClass = new ReflectionClass(FileCache::class);
         $reflProp  = $reflClass->getProperty('isRunningOnWindows');
         $reflProp->setAccessible(true);
         $reflProp->setValue($cache, true);

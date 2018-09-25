@@ -4,6 +4,7 @@ namespace Doctrine\Tests\Common\Cache;
 
 use Doctrine\Common\Cache\CacheProvider;
 use Doctrine\Common\Cache\RiakCache;
+use ReflectionMethod;
 use Riak\Bucket;
 use Riak\Connection;
 use Riak\Exception;
@@ -54,7 +55,7 @@ class RiakCacheTest extends CacheTest
         $this->assertTrue($cache->save('1', 'value-1'));
         $this->assertTrue($cache->save('2', 'value-2'));
 
-        $getNamespacedId = new \ReflectionMethod(RiakCache::class, 'getNamespacedId');
+        $getNamespacedId = new ReflectionMethod(RiakCache::class, 'getNamespacedId');
         $getNamespacedId->setAccessible(true);
 
         // faking the object list instead of modifying bucket properties to allow multi
@@ -65,7 +66,7 @@ class RiakCacheTest extends CacheTest
             $this->bucket->get($getNamespacedId->invoke($cache, '2'))->getFirstObject(),
         ];
 
-        $resolveConflict = new \ReflectionMethod(RiakCache::class, 'resolveConflict');
+        $resolveConflict = new ReflectionMethod(RiakCache::class, 'resolveConflict');
         $resolveConflict->setAccessible(true);
 
         $object = $resolveConflict->invoke($cache, '1', $vclock, $objectList);

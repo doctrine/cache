@@ -9,6 +9,8 @@ use Doctrine\Common\Cache\MongoDBCache;
 use MongoClient;
 use MongoCollection;
 use MongoConnectionException;
+use MongoCursorException;
+use PHPUnit_Framework_MockObject_MockObject;
 use function sleep;
 
 /**
@@ -57,13 +59,13 @@ class LegacyMongoDBCacheTest extends CacheTest
      */
     public function testMongoCursorExceptionsDoNotBubbleUp() : void
     {
-        /** @var \MongoCollection|\PHPUnit_Framework_MockObject_MockObject $collection */
+        /** @var MongoCollection|PHPUnit_Framework_MockObject_MockObject $collection */
         $collection = $this
-            ->getMockBuilder(\MongoCollection::class)
+            ->getMockBuilder(MongoCollection::class)
             ->disableOriginalConstructor()
             ->getMock();
 
-        $collection->expects(self::once())->method('update')->willThrowException(new \MongoCursorException());
+        $collection->expects(self::once())->method('update')->willThrowException(new MongoCursorException());
 
         $cache = new LegacyMongoDBCache($collection);
 

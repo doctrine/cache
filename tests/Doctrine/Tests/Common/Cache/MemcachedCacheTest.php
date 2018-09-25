@@ -5,6 +5,7 @@ namespace Doctrine\Tests\Common\Cache;
 use Doctrine\Common\Cache\CacheProvider;
 use Doctrine\Common\Cache\MemcachedCache;
 use Memcached;
+use ReflectionClass;
 use function fsockopen;
 use function sprintf;
 
@@ -60,7 +61,7 @@ class MemcachedCacheTest extends CacheTest
     {
         $testKey    = __METHOD__;
         $driver     = $this->_getCacheDriver();
-        $reflection = new \ReflectionClass($driver);
+        $reflection = new ReflectionClass($driver);
         $method     = $reflection->getMethod('getNamespacedId');
         $method->setAccessible(true);
         $testKeyNS = $method->invokeArgs($driver, [$testKey]);
