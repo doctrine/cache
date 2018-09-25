@@ -6,6 +6,7 @@ use Doctrine\Common\Cache\Cache;
 use Doctrine\Common\Cache\FileCache;
 use Doctrine\Tests\DoctrineTestCase;
 use InvalidArgumentException;
+use ReflectionMethod;
 use const DIRECTORY_SEPARATOR;
 use const PATHINFO_DIRNAME;
 use function basename;
@@ -44,7 +45,7 @@ class FileCacheTest extends DoctrineTestCase
     public function testFilenameShouldCreateThePathWithOneSubDirectory() : void
     {
         $cache       = $this->driver;
-        $method      = new \ReflectionMethod($cache, 'getFilename');
+        $method      = new ReflectionMethod($cache, 'getFilename');
         $key         = 'item-key';
         $expectedDir = '84';
 
@@ -70,7 +71,7 @@ class FileCacheTest extends DoctrineTestCase
             ->setConstructorArgs([__DIR__, '.php'])
             ->getMock();
 
-        $doGetStats = new \ReflectionMethod($driver1, 'doGetStats');
+        $doGetStats = new ReflectionMethod($driver1, 'doGetStats');
 
         $doGetStats->setAccessible(true);
 
@@ -92,7 +93,7 @@ class FileCacheTest extends DoctrineTestCase
             ->setConstructorArgs([__DIR__ . '/../', DIRECTORY_SEPARATOR . basename(__FILE__)])
             ->getMock();
 
-        $doGetStats = new \ReflectionMethod($driver, 'doGetStats');
+        $doGetStats = new ReflectionMethod($driver, 'doGetStats');
 
         $doGetStats->setAccessible(true);
 
@@ -122,7 +123,7 @@ class FileCacheTest extends DoctrineTestCase
             ->setConstructorArgs([$directory])
             ->getMock();
 
-        $doGetDirectory = new \ReflectionMethod($driver, 'getDirectory');
+        $doGetDirectory = new ReflectionMethod($driver, 'getDirectory');
 
         $actualDirectory   = $doGetDirectory->invoke($driver);
         $expectedDirectory = realpath($directory);
@@ -141,7 +142,7 @@ class FileCacheTest extends DoctrineTestCase
             ->setConstructorArgs([$directory, $extension])
             ->getMock();
 
-        $doGetExtension = new \ReflectionMethod($driver, 'getExtension');
+        $doGetExtension = new ReflectionMethod($driver, 'getExtension');
 
         $actualExtension = $doGetExtension->invoke($driver);
 
@@ -227,7 +228,6 @@ class FileCacheTest extends DoctrineTestCase
 
     /**
      * @dataProvider getPathLengthsToTest
-     *
      * @covers \Doctrine\Common\Cache\FileCache::getFilename
      */
     public function testWindowsPathLengthLimitationsAreCorrectlyRespected(int $length, bool $pathShouldBeHashed) : void
@@ -243,9 +243,9 @@ class FileCacheTest extends DoctrineTestCase
             [$basePath, '.doctrine.cache']
         );
 
-        list($key, $keyPath, $hashedKeyPath) = self::getKeyAndPathFittingLength($length, $basePath);
+        [$key, $keyPath, $hashedKeyPath] = self::getKeyAndPathFittingLength($length, $basePath);
 
-        $getFileName = new \ReflectionMethod($fileCache, 'getFilename');
+        $getFileName = new ReflectionMethod($fileCache, 'getFilename');
 
         $getFileName->setAccessible(true);
 

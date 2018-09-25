@@ -9,9 +9,10 @@ use function time;
 /**
  * Couchbase cache provider.
  *
- * @link   www.doctrine-project.org
  * @deprecated Couchbase SDK 1.x is now deprecated. Use \Doctrine\Common\Cache\CouchbaseBucketCache instead.
  * https://developer.couchbase.com/documentation/server/current/sdk/php/compatibility-versions-features.html
+ *
+ * @link   www.doctrine-project.org
  */
 class CouchbaseCache extends CacheProvider
 {

@@ -6,6 +6,7 @@ use ArrayObject;
 use Doctrine\Common\Cache\Cache;
 use Doctrine\Common\Cache\CacheProvider;
 use Doctrine\Tests\DoctrineTestCase;
+use stdClass;
 use function array_keys;
 use function array_map;
 use function array_slice;
@@ -125,7 +126,7 @@ abstract class CacheTest extends DoctrineTestCase
         $cache = $this->_getCacheDriver();
         $cache->deleteAll();
 
-        $data = array_map(function ($value) {
+        $data = array_map(static function ($value) {
             return $value[0];
         }, $this->provideDataToCache());
 
@@ -138,9 +139,9 @@ abstract class CacheTest extends DoctrineTestCase
 
     public function provideDataToCache() : array
     {
-        $obj       = new \stdClass();
+        $obj       = new stdClass();
         $obj->foo  = 'bar';
-        $obj2      = new \stdClass();
+        $obj2      = new stdClass();
         $obj2->bar = 'foo';
         $obj2->obj = $obj;
         $obj->obj2 = $obj2;
@@ -497,7 +498,7 @@ abstract class CacheTest extends DoctrineTestCase
 
         self::assertSame(
             $errorHandler,
-            set_error_handler(function () {
+            set_error_handler(static function () {
             }),
             'The error handler is the one set by this test, and wasn\'t replaced'
         );
