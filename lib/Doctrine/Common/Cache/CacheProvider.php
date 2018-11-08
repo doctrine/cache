@@ -2,9 +2,8 @@
 
 namespace Doctrine\Common\Cache;
 
-use function array_combine;
 use function array_key_exists;
-use function array_map;
+use function array_keys;
 use function sprintf;
 
 /**
@@ -68,8 +67,7 @@ abstract class CacheProvider implements Cache, FlushableCache, ClearableCache, M
             return [];
         }
 
-        // note: the array_combine() is in place to keep an association between our $keys and the $namespacedKeys
-        $namespacedKeys = array_combine($keys, array_map([$this, 'getNamespacedId'], $keys));
+        $namespacedKeys = $this->prepareNamespacedIdsMap($keys);
         $items          = $this->doFetchMultiple($namespacedKeys);
         $foundItems     = [];
 
@@ -91,9 +89,10 @@ abstract class CacheProvider implements Cache, FlushableCache, ClearableCache, M
      */
     public function saveMultiple(array $keysAndValues, $lifetime = 0)
     {
+        $namespacedKeys          = $this->prepareNamespacedIdsMap(array_keys($keysAndValues));
         $namespacedKeysAndValues = [];
         foreach ($keysAndValues as $key => $value) {
-            $namespacedKeysAndValues[$this->getNamespacedId($key)] = $value;
+            $namespacedKeysAndValues[$namespacedKeys[$key]] = $value;
         }
 
         return $this->doSaveMultiple($namespacedKeysAndValues, $lifetime);
@@ -120,7 +119,9 @@ abstract class CacheProvider implements Cache, FlushableCache, ClearableCache, M
      */
     public function deleteMultiple(array $keys)
     {
-        return $this->doDeleteMultiple(array_map([$this, 'getNamespacedId'], $keys));
+        $namespacedKeys = $this->prepareNamespacedIdsMap($keys);
+
+        return $this->doDeleteMultiple($namespacedKeys);
     }
 
     /**
@@ -175,6 +176,20 @@ abstract class CacheProvider implements Cache, FlushableCache, ClearableCache, M
     {
         $namespaceVersion = $this->getNamespaceVersion();
 
+        return $this->getNamespacedIdForVersion($id, $namespaceVersion);
+    }
+
+    /**
+     * Return the passed id prefixed with the namespace value and suffixed
+     * with the passed namespace version number
+     *
+     * @param string $id               The id to namespace.
+     * @param int    $namespaceVersion The namespace version number.
+     *
+     * @return string The namespaced id.
+     */
+    private function getNamespacedIdForVersion(string $id, int $namespaceVersion) : string
+    {
         return sprintf('%s[%s][%s]', $this->namespace, $id, $namespaceVersion);
     }
 
@@ -199,6 +214,25 @@ abstract class CacheProvider implements Cache, FlushableCache, ClearableCache, M
         $this->namespaceVersion = (int) $this->doFetch($namespaceCacheKey) ?: 1;
 
         return $this->namespaceVersion;
+    }
+
+    /**
+     * Return a map containing the passed ids as keys and
+     * their namespaced versions as keys
+     *
+     * @param array $ids The ids that will be namespaced
+     *
+     * @return array A map where the original id is the key and the namespaced id is the value
+     */
+    private function prepareNamespacedIdsMap(array $ids) : array
+    {
+        $namespacedIdsMap = [];
+        $namespaceVersion = $this->getNamespaceVersion();
+        foreach ($ids as $id) {
+            $namespacedIdsMap[$id] = $this->getNamespacedIdForVersion($id, $namespaceVersion);
+        }
+
+        return $namespacedIdsMap;
     }
 
     /**
