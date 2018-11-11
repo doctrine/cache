@@ -182,11 +182,6 @@ abstract class CacheProvider implements Cache, FlushableCache, ClearableCache, M
     /**
      * Return the passed id prefixed with the namespace value and suffixed
      * with the passed namespace version number
-     *
-     * @param string $id               The id to namespace.
-     * @param int    $namespaceVersion The namespace version number.
-     *
-     * @return string The namespaced id.
      */
     private function getNamespacedIdForVersion(string $id, int $namespaceVersion) : string
     {
@@ -220,9 +215,9 @@ abstract class CacheProvider implements Cache, FlushableCache, ClearableCache, M
      * Return a map containing the passed ids as keys and
      * their namespaced versions as keys
      *
-     * @param array $ids The ids that will be namespaced
+     * @param string[] $ids The ids that will be namespaced
      *
-     * @return array A map where the original id is the key and the namespaced id is the value
+     * @return string[][] A map where the original id is the key and the namespaced id is the value
      */
     private function prepareNamespacedIdsMap(array $ids) : array
     {
