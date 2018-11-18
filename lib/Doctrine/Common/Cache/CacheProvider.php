@@ -95,6 +95,8 @@ abstract class CacheProvider implements Cache, FlushableCache, ClearableCache, M
             $namespacedKeysAndValues[$namespacedKeys[$key]] = $value;
         }
 
+        unset($namespacedKeys);
+
         return $this->doSaveMultiple($namespacedKeysAndValues, $lifetime);
     }
 
