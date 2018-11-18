@@ -217,7 +217,7 @@ abstract class CacheProvider implements Cache, FlushableCache, ClearableCache, M
      *
      * @param string[] $ids The ids that will be namespaced
      *
-     * @return string[][] A map where the original id is the key and the namespaced id is the value
+     * @return string[] A map where the original id is the key and the namespaced id is the value
      */
     private function prepareNamespacedIdsMap(array $ids) : array
     {
