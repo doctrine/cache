@@ -180,9 +180,9 @@ class RiakCache extends CacheProvider
     }
 
     /**
-     * Check if a given Riak Object have expired.
+     * Check if a given RiakObject has expired.
      */
-    private function isExpired(object $object) : bool
+    private function isExpired(RiakObject $object) : bool
     {
         $metadataMap = $object->getMetadataMap();
 
@@ -208,7 +208,7 @@ class RiakCache extends CacheProvider
      * @param string $vClock
      * @param array  $objectList
      *
-     * @return Object
+     * @return RiakObject
      */
     protected function resolveConflict($id, $vClock, array $objectList)
     {
