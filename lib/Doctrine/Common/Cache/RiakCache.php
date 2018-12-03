@@ -5,7 +5,7 @@ namespace Doctrine\Common\Cache;
 use Riak\Bucket;
 use Riak\Exception;
 use Riak\Input;
-use Riak\Object;
+use Riak\Object as RiakObject;
 use function count;
 use function serialize;
 use function time;
@@ -111,7 +111,7 @@ class RiakCache extends CacheProvider
     protected function doSave($id, $data, $lifeTime = 0)
     {
         try {
-            $object = new Object($id);
+            $object = new RiakObject($id);
 
             $object->setContent(serialize($data));
 
@@ -218,7 +218,7 @@ class RiakCache extends CacheProvider
         $putInput = new Input\PutInput();
         $putInput->setVClock($vClock);
 
-        $mergedObject = new Object($id);
+        $mergedObject = new RiakObject($id);
         $mergedObject->setContent($winner->getContent());
 
         $this->bucket->put($mergedObject, $putInput);
