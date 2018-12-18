@@ -7,11 +7,13 @@
         {
             "name": "master",
             "branchName": "master",
-            "slug": "latest",
-            "aliases": [
-                "current",
-                "stable"
-            ]
+            "slug": "latest"
+        },
+        {
+            "name": "1.8",
+            "branchName": "1.8",
+            "slug": "1.8",
+            "current": true
         }
     ]
 }
