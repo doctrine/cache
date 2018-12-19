@@ -11,7 +11,7 @@
         },
         {
             "name": "1.8",
-            "branchName": "1.8",
+            "branchName": "1.8.x",
             "slug": "1.8",
             "current": true
         }
