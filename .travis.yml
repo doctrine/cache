@@ -9,7 +9,7 @@ cache:
 php:
     - 7.1
     - 7.2
-    - nightly
+    - 7.4snapshot
 
 services:
     - riak
@@ -34,7 +34,7 @@ script: ./vendor/bin/phpunit --exclude-group performance
 
 jobs:
   allow_failures:
-    - php: nightly
+    - php: 7.4snapshot
 
   include:
     - stage: Coding standard
