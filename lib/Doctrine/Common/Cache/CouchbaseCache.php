@@ -63,6 +63,7 @@ class CouchbaseCache extends CacheProvider
         if ($lifeTime > 30 * 24 * 3600) {
             $lifeTime = time() + $lifeTime;
         }
+
         return $this->couchbase->set($id, $data, (int) $lifeTime);
     }
 
@@ -92,6 +93,7 @@ class CouchbaseCache extends CacheProvider
         $server  = explode(':', $servers[0]);
         $key     = $server[0] . ':11210';
         $stats   = $stats[$key];
+
         return [
             Cache::STATS_HITS   => $stats['get_hits'],
             Cache::STATS_MISSES => $stats['get_misses'],

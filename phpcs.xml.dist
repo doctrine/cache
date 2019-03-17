@@ -18,8 +18,8 @@
         <exclude name="SlevomatCodingStandard.TypeHints.DeclareStrictTypes"/>
         <exclude name="SlevomatCodingStandard.TypeHints.TypeHintDeclaration.MissingParameterTypeHint"/>
         <exclude name="SlevomatCodingStandard.TypeHints.TypeHintDeclaration.MissingReturnTypeHint"/>
-        <exclude name="SlevomatCodingStandard.ControlStructures.DisallowEqualOperators"/>
         <exclude name="SlevomatCodingStandard.TypeHints.TypeHintDeclaration"/>
+        <exclude name="SlevomatCodingStandard.Operators.DisallowEqualOperators"/>
     </rule>
 
     <rule ref="PSR1.Classes.ClassDeclaration.MultipleClasses">

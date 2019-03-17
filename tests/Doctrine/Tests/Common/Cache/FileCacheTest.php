@@ -162,7 +162,7 @@ class FileCacheTest extends DoctrineTestCase
         $basePath = realpath($basePath);
 
         // Test whether the desired path length is odd or even.
-        $desiredPathLengthIsOdd = ($pathLength % 2) == 1;
+        $desiredPathLengthIsOdd = $pathLength % 2 == 1;
 
         // If the cache key is not too long, the filecache codepath will add
         // a slash and bin2hex($key). The length of the added portion will be an odd number.
@@ -171,7 +171,7 @@ class FileCacheTest extends DoctrineTestCase
         //         even = odd            + odd
         $basePathLengthShouldBeOdd = ! $desiredPathLengthIsOdd;
 
-        $basePathLengthIsOdd = (strlen($basePath) % 2) == 1;
+        $basePathLengthIsOdd = strlen($basePath) % 2 == 1;
 
         // If the base path needs to be odd or even where it is not, we add an odd number of
         // characters as a pad. In this case, we're adding '\aa' (or '/aa' depending on platform)

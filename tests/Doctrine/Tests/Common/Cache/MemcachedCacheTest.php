@@ -89,6 +89,7 @@ class MemcachedCacheTest extends CacheTest
     {
         $driver = new MemcachedCache();
         $driver->setMemcached($this->memcached);
+
         return $driver;
     }
 }

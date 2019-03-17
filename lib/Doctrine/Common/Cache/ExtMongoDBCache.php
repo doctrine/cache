@@ -62,6 +62,7 @@ class ExtMongoDBCache extends CacheProvider
         if ($this->isExpired($document)) {
             $this->createExpirationIndex();
             $this->doDelete($id);
+
             return false;
         }
 
@@ -82,6 +83,7 @@ class ExtMongoDBCache extends CacheProvider
         if ($this->isExpired($document)) {
             $this->createExpirationIndex();
             $this->doDelete($id);
+
             return false;
         }
 
