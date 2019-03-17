@@ -60,6 +60,7 @@ class RedisCacheTest extends CacheTest
     {
         $driver = new RedisCache();
         $driver->setRedis($this->_redis);
+
         return $driver;
     }
 }

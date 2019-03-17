@@ -28,6 +28,7 @@ class CouchbaseCacheTest extends CacheTest
     {
         $driver = new CouchbaseCache();
         $driver->setCouchbase($this->couchbase);
+
         return $driver;
     }
 }

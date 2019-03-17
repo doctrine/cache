@@ -148,6 +148,7 @@ class RedisCache extends CacheProvider
     protected function doGetStats()
     {
         $info = $this->redis->info();
+
         return [
             Cache::STATS_HITS   => $info['keyspace_hits'],
             Cache::STATS_MISSES => $info['keyspace_misses'],

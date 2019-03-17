@@ -110,6 +110,7 @@ class SetStateClass extends NotSetStateClass
     public static function __set_state($data)
     {
         self::$values = $data;
+
         return new self($data['value']);
     }
 }
