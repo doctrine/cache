@@ -4,6 +4,11 @@ namespace Doctrine\Common\Cache;
 
 use Redis;
 use function array_combine;
+use function array_diff_key;
+use function array_fill_keys;
+use function array_filter;
+use function array_intersect_key;
+use function array_keys;
 use function defined;
 use function extension_loaded;
 use function is_bool;
@@ -55,17 +60,22 @@ class RedisCache extends CacheProvider
         $fetchedItems = array_combine($keys, $this->redis->mget($keys));
 
         // Redis mget returns false for keys that do not exist. So we need to filter those out unless it's the real data.
-        $foundItems = [];
-
-        foreach ($fetchedItems as $key => $value) {
-            if ($value === false && ! $this->redis->exists($key)) {
-                continue;
+        $falseItemKeys = array_keys(array_filter($fetchedItems, static function ($item) {
+            return $item === false;
+        }));
+        if ($falseItemKeys) {
+            $multi = $this->redis->multi(Redis::PIPELINE);
+            foreach ($falseItemKeys as $key) {
+                $multi->exists($key);
             }
-
-            $foundItems[$key] = $value;
+            $nonExists        = array_filter($multi->exec(), static function ($exists) {
+                return ! $exists;
+            });
+            $nonExistItemKeys = array_intersect_key($falseItemKeys, $nonExists);
+            $fetchedItems     = array_diff_key($fetchedItems, array_fill_keys($nonExistItemKeys, true));
         }
 
-        return $foundItems;
+        return $fetchedItems;
     }
 
     /**
@@ -77,15 +87,14 @@ class RedisCache extends CacheProvider
             $success = true;
 
             // Keys have lifetime, use SETEX for each of them
+            $multi = $this->redis->multi(Redis::PIPELINE);
             foreach ($keysAndValues as $key => $value) {
-                if ($this->redis->setex($key, $lifetime, $value)) {
-                    continue;
-                }
-
-                $success = false;
+                $multi->setex($key, $lifetime, $value);
             }
 
-            return $success;
+            return ! array_filter($multi->exec(), static function ($setex) {
+                return ! $setex;
+            });
         }
 
         // No lifetime, use MSET
