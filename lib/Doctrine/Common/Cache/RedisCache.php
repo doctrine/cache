@@ -7,8 +7,8 @@ use function array_combine;
 use function array_diff_key;
 use function array_fill_keys;
 use function array_filter;
-use function array_intersect_key;
 use function array_keys;
+use function count;
 use function defined;
 use function extension_loaded;
 use function is_bool;
@@ -60,19 +60,18 @@ class RedisCache extends CacheProvider
         $fetchedItems = array_combine($keys, $this->redis->mget($keys));
 
         // Redis mget returns false for keys that do not exist. So we need to filter those out unless it's the real data.
-        $falseItemKeys = array_keys(array_filter($fetchedItems, static function ($item) {
+        $keysToFilter = array_keys(array_filter($fetchedItems, static function ($item) : bool {
             return $item === false;
         }));
-        if ($falseItemKeys) {
+
+        if ($keysToFilter) {
             $multi = $this->redis->multi(Redis::PIPELINE);
-            foreach ($falseItemKeys as $key) {
+            foreach ($keysToFilter as $key) {
                 $multi->exists($key);
             }
-            $nonExists        = array_filter($multi->exec(), static function ($exists) {
-                return ! $exists;
-            });
-            $nonExistItemKeys = array_intersect_key($falseItemKeys, $nonExists);
-            $fetchedItems     = array_diff_key($fetchedItems, array_fill_keys($nonExistItemKeys, true));
+            $existItems     = array_filter($multi->exec());
+            $missedItemKeys = array_diff_key($keysToFilter, $existItems);
+            $fetchedItems   = array_diff_key($fetchedItems, array_fill_keys($missedItemKeys, true));
         }
 
         return $fetchedItems;
@@ -91,10 +90,9 @@ class RedisCache extends CacheProvider
             foreach ($keysAndValues as $key => $value) {
                 $multi->setex($key, $lifetime, $value);
             }
+            $succeeded = array_filter($multi->exec());
 
-            return ! array_filter($multi->exec(), static function ($setex) {
-                return ! $setex;
-            });
+            return count($succedeed) < count($keysAndValues);
         }
 
         // No lifetime, use MSET
