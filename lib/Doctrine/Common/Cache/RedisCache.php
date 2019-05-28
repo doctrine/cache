@@ -83,8 +83,6 @@ class RedisCache extends CacheProvider
     protected function doSaveMultiple(array $keysAndValues, $lifetime = 0)
     {
         if ($lifetime) {
-            $success = true;
-
             // Keys have lifetime, use SETEX for each of them
             $multi = $this->redis->multi(Redis::PIPELINE);
             foreach ($keysAndValues as $key => $value) {
@@ -92,7 +90,7 @@ class RedisCache extends CacheProvider
             }
             $succeeded = array_filter($multi->exec());
 
-            return count($succedeed) < count($keysAndValues);
+            return count($succedeed) == count($keysAndValues);
         }
 
         // No lifetime, use MSET
