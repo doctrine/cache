@@ -3,11 +3,14 @@
 namespace Doctrine\Tests\Common\Cache;
 
 use Doctrine\Common\Cache\CacheProvider;
+use Doctrine\Common\Cache\InvalidCacheId;
 use Doctrine\Common\Cache\MemcachedCache;
+use Generator;
 use Memcached;
 use ReflectionClass;
 use function fsockopen;
 use function sprintf;
+use function str_repeat;
 
 /**
  * @requires extension memcached
@@ -50,6 +53,40 @@ class MemcachedCacheTest extends CacheTest
         unset($ids[21], $ids[22], $ids[24]);
 
         return $ids;
+    }
+
+    /**
+     * @dataProvider provideInvalidCacheIds
+     */
+    public function testSaveInvalidCacheId($id) : void
+    {
+        $this->expectException(InvalidCacheId::class);
+
+        $this->_getCacheDriver()->save($id, 1);
+    }
+
+    /**
+     * @dataProvider provideInvalidCacheIdSets
+     */
+    public function testSaveMultipleInvalidCacheIds(array $ids) : void
+    {
+        $this->expectException(InvalidCacheId::class);
+
+        $this->_getCacheDriver()->saveMultiple($ids);
+    }
+
+    public function provideInvalidCacheIds() : Generator
+    {
+        yield 'contains space' => ['foo bar'];
+        yield 'contains control characters' => ["\tfoo\n\r"];
+        yield 'exceeds max length' => [str_repeat('a', MemcachedCache::CACHE_ID_MAX_LENGTH + 1)];
+    }
+
+    public function provideInvalidCacheIdSets() : Generator
+    {
+        yield 'contains space' => [['foo' => 1, 'foo bar' => 2, 'bar' => 3]];
+        yield 'contains control characters' => [['foo' => 1, "\tfoo\n\r" => 2, 'bar' => 3]];
+        yield 'exceeds max length' => [['foo' => 1, str_repeat('a', MemcachedCache::CACHE_ID_MAX_LENGTH + 1) => 2, 'bar' => 3]];
     }
 
     public function testGetMemcachedReturnsInstanceOfMemcached() : void
