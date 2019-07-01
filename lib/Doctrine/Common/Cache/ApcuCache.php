@@ -23,7 +23,7 @@ class ApcuCache extends CacheProvider
      */
     protected function doFetch($id)
     {
-        return apcu_fetch($id);
+        return @apcu_fetch($id);
     }
 
     /**
