@@ -123,7 +123,7 @@ class RedisCache extends CacheProvider
      */
     protected function doDelete($id)
     {
-        return $this->redis->delete($id) >= 0;
+        return $this->redis->del($id) >= 0;
     }
 
     /**
@@ -131,7 +131,7 @@ class RedisCache extends CacheProvider
      */
     protected function doDeleteMultiple(array $keys)
     {
-        return $this->redis->delete($keys) >= 0;
+        return $this->redis->del($keys) >= 0;
     }
 
     /**
