@@ -12,7 +12,6 @@ php:
     - 7.4snapshot
 
 services:
-    - riak
     - mongodb
     - memcached
     - redis-server
