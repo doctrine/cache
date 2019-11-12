@@ -56,10 +56,10 @@ class ExtMongoDBCacheTest extends CacheTest
     public function testLifetime() : void
     {
         $cache = $this->_getCacheDriver();
-        $cache->save('expire', 'value', 1);
+        $cache->save('expire', 'value', 2);
         self::assertCount(1, $this->collection->listIndexes());
         self::assertTrue($cache->contains('expire'), 'Data should not be expired yet');
-        sleep(2);
+        sleep(3);
         self::assertFalse($cache->contains('expire'), 'Data should be expired');
         self::assertCount(2, $this->collection->listIndexes());
     }
