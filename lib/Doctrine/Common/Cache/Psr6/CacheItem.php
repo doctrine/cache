@@ -84,7 +84,10 @@ final class CacheItem implements CacheItemInterface
         } elseif ($time instanceof \DateInterval) {
             $this->expiration = (new \DateTimeImmutable())->add($time);
         } else {
-            throw new \TypeError(sprintf('Expected $time to be either an integer, an instance of DateInterval or null, got %s', \is_object($time) ? \get_class($time) : \gettype($time)));
+            throw new \TypeError(sprintf(
+                'Expected $time to be either an integer, an instance of DateInterval or null, got %s',
+                \is_object($time) ? \get_class($time) : \gettype($time)
+            ));
         }
 
         return $this;
