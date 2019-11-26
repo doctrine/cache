@@ -62,7 +62,10 @@ final class CacheItem implements CacheItemInterface
     public function expiresAt($expiration): self
     {
         if (null !== $expiration && !$expiration instanceof \DateTimeInterface) {
-            throw new \TypeError(sprintf('Expected $expiration to be an instance of DateTimeInterface or null, got %s', \is_object($expiration) ? \get_class($expiration) : \gettype($expiration)));
+            throw new \TypeError(sprintf(
+                'Expected $expiration to be an instance of DateTimeInterface or null, got %s',
+                \is_object($expiration) ? \get_class($expiration) : \gettype($expiration)
+            ));
         }
 
         $this->expiration = $expiration;
