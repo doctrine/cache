@@ -23,7 +23,6 @@ before_install:
     - pecl config-set preferred_state beta
     - echo yes | pecl upgrade apcu
     - mv ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini{,.disabled} || echo "xdebug not available"
-    - ./tests/travis/Couchbase.sh
     - phpenv config-add ./tests/travis/php.ini
 
 install:
