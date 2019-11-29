@@ -9,6 +9,7 @@ cache:
 php:
     - 7.1
     - 7.2
+    - 7.3
     - 7.4snapshot
 
 services:
@@ -22,7 +23,6 @@ before_install:
     - pecl config-set preferred_state beta
     - echo yes | pecl upgrade apcu
     - mv ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini{,.disabled} || echo "xdebug not available"
-    - ./tests/travis/Couchbase.sh
     - phpenv config-add ./tests/travis/php.ini
 
 install:
@@ -32,9 +32,6 @@ install:
 script: ./vendor/bin/phpunit --exclude-group performance
 
 jobs:
-  allow_failures:
-    - php: 7.4snapshot
-
   include:
     - stage: Coding standard
       install:
