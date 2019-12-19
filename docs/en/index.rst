@@ -174,19 +174,6 @@ The ``RedisCache`` driver stores the cache data in Redis and depends on the
 
     $cache = new RedisCache($redis);
 
-RiakCache
----------
-
-The ``RiakCache`` driver stores the cache data in Riak and depends on the
-``riak`` extension which can be found `here <https://github.com/php-riak/php_riak>`_.
-
-.. code-block:: php
-    $connection = new Riak\Connection('localhost', 8087);
-
-    $bucket = new Riak\Bucket($connection, 'bucket_name');
-
-    $cache = new RiakCache($bucket);
-
 SQLite3Cache
 ------------
 
