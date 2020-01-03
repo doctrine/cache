@@ -82,7 +82,7 @@ class ChainCache extends CacheProvider
             // We populate all the previous cache layers (that are assumed to be faster)
             if (count($fetchedValues) === $keysCount) {
                 foreach ($traversedProviders as $previousCacheProvider) {
-                    $previousCacheProvider->doSaveMultiple($fetchedValues);
+                    $previousCacheProvider->doSaveMultiple($fetchedValues, $this->defaultLifeTimeForDownstreamCacheProviders);
                 }
 
                 return $fetchedValues;
