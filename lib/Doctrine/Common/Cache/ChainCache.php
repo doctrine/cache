@@ -16,7 +16,7 @@ class ChainCache extends CacheProvider
     private $cacheProviders = [];
 
     /** @var int */
-    private $defaultLifeTimeForDownstreamCacheProviders;
+    private $defaultLifeTimeForDownstreamCacheProviders = 0;
 
     /**
      * @param CacheProvider[] $cacheProviders
