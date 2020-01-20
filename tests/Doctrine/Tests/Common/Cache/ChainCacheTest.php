@@ -92,7 +92,7 @@ class ChainCacheTest extends CacheTest
 
     public function testFetchPropagatesToFastestCacheUsingIndicatedDefaultLifeTimeForDownstreamCacheProviders() : void
     {
-        $pecificDefaultLifeTimeForDownstreamCacheProviders = 12345;
+        $specificDefaultLifeTimeForDownstreamCacheProviders = 12345;
 
         $cache1 = $this
             ->getMockBuilder(ArrayCache::class)
@@ -101,12 +101,12 @@ class ChainCacheTest extends CacheTest
         $cache1
             ->expects($this->once())
             ->method('doSave')
-            ->with('[bar][1]', 'value', $pecificDefaultLifeTimeForDownstreamCacheProviders);
+            ->with('[bar][1]', 'value', $specificDefaultLifeTimeForDownstreamCacheProviders);
         $cache2 = new ArrayCache();
         $cache2->save('bar', 'value');
 
         $chainCache = new ChainCache([$cache1, $cache2]);
-        $chainCache->setDefaultLifeTimeForDownstreamCacheProviders($pecificDefaultLifeTimeForDownstreamCacheProviders);
+        $chainCache->setDefaultLifeTimeForDownstreamCacheProviders($specificDefaultLifeTimeForDownstreamCacheProviders);
 
         $result = $chainCache->fetch('bar');
 
@@ -134,7 +134,7 @@ class ChainCacheTest extends CacheTest
 
     public function testFetchMultiplePropagatesToFastestCacheUsingIndicatedDefaultLifeTimeForDownstreamCacheProviders() : void
     {
-        $pecificDefaultLifeTimeForDownstreamCacheProviders = 12345;
+        $specificDefaultLifeTimeForDownstreamCacheProviders = 12345;
 
         $cache1 = $this
             ->getMockBuilder(ArrayCache::class)
@@ -143,12 +143,12 @@ class ChainCacheTest extends CacheTest
         $cache1
             ->expects($this->once())
             ->method('doSaveMultiple')
-            ->with(['[bar][1]' => 'Bar', '[foo][1]' => 'Foo'], $pecificDefaultLifeTimeForDownstreamCacheProviders);
+            ->with(['[bar][1]' => 'Bar', '[foo][1]' => 'Foo'], $specificDefaultLifeTimeForDownstreamCacheProviders);
         $cache2 = new ArrayCache();
         $cache2->saveMultiple(['bar' => 'Bar', 'foo' => 'Foo']);
 
         $chainCache = new ChainCache([$cache1, $cache2]);
-        $chainCache->setDefaultLifeTimeForDownstreamCacheProviders($pecificDefaultLifeTimeForDownstreamCacheProviders);
+        $chainCache->setDefaultLifeTimeForDownstreamCacheProviders($specificDefaultLifeTimeForDownstreamCacheProviders);
 
         $result = $chainCache->fetchMultiple(['bar', 'foo']);
 
@@ -227,5 +227,4 @@ class ChainCacheTest extends CacheTest
     {
         return false;
     }
-
 }
