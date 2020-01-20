@@ -70,11 +70,11 @@ class ChainCacheTest extends CacheTest
 
     public function testFetchPropagatesToFastestCacheUsingDefaultLifeTimeForDownstreamCacheProviders() : void
     {
-        $defaultLifeTimeForDownstreamCacheProviders = 12345;
+        $defaultLifeTimeForDownstreamCacheProviders = 0;
 
         $cache1 = $this
             ->getMockBuilder(ArrayCache::class)
-            ->onlyMethods(['doSave'])
+            ->setMethods(['doSave'])
             ->getMock();
         $cache1
             ->expects($this->once())
@@ -84,7 +84,29 @@ class ChainCacheTest extends CacheTest
         $cache2->save('bar', 'value');
 
         $chainCache = new ChainCache([$cache1, $cache2]);
-        $chainCache->setDefaultLifeTimeForDownstreamCacheProviders($defaultLifeTimeForDownstreamCacheProviders);
+
+        $result = $chainCache->fetch('bar');
+
+        self::assertEquals('value', $result);
+    }
+
+    public function testFetchPropagatesToFastestCacheUsingIndicatedDefaultLifeTimeForDownstreamCacheProviders() : void
+    {
+        $pecificDefaultLifeTimeForDownstreamCacheProviders = 12345;
+
+        $cache1 = $this
+            ->getMockBuilder(ArrayCache::class)
+            ->setMethods(['doSave'])
+            ->getMock();
+        $cache1
+            ->expects($this->once())
+            ->method('doSave')
+            ->with('[bar][1]', 'value', $pecificDefaultLifeTimeForDownstreamCacheProviders);
+        $cache2 = new ArrayCache();
+        $cache2->save('bar', 'value');
+
+        $chainCache = new ChainCache([$cache1, $cache2]);
+        $chainCache->setDefaultLifeTimeForDownstreamCacheProviders($pecificDefaultLifeTimeForDownstreamCacheProviders);
 
         $result = $chainCache->fetch('bar');
 
@@ -110,23 +132,23 @@ class ChainCacheTest extends CacheTest
         self::assertTrue($cache1->contains('foo'));
     }
 
-    public function testFetchMultiplePropagatesToFastestCacheUsingDefaultLifeTimeForDownstreamCacheProviders() : void
+    public function testFetchMultiplePropagatesToFastestCacheUsingIndicatedDefaultLifeTimeForDownstreamCacheProviders() : void
     {
-        $defaultLifeTimeForDownstreamCacheProviders = 12345;
+        $pecificDefaultLifeTimeForDownstreamCacheProviders = 12345;
 
         $cache1 = $this
             ->getMockBuilder(ArrayCache::class)
-            ->onlyMethods(['doSaveMultiple'])
+            ->setMethods(['doSaveMultiple'])
             ->getMock();
         $cache1
             ->expects($this->once())
             ->method('doSaveMultiple')
-            ->with(['[bar][1]' => 'Bar', '[foo][1]' => 'Foo'], $defaultLifeTimeForDownstreamCacheProviders);
+            ->with(['[bar][1]' => 'Bar', '[foo][1]' => 'Foo'], $pecificDefaultLifeTimeForDownstreamCacheProviders);
         $cache2 = new ArrayCache();
         $cache2->saveMultiple(['bar' => 'Bar', 'foo' => 'Foo']);
 
         $chainCache = new ChainCache([$cache1, $cache2]);
-        $chainCache->setDefaultLifeTimeForDownstreamCacheProviders($defaultLifeTimeForDownstreamCacheProviders);
+        $chainCache->setDefaultLifeTimeForDownstreamCacheProviders($pecificDefaultLifeTimeForDownstreamCacheProviders);
 
         $result = $chainCache->fetchMultiple(['bar', 'foo']);
 
