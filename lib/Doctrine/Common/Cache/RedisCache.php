@@ -69,6 +69,7 @@ class RedisCache extends CacheProvider
             foreach ($keysToFilter as $key) {
                 $multi->exists($key);
             }
+
             $existItems     = array_filter($multi->exec());
             $missedItemKeys = array_diff_key($keysToFilter, $existItems);
             $fetchedItems   = array_diff_key($fetchedItems, array_fill_keys($missedItemKeys, true));
@@ -88,6 +89,7 @@ class RedisCache extends CacheProvider
             foreach ($keysAndValues as $key => $value) {
                 $multi->setex($key, $lifetime, $value);
             }
+
             $succeeded = array_filter($multi->exec());
 
             return count($succeeded) == count($keysAndValues);

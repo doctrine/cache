@@ -90,13 +90,20 @@ class PhpFileCacheTest extends BaseFileCacheTest
 
 class NotSetStateClass
 {
+    /** @var mixed */
     private $value;
 
+    /**
+     * @param mixed $value
+     */
     public function __construct($value)
     {
         $this->value = $value;
     }
 
+    /**
+     * @return mixed
+     */
     public function getValue()
     {
         return $this->value;
@@ -105,9 +112,13 @@ class NotSetStateClass
 
 class SetStateClass extends NotSetStateClass
 {
+    /** @var mixed[] */
     public static $values = [];
 
-    public static function __set_state($data)
+    /**
+     * @param mixed[] $data
+     */
+    public static function __set_state($data) : SetStateClass
     {
         self::$values = $data;
 

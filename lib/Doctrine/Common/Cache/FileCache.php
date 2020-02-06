@@ -7,8 +7,6 @@ use InvalidArgumentException;
 use Iterator;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
-use const DIRECTORY_SEPARATOR;
-use const PATHINFO_DIRNAME;
 use function bin2hex;
 use function chmod;
 use function defined;
@@ -31,6 +29,8 @@ use function strrpos;
 use function substr;
 use function tempnam;
 use function unlink;
+use const DIRECTORY_SEPARATOR;
+use const PATHINFO_DIRNAME;
 
 /**
  * Base file cache driver.
@@ -66,6 +66,7 @@ abstract class FileCache extends CacheProvider
     /**
      * @param string $directory The cache directory.
      * @param string $extension The cache file extension.
+     * @param mixed  $umask     The umask number
      *
      * @throws InvalidArgumentException
      */
@@ -78,6 +79,7 @@ abstract class FileCache extends CacheProvider
                 gettype($umask)
             ));
         }
+
         $this->umask = $umask;
 
         if (! $this->createPathIfNeeded($directory)) {
@@ -276,6 +278,6 @@ abstract class FileCache extends CacheProvider
     private function isFilenameEndingWithExtension(string $name) : bool
     {
         return $this->extension === ''
-            || strrpos($name, $this->extension) === (strlen($name) - $this->extensionStringLength);
+            || strrpos($name, $this->extension) === strlen($name) - $this->extensionStringLength;
     }
 }

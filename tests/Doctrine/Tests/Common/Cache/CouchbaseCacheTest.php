@@ -13,6 +13,7 @@ use Throwable;
  */
 class CouchbaseCacheTest extends CacheTest
 {
+    /** @var Couchbase */
     private $couchbase;
 
     protected function setUp() : void

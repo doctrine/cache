@@ -14,6 +14,7 @@ use function extension_loaded;
  */
 class RedisCacheTest extends CacheTest
 {
+    /** @var Redis */
     private $_redis;
 
     protected function setUp() : void
@@ -53,9 +54,6 @@ class RedisCacheTest extends CacheTest
         );
     }
 
-    /**
-     * {@inheritDoc}
-     */
     protected function _getCacheDriver() : CacheProvider
     {
         $driver = new RedisCache();

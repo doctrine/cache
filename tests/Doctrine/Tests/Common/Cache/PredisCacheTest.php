@@ -8,10 +8,12 @@ use Doctrine\Common\Cache\PredisCache;
 use Predis\Client;
 use Predis\ClientInterface;
 use Predis\Connection\ConnectionException;
+use function assert;
 use function class_exists;
 
 class PredisCacheTest extends CacheTest
 {
+    /** @var Client */
     private $client;
 
     protected function setUp() : void
@@ -82,8 +84,8 @@ class PredisCacheTest extends CacheTest
 
     public function testAllowsGenericPredisClient() : void
     {
-        /** @var ClientInterface $predisClient */
         $predisClient = $this->createMock(ClientInterface::class);
+        assert($predisClient instanceof ClientInterface);
 
         self::assertInstanceOf(PredisCache::class, new PredisCache($predisClient));
     }

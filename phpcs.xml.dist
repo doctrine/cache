@@ -16,10 +16,11 @@
 
     <rule ref="Doctrine">
         <exclude name="SlevomatCodingStandard.TypeHints.DeclareStrictTypes"/>
-        <exclude name="SlevomatCodingStandard.TypeHints.TypeHintDeclaration.MissingParameterTypeHint"/>
-        <exclude name="SlevomatCodingStandard.TypeHints.TypeHintDeclaration.MissingReturnTypeHint"/>
-        <exclude name="SlevomatCodingStandard.TypeHints.TypeHintDeclaration"/>
-        <exclude name="SlevomatCodingStandard.Operators.DisallowEqualOperators"/>
+        <exclude name="SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint"/>
+        <exclude name="SlevomatCodingStandard.TypeHints.ReturnTypeHint.MissingNativeTypeHint"/>
+        <exclude name="SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingTraversableTypeHintSpecification"/>
+        <exclude name="SlevomatCodingStandard.TypeHints.ReturnTypeHint.MissingTraversableTypeHintSpecification"/>
+        <exclude name="SlevomatCodingStandard.TypeHints.PropertyTypeHint.MissingTraversableTypeHintSpecification"/>
         <exclude name="SlevomatCodingStandard.Classes.DisallowLateStaticBindingForConstants" />
     </rule>
 
@@ -30,5 +31,11 @@
     <!-- Multiple classes confuse this rule -->
     <rule ref="Squiz.Classes.ClassFileName">
         <exclude-pattern>tests/Doctrine/Tests/Common/Cache/PhpFileCacheTest.php</exclude-pattern>
+    </rule>
+
+    <rule ref="SlevomatCodingStandard.Operators.DisallowEqualOperators">
+        <exclude-pattern>lib/Doctrine/Common/Cache/LegacyMongoDBCache.php</exclude-pattern>
+        <exclude-pattern>lib/Doctrine/Common/Cache/PredisCache.php</exclude-pattern>
+        <exclude-pattern>lib/Doctrine/Common/Cache/RedisCache.php</exclude-pattern>
     </rule>
 </ruleset>

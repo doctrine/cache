@@ -7,8 +7,6 @@ use Doctrine\Common\Cache\FileCache;
 use Doctrine\Tests\DoctrineTestCase;
 use InvalidArgumentException;
 use ReflectionMethod;
-use const DIRECTORY_SEPARATOR;
-use const PATHINFO_DIRNAME;
 use function basename;
 use function bin2hex;
 use function define;
@@ -24,6 +22,8 @@ use function strlen;
 use function substr;
 use function sys_get_temp_dir;
 use function uniqid;
+use const DIRECTORY_SEPARATOR;
+use const PATHINFO_DIRNAME;
 
 /**
  * @group DCOM-101
@@ -162,7 +162,7 @@ class FileCacheTest extends DoctrineTestCase
         $basePath = realpath($basePath);
 
         // Test whether the desired path length is odd or even.
-        $desiredPathLengthIsOdd = $pathLength % 2 == 1;
+        $desiredPathLengthIsOdd = $pathLength % 2 === 1;
 
         // If the cache key is not too long, the filecache codepath will add
         // a slash and bin2hex($key). The length of the added portion will be an odd number.
@@ -171,14 +171,14 @@ class FileCacheTest extends DoctrineTestCase
         //         even = odd            + odd
         $basePathLengthShouldBeOdd = ! $desiredPathLengthIsOdd;
 
-        $basePathLengthIsOdd = strlen($basePath) % 2 == 1;
+        $basePathLengthIsOdd = strlen($basePath) % 2 === 1;
 
         // If the base path needs to be odd or even where it is not, we add an odd number of
         // characters as a pad. In this case, we're adding '\aa' (or '/aa' depending on platform)
         // This is all to make it so that the key we're testing would result in
         // a path that is exactly the length we want to test IF the path length limit
         // were not in place in FileCache.
-        if ($basePathLengthIsOdd != $basePathLengthShouldBeOdd) {
+        if ($basePathLengthIsOdd !== $basePathLengthShouldBeOdd) {
             $basePath .= DIRECTORY_SEPARATOR . 'aa';
         }
 

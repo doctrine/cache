@@ -13,7 +13,10 @@ use function unlink;
  */
 class SQLite3CacheTest extends CacheTest
 {
+    /** @var string */
     private $file;
+
+    /** @var SQLite3 */
     private $sqlite;
 
     protected function setUp() : void
@@ -34,9 +37,6 @@ class SQLite3CacheTest extends CacheTest
         self::assertNull($this->_getCacheDriver()->getStats());
     }
 
-    /**
-     * {@inheritDoc}
-     */
     protected function _getCacheDriver() : CacheProvider
     {
         return new SQLite3Cache($this->sqlite, 'test_table');

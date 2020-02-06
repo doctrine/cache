@@ -20,6 +20,8 @@ use function str_repeat;
 abstract class CacheTest extends DoctrineTestCase
 {
     /**
+     * @param mixed $value
+     *
      * @dataProvider provideDataToCache
      */
     public function testSetContainsFetchDelete($value) : void
@@ -42,6 +44,8 @@ abstract class CacheTest extends DoctrineTestCase
     }
 
     /**
+     * @param mixed $value
+     *
      * @dataProvider provideDataToCache
      */
     public function testUpdateExistingEntry($value) : void
@@ -202,7 +206,7 @@ abstract class CacheTest extends DoctrineTestCase
     /**
      * @dataProvider provideCacheIds
      */
-    public function testCanHandleSpecialCacheIds($id) : void
+    public function testCanHandleSpecialCacheIds(string $id) : void
     {
         $cache = $this->_getCacheDriver();
 

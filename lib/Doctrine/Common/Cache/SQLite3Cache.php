@@ -4,15 +4,15 @@ namespace Doctrine\Common\Cache;
 
 use SQLite3;
 use SQLite3Result;
-use const SQLITE3_ASSOC;
-use const SQLITE3_BLOB;
-use const SQLITE3_TEXT;
 use function array_search;
 use function implode;
 use function serialize;
 use function sprintf;
 use function time;
 use function unserialize;
+use const SQLITE3_ASSOC;
+use const SQLITE3_BLOB;
+use const SQLITE3_TEXT;
 
 /**
  * SQLite3 cache provider.

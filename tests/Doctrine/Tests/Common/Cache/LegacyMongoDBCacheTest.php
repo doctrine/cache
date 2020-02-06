@@ -11,6 +11,7 @@ use MongoCollection;
 use MongoConnectionException;
 use MongoCursorException;
 use PHPUnit_Framework_MockObject_MockObject;
+use function assert;
 use function sleep;
 
 /**
@@ -59,11 +60,11 @@ class LegacyMongoDBCacheTest extends CacheTest
      */
     public function testMongoCursorExceptionsDoNotBubbleUp() : void
     {
-        /** @var MongoCollection|PHPUnit_Framework_MockObject_MockObject $collection */
         $collection = $this
             ->getMockBuilder(MongoCollection::class)
             ->disableOriginalConstructor()
             ->getMock();
+        assert($collection instanceof MongoCollection || $collection instanceof PHPUnit_Framework_MockObject_MockObject);
 
         $collection->expects(self::once())->method('update')->willThrowException(new MongoCursorException());
 

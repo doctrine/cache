@@ -2,7 +2,6 @@
 
 namespace Doctrine\Common\Cache;
 
-use const PHP_EOL;
 use function fclose;
 use function fgets;
 use function fopen;
@@ -10,6 +9,7 @@ use function is_file;
 use function serialize;
 use function time;
 use function unserialize;
+use const PHP_EOL;
 
 /**
  * Filesystem cache driver.

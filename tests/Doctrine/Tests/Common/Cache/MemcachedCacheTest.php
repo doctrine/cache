@@ -17,6 +17,7 @@ use function str_repeat;
  */
 class MemcachedCacheTest extends CacheTest
 {
+    /** @var Memcached */
     private $memcached;
 
     protected function setUp() : void
@@ -58,7 +59,7 @@ class MemcachedCacheTest extends CacheTest
     /**
      * @dataProvider provideInvalidCacheIds
      */
-    public function testSaveInvalidCacheId($id) : void
+    public function testSaveInvalidCacheId(string $id) : void
     {
         $this->expectException(InvalidCacheId::class);
 
@@ -119,9 +120,6 @@ class MemcachedCacheTest extends CacheTest
         self::assertFalse($driver->contains($testKey), sprintf('Expected key "%s" not to be found in cache.', $testKey));
     }
 
-    /**
-     * {@inheritDoc}
-     */
     protected function _getCacheDriver() : CacheProvider
     {
         $driver = new MemcachedCache();
