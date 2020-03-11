@@ -3,10 +3,12 @@
 namespace Doctrine\Common\Cache;
 
 use Predis\ClientInterface;
+use RuntimeException;
 use function array_combine;
 use function array_filter;
 use function array_map;
 use function call_user_func_array;
+use function class_exists;
 use function serialize;
 use function unserialize;
 
@@ -34,6 +36,28 @@ class PredisCache extends CacheProvider
         }
 
         return unserialize($result);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function doFetchAtomic(string $id, callable $generator, int $ttl)
+    {
+        if (! class_exists('\Predis\Pipeline\Atomic', false)) {
+            throw new RuntimeException('Atomic fetch (atomic pipeline) is not supported by this version of Predis');
+        }
+
+        return $this->client->pipeline(['atomic'], static function ($pipe) use ($id, $generator, $ttl) {
+            $pipelineCache = new static($pipe);
+            if ($pipelineCache->contains($id)) {
+                return $pipelineCache->fetch($id);
+            }
+
+            $data = $generator($id);
+            $pipelineCache->save($id, $data, $ttl);
+
+            return $data;
+        });
     }
 
     /**

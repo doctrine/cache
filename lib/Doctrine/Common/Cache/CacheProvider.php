@@ -10,7 +10,7 @@ use function sprintf;
 /**
  * Base class for cache provider implementations.
  */
-abstract class CacheProvider implements Cache, FlushableCache, ClearableCache, MultiOperationCache
+abstract class CacheProvider implements Cache, FlushableCache, ClearableCache, MultiOperationCache, AtomicFetchCache
 {
     public const DOCTRINE_NAMESPACE_CACHEKEY = 'DoctrineNamespaceCacheKey[%s]';
 
@@ -57,6 +57,14 @@ abstract class CacheProvider implements Cache, FlushableCache, ClearableCache, M
     public function fetch($id)
     {
         return $this->doFetch($this->getNamespacedId($id));
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function fetchAtomic(string $id, callable $generator, int $ttl = 0)
+    {
+        return $this->doFetchAtomic($id, $generator, $ttl);
     }
 
     /**
@@ -199,6 +207,27 @@ abstract class CacheProvider implements Cache, FlushableCache, ClearableCache, M
         $this->namespaceVersion = (int) $this->doFetch($namespaceCacheKey) ?: 1;
 
         return $this->namespaceVersion;
+    }
+
+    /**
+     * Note: this implementation is NOT atomic! Inheriting classes should provide an atomic implementation.
+     *
+     * @param string   $id
+     * @param callable $generator
+     * @param int      $ttl
+     *
+     * @return false|mixed
+     */
+    protected function doFetchAtomic(string $id, callable $generator, int $ttl)
+    {
+        if ($this->contains($id)) {
+            return $this->fetch($id);
+        }
+
+        $data = $generator($id);
+        $this->save($id, $data, $ttl);
+
+        return $data;
     }
 
     /**

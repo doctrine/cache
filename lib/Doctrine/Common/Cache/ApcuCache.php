@@ -2,14 +2,17 @@
 
 namespace Doctrine\Common\Cache;
 
+use RuntimeException;
 use function apcu_cache_info;
 use function apcu_clear_cache;
 use function apcu_delete;
+use function apcu_entry;
 use function apcu_exists;
 use function apcu_fetch;
 use function apcu_sma_info;
 use function apcu_store;
 use function count;
+use function function_exists;
 
 /**
  * APCu cache provider.
@@ -67,6 +70,18 @@ class ApcuCache extends CacheProvider
     protected function doFlush()
     {
         return apcu_clear_cache();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function doFetchAtomic(string $id, callable $generator, int $ttl)
+    {
+        if (! function_exists('apcu_entry')) {
+            throw new RuntimeException('Atomic fetch (apcu_entry) is not supported by this version of apcu');
+        }
+
+        return apcu_entry($id, $generator, $ttl);
     }
 
     /**
