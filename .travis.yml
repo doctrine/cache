@@ -45,5 +45,6 @@ jobs:
       script:
         - ./vendor/bin/phpunit --exclude-group performance --coverage-clover clover.xml
       after_script:
-        - wget https://scrutinizer-ci.com/ocular.phar
-        - php ocular.phar code-coverage:upload --format=php-clover clover.xml
+        - wget https://github.com/php-coveralls/php-coveralls/releases/download/v2.2.0/php-coveralls.phar --output-document="${HOME}/bin/coveralls"
+        - chmod +x ${HOME}/bin/coveralls
+        - travis_retry coveralls -v --json_path /tmp/coveralls-upload.json --coverage_clover=clover.xml
