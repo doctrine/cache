@@ -1,5 +1,4 @@
 dist: xenial
-sudo: false
 language: php
 
 cache:
@@ -10,7 +9,7 @@ php:
     - 7.1
     - 7.2
     - 7.3
-    - 7.4snapshot
+    - 7.4
 
 services:
     - mongodb
@@ -32,7 +31,15 @@ install:
 script: ./vendor/bin/phpunit --exclude-group performance
 
 jobs:
+  allow_failures:
+    - php: nightly
+
   include:
+    -   stage: Test
+        php: nightly
+        before_install:
+            - composer config platform.php 7.4.99
+
     - stage: Coding standard
       install:
           - travis_retry composer install --no-interaction --prefer-dist --ignore-platform-reqs
