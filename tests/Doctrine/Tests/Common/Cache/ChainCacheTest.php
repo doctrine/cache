@@ -68,6 +68,51 @@ class ChainCacheTest extends CacheTest
         self::assertTrue($cache1->contains('bar'));
     }
 
+    public function testFetchPropagatesToFastestCacheUsingDefaultLifeTimeForDownstreamCacheProviders() : void
+    {
+        $defaultLifeTimeForDownstreamCacheProviders = 0;
+
+        $cache1 = $this
+            ->getMockBuilder(ArrayCache::class)
+            ->setMethods(['doSave'])
+            ->getMock();
+        $cache1
+            ->expects($this->once())
+            ->method('doSave')
+            ->with('[bar][1]', 'value', $defaultLifeTimeForDownstreamCacheProviders);
+        $cache2 = new ArrayCache();
+        $cache2->save('bar', 'value');
+
+        $chainCache = new ChainCache([$cache1, $cache2]);
+
+        $result = $chainCache->fetch('bar');
+
+        self::assertEquals('value', $result);
+    }
+
+    public function testFetchPropagatesToFastestCacheUsingIndicatedDefaultLifeTimeForDownstreamCacheProviders() : void
+    {
+        $specificDefaultLifeTimeForDownstreamCacheProviders = 12345;
+
+        $cache1 = $this
+            ->getMockBuilder(ArrayCache::class)
+            ->setMethods(['doSave'])
+            ->getMock();
+        $cache1
+            ->expects($this->once())
+            ->method('doSave')
+            ->with('[bar][1]', 'value', $specificDefaultLifeTimeForDownstreamCacheProviders);
+        $cache2 = new ArrayCache();
+        $cache2->save('bar', 'value');
+
+        $chainCache = new ChainCache([$cache1, $cache2]);
+        $chainCache->setDefaultLifeTimeForDownstreamCacheProviders($specificDefaultLifeTimeForDownstreamCacheProviders);
+
+        $result = $chainCache->fetch('bar');
+
+        self::assertEquals('value', $result);
+    }
+
     public function testFetchMultiplePropagateToFastestCache() : void
     {
         $cache1 = new ArrayCache();
@@ -85,6 +130,29 @@ class ChainCacheTest extends CacheTest
 
         self::assertEquals(['bar' => 'Bar', 'foo' => 'Foo'], $result);
         self::assertTrue($cache1->contains('foo'));
+    }
+
+    public function testFetchMultiplePropagatesToFastestCacheUsingIndicatedDefaultLifeTimeForDownstreamCacheProviders() : void
+    {
+        $specificDefaultLifeTimeForDownstreamCacheProviders = 12345;
+
+        $cache1 = $this
+            ->getMockBuilder(ArrayCache::class)
+            ->setMethods(['doSaveMultiple'])
+            ->getMock();
+        $cache1
+            ->expects($this->once())
+            ->method('doSaveMultiple')
+            ->with(['[bar][1]' => 'Bar', '[foo][1]' => 'Foo'], $specificDefaultLifeTimeForDownstreamCacheProviders);
+        $cache2 = new ArrayCache();
+        $cache2->saveMultiple(['bar' => 'Bar', 'foo' => 'Foo']);
+
+        $chainCache = new ChainCache([$cache1, $cache2]);
+        $chainCache->setDefaultLifeTimeForDownstreamCacheProviders($specificDefaultLifeTimeForDownstreamCacheProviders);
+
+        $result = $chainCache->fetchMultiple(['bar', 'foo']);
+
+        self::assertEquals(['bar' => 'Bar', 'foo' => 'Foo'], $result);
     }
 
     public function testNamespaceIsPropagatedToAllProviders() : void
