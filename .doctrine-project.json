@@ -5,15 +5,28 @@
     "docsSlug": "doctrine-cache",
     "versions": [
         {
-            "name": "master",
+            "name": "1.11",
             "branchName": "master",
-            "slug": "latest"
+            "slug": "latest",
+            "upcoming": true
+        },
+        {
+            "name": "1.10",
+            "branchName": "1.10.x",
+            "slug": "1.10",
+            "current": true
+        },
+        {
+            "name": "1.9",
+            "branchName": "1.8.x",
+            "slug": "1.9",
+            "maintained": false
         },
         {
             "name": "1.8",
             "branchName": "1.8.x",
             "slug": "1.8",
-            "current": true
+            "maintained": false
         }
     ]
 }
