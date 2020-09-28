@@ -26,7 +26,7 @@ before_install:
 
 install:
     - rm composer.lock
-    - travis_retry composer update --no-interaction --prefer-dist
+    - travis_retry composer update --no-interaction --prefer-dist --ignore-platform-reqs
 
 script: ./vendor/bin/phpunit --exclude-group performance
 

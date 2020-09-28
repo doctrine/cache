@@ -19,7 +19,7 @@ class ChainCacheTest extends CacheTest
         $cache = $this->_getCacheDriver();
         $stats = $cache->getStats();
 
-        self::assertInternalType('array', $stats);
+        self::assertIsArray($stats);
     }
 
     public function testOnlyFetchFirstOne() : void
