@@ -165,6 +165,10 @@ class SQLite3Cache extends CacheProvider
             $idField
         ));
 
+        if ($statement === false) {
+            throw new \RuntimeException('SQLite internal database structure is broken: ' . (error_get_last()['message'] ?? ''));
+        }
+
         $statement->bindValue(':id', $id, SQLITE3_TEXT);
 
         $item = $statement->execute()->fetchArray(SQLITE3_ASSOC);
