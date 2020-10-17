@@ -2,12 +2,14 @@
 
 namespace Doctrine\Common\Cache;
 
+use RuntimeException;
 use SQLite3;
 use SQLite3Result;
 use const SQLITE3_ASSOC;
 use const SQLITE3_BLOB;
 use const SQLITE3_TEXT;
 use function array_search;
+use function error_get_last;
 use function implode;
 use function serialize;
 use function sprintf;
@@ -166,7 +168,7 @@ class SQLite3Cache extends CacheProvider
         ));
 
         if ($statement === false) {
-            throw new \RuntimeException('SQLite internal database structure is broken: ' . (error_get_last()['message'] ?? ''));
+            throw new RuntimeException('SQLite internal database structure is broken: ' . (error_get_last()['message'] ?? ''));
         }
 
         $statement->bindValue(':id', $id, SQLITE3_TEXT);
