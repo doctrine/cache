@@ -40,12 +40,6 @@ jobs:
         before_install:
             - composer config platform.php 7.4.99
 
-    - stage: Coding standard
-      install:
-          - travis_retry composer install --no-interaction --prefer-dist --ignore-platform-reqs
-      script:
-        - ./vendor/bin/phpcs
-
     - stage: Coverage
       before_script:
         - mv ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini{.disabled,}
