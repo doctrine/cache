@@ -191,7 +191,10 @@ abstract class CacheTest extends DoctrineTestCase
         self::assertTrue($cache->save('key1', 1));
         self::assertTrue($cache->save('key2', 2));
         self::assertTrue($cache->deleteAll());
-        self::assertFalse($cache->contains('key1'));
+        self::assertFalse($cache->contains('key1'), sprintf(
+            'key1 should have disappeared but did not. The namespace is "%s"',
+            $cache->getNamespace()
+        ));
         self::assertFalse($cache->contains('key2'));
     }
 
