@@ -7,6 +7,7 @@ use InvalidArgumentException;
 use Iterator;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
+use SplFileInfo;
 
 use function bin2hex;
 use function chmod;
@@ -68,6 +69,7 @@ abstract class FileCache extends CacheProvider
     /**
      * @param string $directory The cache directory.
      * @param string $extension The cache file extension.
+     * @param int    $umask
      *
      * @throws InvalidArgumentException
      */
@@ -266,6 +268,9 @@ abstract class FileCache extends CacheProvider
         return false;
     }
 
+    /**
+     * @return Iterator<string, SplFileInfo>
+     */
     private function getIterator(): Iterator
     {
         return new RecursiveIteratorIterator(

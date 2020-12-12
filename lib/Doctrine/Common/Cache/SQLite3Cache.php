@@ -149,7 +149,7 @@ class SQLite3Cache extends CacheProvider
      *
      * @param mixed $id
      *
-     * @return array|null
+     * @return mixed[]|null
      */
     private function findById($id, bool $includeData = true): ?array
     {
@@ -187,7 +187,7 @@ class SQLite3Cache extends CacheProvider
     /**
      * Gets an array of the fields in our table.
      *
-     * @return array
+     * @psalm-return array{string, string, string}
      */
     private function getFields(): array
     {
@@ -197,7 +197,7 @@ class SQLite3Cache extends CacheProvider
     /**
      * Check if the item is expired.
      *
-     * @param array $item
+     * @param mixed[] $item
      */
     private function isExpired(array $item): bool
     {

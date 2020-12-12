@@ -156,7 +156,7 @@ class LegacyMongoDBCache extends CacheProvider
     /**
      * Check if the document is expired.
      *
-     * @param array $document
+     * @param mixed[] $document
      */
     private function isExpired(array $document): bool
     {

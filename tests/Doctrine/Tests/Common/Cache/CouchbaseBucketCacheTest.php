@@ -21,7 +21,7 @@ class CouchbaseBucketCacheTest extends CacheTest
         $this->bucket = $cluster->openBucket('default');
     }
 
-    protected function _getCacheDriver(): CacheProvider
+    protected function getCacheDriver(): CacheProvider
     {
         return new CouchbaseBucketCache($this->bucket);
     }

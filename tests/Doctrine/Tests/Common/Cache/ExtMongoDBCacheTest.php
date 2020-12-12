@@ -42,7 +42,7 @@ class ExtMongoDBCacheTest extends CacheTest
 
     public function testGetStats(): void
     {
-        $cache = $this->_getCacheDriver();
+        $cache = $this->getCacheDriver();
         // Run a query to create the collection
         $this->collection->find([]);
         $stats = $cache->getStats();
@@ -56,7 +56,7 @@ class ExtMongoDBCacheTest extends CacheTest
 
     public function testLifetime(): void
     {
-        $cache = $this->_getCacheDriver();
+        $cache = $this->getCacheDriver();
         $cache->save('expire', 'value', 2);
         self::assertCount(1, $this->collection->listIndexes());
         self::assertTrue($cache->contains('expire'), 'Data should not be expired yet');
@@ -65,7 +65,7 @@ class ExtMongoDBCacheTest extends CacheTest
         self::assertCount(2, $this->collection->listIndexes());
     }
 
-    protected function _getCacheDriver(): CacheProvider
+    protected function getCacheDriver(): CacheProvider
     {
         return new MongoDBCache($this->collection);
     }

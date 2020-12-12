@@ -96,7 +96,7 @@ class PhpFileCache extends FileCache
     }
 
     /**
-     * @return array|null
+     * @return mixed[]|null
      */
     private function includeFileForId(string $id): ?array
     {

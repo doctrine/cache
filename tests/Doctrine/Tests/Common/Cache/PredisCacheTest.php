@@ -14,6 +14,7 @@ use function class_exists;
 
 class PredisCacheTest extends CacheTest
 {
+    /** @var Client */
     private $client;
 
     protected function setUp(): void
@@ -33,7 +34,7 @@ class PredisCacheTest extends CacheTest
 
     public function testHitMissesStatsAreProvided(): void
     {
-        $cache = $this->_getCacheDriver();
+        $cache = $this->getCacheDriver();
         $stats = $cache->getStats();
 
         self::assertNotNull($stats[Cache::STATS_HITS]);
@@ -43,7 +44,7 @@ class PredisCacheTest extends CacheTest
     /**
      * @return PredisCache
      */
-    protected function _getCacheDriver(): CacheProvider
+    protected function getCacheDriver(): CacheProvider
     {
         return new PredisCache($this->client);
     }

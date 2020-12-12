@@ -21,7 +21,7 @@ class ApcCacheTest extends CacheTest
         $this->markTestSkipped('APC must be enabled for the CLI with the ini setting apc.enable_cli=1');
     }
 
-    protected function _getCacheDriver(): CacheProvider
+    protected function getCacheDriver(): CacheProvider
     {
         return new ApcCache();
     }

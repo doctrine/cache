@@ -15,6 +15,7 @@ use function extension_loaded;
  */
 class RedisCacheTest extends CacheTest
 {
+    /** @var Redis */
     private $_redis;
 
     protected function setUp(): void
@@ -30,7 +31,7 @@ class RedisCacheTest extends CacheTest
 
     public function testHitMissesStatsAreProvided(): void
     {
-        $cache = $this->_getCacheDriver();
+        $cache = $this->getCacheDriver();
         $stats = $cache->getStats();
 
         self::assertNotNull($stats[Cache::STATS_HITS]);
@@ -39,7 +40,7 @@ class RedisCacheTest extends CacheTest
 
     public function testGetRedisReturnsInstanceOfRedis(): void
     {
-        self::assertInstanceOf(Redis::class, $this->_getCacheDriver()->getRedis());
+        self::assertInstanceOf(Redis::class, $this->getCacheDriver()->getRedis());
     }
 
     public function testSerializerOptionWithOutIgbinaryExtension(): void
@@ -50,11 +51,11 @@ class RedisCacheTest extends CacheTest
 
         self::assertEquals(
             Redis::SERIALIZER_PHP,
-            $this->_getCacheDriver()->getRedis()->getOption(Redis::OPT_SERIALIZER)
+            $this->getCacheDriver()->getRedis()->getOption(Redis::OPT_SERIALIZER)
         );
     }
 
-    protected function _getCacheDriver(): CacheProvider
+    protected function getCacheDriver(): CacheProvider
     {
         $driver = new RedisCache();
         $driver->setRedis($this->_redis);

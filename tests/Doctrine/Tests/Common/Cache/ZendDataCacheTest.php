@@ -23,13 +23,13 @@ class ZendDataCacheTest extends CacheTest
 
     public function testGetStats(): void
     {
-        $cache = $this->_getCacheDriver();
+        $cache = $this->getCacheDriver();
         $stats = $cache->getStats();
 
         self::assertNull($stats);
     }
 
-    protected function _getCacheDriver(): CacheProvider
+    protected function getCacheDriver(): CacheProvider
     {
         return new ZendDataCache();
     }

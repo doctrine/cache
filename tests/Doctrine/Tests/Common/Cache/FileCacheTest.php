@@ -187,6 +187,9 @@ class FileCacheTest extends DoctrineTestCase
         return $basePath;
     }
 
+    /**
+     * @psalm-return array{string, string, string}
+     */
     public static function getKeyAndPathFittingLength(int $length, string $basePath): array
     {
         $baseDirLength   = strlen($basePath);
@@ -215,6 +218,9 @@ class FileCacheTest extends DoctrineTestCase
         return [$key, $keyPath, $hashedKeyPath];
     }
 
+    /**
+     * @psalm-return list<array{int, bool}>
+     */
     public function getPathLengthsToTest(): array
     {
         // Windows officially supports 260 bytes including null terminator

@@ -11,6 +11,7 @@ use Memcache;
  */
 class MemcacheCacheTest extends CacheTest
 {
+    /** @var Memcache */
     private $memcache;
 
     protected function setUp(): void
@@ -49,10 +50,10 @@ class MemcacheCacheTest extends CacheTest
 
     public function testGetMemcacheReturnsInstanceOfMemcache(): void
     {
-        self::assertInstanceOf('Memcache', $this->_getCacheDriver()->getMemcache());
+        self::assertInstanceOf('Memcache', $this->getCacheDriver()->getMemcache());
     }
 
-    protected function _getCacheDriver(): CacheProvider
+    protected function getCacheDriver(): CacheProvider
     {
         $driver = new MemcacheCache();
         $driver->setMemcache($this->memcache);

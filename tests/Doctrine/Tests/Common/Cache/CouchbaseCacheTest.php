@@ -13,6 +13,7 @@ use Throwable;
  */
 class CouchbaseCacheTest extends CacheTest
 {
+    /** @var Couchbase */
     private $couchbase;
 
     protected function setUp(): void
@@ -24,7 +25,7 @@ class CouchbaseCacheTest extends CacheTest
         }
     }
 
-    protected function _getCacheDriver(): CacheProvider
+    protected function getCacheDriver(): CacheProvider
     {
         $driver = new CouchbaseCache();
         $driver->setCouchbase($this->couchbase);

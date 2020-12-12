@@ -21,11 +21,13 @@ use function str_repeat;
 abstract class CacheTest extends DoctrineTestCase
 {
     /**
+     * @param mixed $value
+     *
      * @dataProvider provideDataToCache
      */
     public function testSetContainsFetchDelete($value): void
     {
-        $cache = $this->_getCacheDriver();
+        $cache = $this->getCacheDriver();
 
         // Test saving a value, checking if it exists, and fetching it back
         self::assertTrue($cache->save('key', $value));
@@ -43,11 +45,13 @@ abstract class CacheTest extends DoctrineTestCase
     }
 
     /**
+     * @param mixed $value
+     *
      * @dataProvider provideDataToCache
      */
     public function testUpdateExistingEntry($value): void
     {
-        $cache = $this->_getCacheDriver();
+        $cache = $this->getCacheDriver();
 
         self::assertTrue($cache->save('key', 'old-value'));
         self::assertTrue($cache->contains('key'));
@@ -63,7 +67,7 @@ abstract class CacheTest extends DoctrineTestCase
 
     public function testCacheKeyIsCaseSensitive(): void
     {
-        $cache = $this->_getCacheDriver();
+        $cache = $this->getCacheDriver();
 
         self::assertTrue($cache->save('key', 'value'));
         self::assertTrue($cache->contains('key'));
@@ -78,7 +82,7 @@ abstract class CacheTest extends DoctrineTestCase
 
     public function testFetchMultiple(): void
     {
-        $cache  = $this->_getCacheDriver();
+        $cache  = $this->getCacheDriver();
         $values = $this->provideDataToCache();
         $saved  = [];
 
@@ -117,14 +121,14 @@ abstract class CacheTest extends DoctrineTestCase
 
     public function testFetchMultipleWithNoKeys(): void
     {
-        $cache = $this->_getCacheDriver();
+        $cache = $this->getCacheDriver();
 
         self::assertSame([], $cache->fetchMultiple([]));
     }
 
     public function testSaveMultiple(): void
     {
-        $cache = $this->_getCacheDriver();
+        $cache = $this->getCacheDriver();
         $cache->deleteAll();
 
         $data = array_map(static function ($value) {
@@ -138,6 +142,9 @@ abstract class CacheTest extends DoctrineTestCase
         self::assertEquals($data, $cache->fetchMultiple($keys));
     }
 
+    /**
+     * @return array<string, array{mixed}>
+     */
     public function provideDataToCache(): array
     {
         $obj       = new stdClass();
@@ -170,7 +177,7 @@ abstract class CacheTest extends DoctrineTestCase
 
     public function testDeleteIsSuccessfulWhenKeyDoesNotExist(): void
     {
-        $cache = $this->_getCacheDriver();
+        $cache = $this->getCacheDriver();
 
         $cache->delete('key');
         self::assertFalse($cache->contains('key'));
@@ -179,7 +186,7 @@ abstract class CacheTest extends DoctrineTestCase
 
     public function testDeleteAll(): void
     {
-        $cache = $this->_getCacheDriver();
+        $cache = $this->getCacheDriver();
 
         self::assertTrue($cache->save('key1', 1));
         self::assertTrue($cache->save('key2', 2));
@@ -190,7 +197,7 @@ abstract class CacheTest extends DoctrineTestCase
 
     public function testDeleteMulti(): void
     {
-        $cache = $this->_getCacheDriver();
+        $cache = $this->getCacheDriver();
 
         self::assertTrue($cache->save('key1', 1));
         self::assertTrue($cache->save('key2', 1));
@@ -203,9 +210,9 @@ abstract class CacheTest extends DoctrineTestCase
     /**
      * @dataProvider provideCacheIds
      */
-    public function testCanHandleSpecialCacheIds($id): void
+    public function testCanHandleSpecialCacheIds(string $id): void
     {
-        $cache = $this->_getCacheDriver();
+        $cache = $this->getCacheDriver();
 
         self::assertTrue($cache->save($id, 'value'));
         self::assertTrue($cache->contains($id));
@@ -218,7 +225,7 @@ abstract class CacheTest extends DoctrineTestCase
 
     public function testNoCacheIdCollisions(): void
     {
-        $cache = $this->_getCacheDriver();
+        $cache = $this->getCacheDriver();
 
         $ids = $this->provideCacheIds();
 
@@ -244,6 +251,8 @@ abstract class CacheTest extends DoctrineTestCase
      *
      * For example, the characters :\/<>"*?| are not valid in Windows filenames. So they must be encoded properly.
      * Each cache id should be considered different from the others.
+     *
+     * @psalm-return list<array{string}>
      */
     public function provideCacheIds(): array
     {
@@ -279,7 +288,7 @@ abstract class CacheTest extends DoctrineTestCase
 
     public function testLifetime(): void
     {
-        $cache = $this->_getCacheDriver();
+        $cache = $this->getCacheDriver();
         $cache->save('expire', 'value', 1);
         self::assertTrue($cache->contains('expire'), 'Data should not be expired yet');
         // @TODO should more TTL-based tests pop up, so then we should mock the `time` API instead
@@ -289,7 +298,7 @@ abstract class CacheTest extends DoctrineTestCase
 
     public function testNoExpire(): void
     {
-        $cache = $this->_getCacheDriver();
+        $cache = $this->getCacheDriver();
         $cache->save('noexpire', 'value', 0);
         // @TODO should more TTL-based tests pop up, so then we should mock the `time` API instead
         sleep(1);
@@ -298,7 +307,7 @@ abstract class CacheTest extends DoctrineTestCase
 
     public function testLongLifetime(): void
     {
-        $cache = $this->_getCacheDriver();
+        $cache = $this->getCacheDriver();
         $cache->save('longlifetime', 'value', 30 * 24 * 3600 + 1);
         self::assertTrue($cache->contains('longlifetime'), 'Data with lifetime > 30 days should be accepted');
     }
@@ -309,8 +318,8 @@ abstract class CacheTest extends DoctrineTestCase
             $this->markTestSkipped('The cache storage needs to be shared.');
         }
 
-        $cache1 = $this->_getCacheDriver();
-        $cache2 = $this->_getCacheDriver();
+        $cache1 = $this->getCacheDriver();
+        $cache2 = $this->getCacheDriver();
 
         self::assertTrue($cache1->save('key1', 1));
         self::assertTrue($cache2->save('key2', 2));
@@ -337,14 +346,14 @@ abstract class CacheTest extends DoctrineTestCase
         /* A new cache provider should not see the deleted entries, since its
          * namespace version will be initialized.
          */
-        $cache3 = $this->_getCacheDriver();
+        $cache3 = $this->getCacheDriver();
         self::assertFalse($cache3->contains('key1'));
         self::assertFalse($cache3->contains('key2'));
     }
 
     public function testFlushAll(): void
     {
-        $cache = $this->_getCacheDriver();
+        $cache = $this->getCacheDriver();
 
         self::assertTrue($cache->save('key1', 1));
         self::assertTrue($cache->save('key2', 2));
@@ -359,8 +368,8 @@ abstract class CacheTest extends DoctrineTestCase
             $this->markTestSkipped('The cache storage needs to be shared.');
         }
 
-        $cache1 = $this->_getCacheDriver();
-        $cache2 = $this->_getCacheDriver();
+        $cache1 = $this->getCacheDriver();
+        $cache2 = $this->getCacheDriver();
 
         /* Deleting all elements from the first provider should increment its
          * namespace version before saving the first entry.
@@ -400,7 +409,7 @@ abstract class CacheTest extends DoctrineTestCase
         /* A new cache provider will be initialized with the original namespace
          * version and not share any visibility with the first two providers.
          */
-        $cache3 = $this->_getCacheDriver();
+        $cache3 = $this->getCacheDriver();
         self::assertFalse($cache3->contains('key1'));
         self::assertFalse($cache3->contains('key2'));
         self::assertTrue($cache3->save('key3', 3));
@@ -409,7 +418,7 @@ abstract class CacheTest extends DoctrineTestCase
 
     public function testNamespace(): void
     {
-        $cache = $this->_getCacheDriver();
+        $cache = $this->getCacheDriver();
 
         $cache->setNamespace('ns1_');
 
@@ -423,7 +432,7 @@ abstract class CacheTest extends DoctrineTestCase
 
     public function testDeleteAllNamespace(): void
     {
-        $cache = $this->_getCacheDriver();
+        $cache = $this->getCacheDriver();
 
         $cache->setNamespace('ns1');
         self::assertFalse($cache->contains('key1'));
@@ -451,7 +460,7 @@ abstract class CacheTest extends DoctrineTestCase
      */
     public function testGetStats(): void
     {
-        $cache = $this->_getCacheDriver();
+        $cache = $this->getCacheDriver();
         $stats = $cache->getStats();
 
         self::assertArrayHasKey(Cache::STATS_HITS, $stats);
@@ -463,7 +472,7 @@ abstract class CacheTest extends DoctrineTestCase
 
     public function testSaveReturnsTrueWithAndWithoutTTlSet(): void
     {
-        $cache = $this->_getCacheDriver();
+        $cache = $this->getCacheDriver();
         $cache->deleteAll();
         self::assertTrue($cache->save('without_ttl', 'without_ttl'));
         self::assertTrue($cache->save('with_ttl', 'with_ttl', 3600));
@@ -471,7 +480,7 @@ abstract class CacheTest extends DoctrineTestCase
 
     public function testValueThatIsFalseBooleanIsProperlyRetrieved()
     {
-        $cache = $this->_getCacheDriver();
+        $cache = $this->getCacheDriver();
         $cache->deleteAll();
 
         self::assertTrue($cache->save('key1', false));
@@ -485,7 +494,7 @@ abstract class CacheTest extends DoctrineTestCase
      */
     public function testFetchingANonExistingKeyShouldNeverCauseANoticeOrWarning(): void
     {
-        $cache = $this->_getCacheDriver();
+        $cache = $this->getCacheDriver();
 
         $errorHandler = function () {
             restore_error_handler();
@@ -518,5 +527,5 @@ abstract class CacheTest extends DoctrineTestCase
         return true;
     }
 
-    abstract protected function _getCacheDriver(): CacheProvider;
+    abstract protected function getCacheDriver(): CacheProvider;
 }

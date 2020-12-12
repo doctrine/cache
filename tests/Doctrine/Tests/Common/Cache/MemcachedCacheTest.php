@@ -18,6 +18,7 @@ use function str_repeat;
  */
 class MemcachedCacheTest extends CacheTest
 {
+    /** @var Memcached */
     private $memcached;
 
     protected function setUp(): void
@@ -59,23 +60,27 @@ class MemcachedCacheTest extends CacheTest
     /**
      * @dataProvider provideInvalidCacheIds
      */
-    public function testSaveInvalidCacheId($id): void
+    public function testSaveInvalidCacheId(string $id): void
     {
         $this->expectException(InvalidCacheId::class);
 
-        $this->_getCacheDriver()->save($id, 1);
+        $this->getCacheDriver()->save($id, 1);
     }
 
     /**
      * @dataProvider provideInvalidCacheIdSets
+     * @psalm-param array<string, int> $ids
      */
     public function testSaveMultipleInvalidCacheIds(array $ids): void
     {
         $this->expectException(InvalidCacheId::class);
 
-        $this->_getCacheDriver()->saveMultiple($ids);
+        $this->getCacheDriver()->saveMultiple($ids);
     }
 
+    /**
+     * @psalm-return Generator<string, array{string}>
+     */
     public function provideInvalidCacheIds(): Generator
     {
         yield 'contains space' => ['foo bar'];
@@ -83,6 +88,9 @@ class MemcachedCacheTest extends CacheTest
         yield 'exceeds max length' => [str_repeat('a', MemcachedCache::CACHE_ID_MAX_LENGTH + 1)];
     }
 
+    /**
+     * @psalm-return Generator<string, array{array<string, int>}>
+     */
     public function provideInvalidCacheIdSets(): Generator
     {
         yield 'contains space' => [['foo' => 1, 'foo bar' => 2, 'bar' => 3]];
@@ -92,13 +100,13 @@ class MemcachedCacheTest extends CacheTest
 
     public function testGetMemcachedReturnsInstanceOfMemcached(): void
     {
-        self::assertInstanceOf('Memcached', $this->_getCacheDriver()->getMemcached());
+        self::assertInstanceOf('Memcached', $this->getCacheDriver()->getMemcached());
     }
 
     public function testContainsWithKeyWithFalseAsValue()
     {
         $testKey    = __METHOD__;
-        $driver     = $this->_getCacheDriver();
+        $driver     = $this->getCacheDriver();
         $reflection = new ReflectionClass($driver);
         $method     = $reflection->getMethod('getNamespacedId');
         $method->setAccessible(true);
@@ -120,7 +128,7 @@ class MemcachedCacheTest extends CacheTest
         self::assertFalse($driver->contains($testKey), sprintf('Expected key "%s" not to be found in cache.', $testKey));
     }
 
-    protected function _getCacheDriver(): CacheProvider
+    protected function getCacheDriver(): CacheProvider
     {
         $driver = new MemcachedCache();
         $driver->setMemcached($this->memcached);

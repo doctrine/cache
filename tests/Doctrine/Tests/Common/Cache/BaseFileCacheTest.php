@@ -27,6 +27,7 @@ use const DIRECTORY_SEPARATOR;
 
 abstract class BaseFileCacheTest extends CacheTest
 {
+    /** @var string */
     protected $directory;
 
     protected function setUp(): void
@@ -57,7 +58,7 @@ abstract class BaseFileCacheTest extends CacheTest
 
     public function testFlushAllRemovesBalancingDirectories(): void
     {
-        $cache = $this->_getCacheDriver();
+        $cache = $this->getCacheDriver();
 
         self::assertTrue($cache->save('key1', 1));
         self::assertTrue($cache->save('key2', 2));
@@ -73,6 +74,9 @@ abstract class BaseFileCacheTest extends CacheTest
         return false;
     }
 
+    /**
+     * @psalm-return list<array{int, bool}>
+     */
     public function getPathLengthsToTest(): array
     {
         // Windows officially supports 260 bytes including null terminator
@@ -93,6 +97,9 @@ abstract class BaseFileCacheTest extends CacheTest
         return FileCacheTest::getBasePathForWindowsPathLengthTests($pathLength);
     }
 
+    /**
+     * @psalm-return array{string, string, string}
+     */
     private static function getKeyAndPathFittingLength(int $length, string $basePath): array
     {
         $baseDirLength             = strlen($basePath);
@@ -138,7 +145,7 @@ abstract class BaseFileCacheTest extends CacheTest
 
         self::assertEquals($length, strlen($keyPath), 'Unhashed path should be of correct length.');
 
-        $cacheClass = get_class($this->_getCacheDriver());
+        $cacheClass = get_class($this->getCacheDriver());
         $cache      = new $cacheClass($this->directory, '.doctrine.cache');
         assert($cache instanceof FileCache);
 

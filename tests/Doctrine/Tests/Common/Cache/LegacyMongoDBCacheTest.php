@@ -46,7 +46,7 @@ class LegacyMongoDBCacheTest extends CacheTest
 
     public function testGetStats(): void
     {
-        $cache = $this->_getCacheDriver();
+        $cache = $this->getCacheDriver();
         $stats = $cache->getStats();
 
         self::assertNull($stats[Cache::STATS_HITS]);
@@ -76,7 +76,7 @@ class LegacyMongoDBCacheTest extends CacheTest
 
     public function testLifetime(): void
     {
-        $cache = $this->_getCacheDriver();
+        $cache = $this->getCacheDriver();
         $cache->save('expire', 'value', 1);
         self::assertCount(1, $this->collection->getIndexInfo());
         self::assertTrue($cache->contains('expire'), 'Data should not be expired yet');
@@ -85,7 +85,7 @@ class LegacyMongoDBCacheTest extends CacheTest
         self::assertCount(2, $this->collection->getIndexInfo());
     }
 
-    protected function _getCacheDriver(): CacheProvider
+    protected function getCacheDriver(): CacheProvider
     {
         return new MongoDBCache($this->collection);
     }

@@ -9,14 +9,14 @@ use Doctrine\Common\Cache\ChainCache;
 
 class ChainCacheTest extends CacheTest
 {
-    protected function _getCacheDriver(): CacheProvider
+    protected function getCacheDriver(): CacheProvider
     {
         return new ChainCache([new ArrayCache()]);
     }
 
     public function testGetStats(): void
     {
-        $cache = $this->_getCacheDriver();
+        $cache = $this->getCacheDriver();
         $stats = $cache->getStats();
 
         self::assertInternalType('array', $stats);

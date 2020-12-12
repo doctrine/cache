@@ -13,7 +13,7 @@ class FilesystemCacheTest extends BaseFileCacheTest
 {
     public function testGetStats(): void
     {
-        $cache = $this->_getCacheDriver();
+        $cache = $this->getCacheDriver();
         $stats = $cache->getStats();
 
         self::assertNull($stats[Cache::STATS_HITS]);
@@ -55,7 +55,7 @@ class FilesystemCacheTest extends BaseFileCacheTest
         self::assertFalse($cache->contains('key2'));
     }
 
-    protected function _getCacheDriver(): CacheProvider
+    protected function getCacheDriver(): CacheProvider
     {
         return new FilesystemCache($this->directory);
     }
