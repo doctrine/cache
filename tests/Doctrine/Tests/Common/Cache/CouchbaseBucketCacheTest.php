@@ -15,13 +15,13 @@ class CouchbaseBucketCacheTest extends CacheTest
     /** @var Bucket */
     private $bucket;
 
-    protected function setUp() : void
+    protected function setUp(): void
     {
         $cluster      = new Cluster('couchbase://localhost?detailed_errcodes=1');
         $this->bucket = $cluster->openBucket('default');
     }
 
-    protected function _getCacheDriver() : CacheProvider
+    protected function _getCacheDriver(): CacheProvider
     {
         return new CouchbaseBucketCache($this->bucket);
     }

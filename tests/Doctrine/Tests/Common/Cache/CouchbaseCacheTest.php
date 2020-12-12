@@ -15,7 +15,7 @@ class CouchbaseCacheTest extends CacheTest
 {
     private $couchbase;
 
-    protected function setUp() : void
+    protected function setUp(): void
     {
         try {
             $this->couchbase = new Couchbase('127.0.0.1', 'Administrator', 'password', 'default');
@@ -24,7 +24,7 @@ class CouchbaseCacheTest extends CacheTest
         }
     }
 
-    protected function _getCacheDriver() : CacheProvider
+    protected function _getCacheDriver(): CacheProvider
     {
         $driver = new CouchbaseCache();
         $driver->setCouchbase($this->couchbase);

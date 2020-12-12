@@ -11,7 +11,7 @@ use Doctrine\Common\Cache\FilesystemCache;
  */
 class FilesystemCacheTest extends BaseFileCacheTest
 {
-    public function testGetStats() : void
+    public function testGetStats(): void
     {
         $cache = $this->_getCacheDriver();
         $stats = $cache->getStats();
@@ -23,7 +23,7 @@ class FilesystemCacheTest extends BaseFileCacheTest
         self::assertGreaterThan(0, $stats[Cache::STATS_MEMORY_AVAILABLE]);
     }
 
-    public function testCacheInSharedDirectoryIsPerExtension() : void
+    public function testCacheInSharedDirectoryIsPerExtension(): void
     {
         $cache1 = new FilesystemCache($this->directory, '.foo');
         $cache2 = new FilesystemCache($this->directory, '.bar');
@@ -44,7 +44,7 @@ class FilesystemCacheTest extends BaseFileCacheTest
         self::assertSame(22, $cache2->fetch('key2'));
     }
 
-    public function testFlushAllWithNoExtension() : void
+    public function testFlushAllWithNoExtension(): void
     {
         $cache = new FilesystemCache($this->directory, '');
 
@@ -55,7 +55,7 @@ class FilesystemCacheTest extends BaseFileCacheTest
         self::assertFalse($cache->contains('key2'));
     }
 
-    protected function _getCacheDriver() : CacheProvider
+    protected function _getCacheDriver(): CacheProvider
     {
         return new FilesystemCache($this->directory);
     }

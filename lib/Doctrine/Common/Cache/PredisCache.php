@@ -3,6 +3,7 @@
 namespace Doctrine\Common\Cache;
 
 use Predis\ClientInterface;
+
 use function array_combine;
 use function array_filter;
 use function array_map;

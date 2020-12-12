@@ -7,7 +7,8 @@ use FilesystemIterator;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use ReflectionClass;
-use const DIRECTORY_SEPARATOR;
+
+use function assert;
 use function bin2hex;
 use function file_exists;
 use function floor;
@@ -22,18 +23,20 @@ use function sys_get_temp_dir;
 use function uniqid;
 use function unlink;
 
+use const DIRECTORY_SEPARATOR;
+
 abstract class BaseFileCacheTest extends CacheTest
 {
     protected $directory;
 
-    protected function setUp() : void
+    protected function setUp(): void
     {
         do {
             $this->directory = sys_get_temp_dir() . '/doctrine_cache_' . uniqid();
         } while (file_exists($this->directory));
     }
 
-    protected function tearDown() : void
+    protected function tearDown(): void
     {
         if (! is_dir($this->directory)) {
             return;
@@ -52,7 +55,7 @@ abstract class BaseFileCacheTest extends CacheTest
         @rmdir($this->directory);
     }
 
-    public function testFlushAllRemovesBalancingDirectories() : void
+    public function testFlushAllRemovesBalancingDirectories(): void
     {
         $cache = $this->_getCacheDriver();
 
@@ -65,12 +68,12 @@ abstract class BaseFileCacheTest extends CacheTest
         self::assertCount(0, $iterator);
     }
 
-    protected function isSharedStorage() : bool
+    protected function isSharedStorage(): bool
     {
         return false;
     }
 
-    public function getPathLengthsToTest() : array
+    public function getPathLengthsToTest(): array
     {
         // Windows officially supports 260 bytes including null terminator
         // 258 bytes available to use due to php bug #70943
@@ -85,12 +88,12 @@ abstract class BaseFileCacheTest extends CacheTest
         ];
     }
 
-    private static function getBasePathForWindowsPathLengthTests(int $pathLength) : string
+    private static function getBasePathForWindowsPathLengthTests(int $pathLength): string
     {
         return FileCacheTest::getBasePathForWindowsPathLengthTests($pathLength);
     }
 
-    private static function getKeyAndPathFittingLength(int $length, string $basePath) : array
+    private static function getKeyAndPathFittingLength(int $length, string $basePath): array
     {
         $baseDirLength             = strlen($basePath);
         $extensionLength           = strlen('.doctrine.cache');
@@ -127,7 +130,7 @@ abstract class BaseFileCacheTest extends CacheTest
     /**
      * @dataProvider getPathLengthsToTest
      */
-    public function testWindowsPathLengthLimitIsCorrectlyHandled(int $length, bool $pathShouldBeHashed) : void
+    public function testWindowsPathLengthLimitIsCorrectlyHandled(int $length, bool $pathShouldBeHashed): void
     {
         $this->directory = self::getBasePathForWindowsPathLengthTests($length);
 
@@ -136,8 +139,8 @@ abstract class BaseFileCacheTest extends CacheTest
         self::assertEquals($length, strlen($keyPath), 'Unhashed path should be of correct length.');
 
         $cacheClass = get_class($this->_getCacheDriver());
-        /** @var FileCache $cache */
-        $cache = new $cacheClass($this->directory, '.doctrine.cache');
+        $cache      = new $cacheClass($this->directory, '.doctrine.cache');
+        assert($cache instanceof FileCache);
 
         // Trick it into thinking this is windows.
         $reflClass = new ReflectionClass(FileCache::class);

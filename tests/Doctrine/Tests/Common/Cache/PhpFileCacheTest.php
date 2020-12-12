@@ -5,6 +5,7 @@ namespace Doctrine\Tests\Common\Cache;
 use Doctrine\Common\Cache\Cache;
 use Doctrine\Common\Cache\CacheProvider;
 use Doctrine\Common\Cache\PhpFileCache;
+
 use const PHP_VERSION_ID;
 
 /**
@@ -12,7 +13,7 @@ use const PHP_VERSION_ID;
  */
 class PhpFileCacheTest extends BaseFileCacheTest
 {
-    public function provideDataToCache() : array
+    public function provideDataToCache(): array
     {
         $data = parent::provideDataToCache();
 
@@ -25,7 +26,7 @@ class PhpFileCacheTest extends BaseFileCacheTest
         return $data;
     }
 
-    public function testImplementsSetState() : void
+    public function testImplementsSetState(): void
     {
         $cache = $this->_getCacheDriver();
 
@@ -50,7 +51,7 @@ class PhpFileCacheTest extends BaseFileCacheTest
     /**
      * @group 154
      */
-    public function testNotImplementsSetState() : void
+    public function testNotImplementsSetState(): void
     {
         $cache = $this->_getCacheDriver();
 
@@ -61,7 +62,7 @@ class PhpFileCacheTest extends BaseFileCacheTest
     /**
      * @group 154
      */
-    public function testNotImplementsSetStateInArray() : void
+    public function testNotImplementsSetStateInArray(): void
     {
         $cache = $this->_getCacheDriver();
 
@@ -70,7 +71,7 @@ class PhpFileCacheTest extends BaseFileCacheTest
         self::assertTrue($cache->contains('test_not_set_state_in_array'));
     }
 
-    public function testGetStats() : void
+    public function testGetStats(): void
     {
         $cache = $this->_getCacheDriver();
         $stats = $cache->getStats();
@@ -82,7 +83,7 @@ class PhpFileCacheTest extends BaseFileCacheTest
         self::assertGreaterThan(0, $stats[Cache::STATS_MEMORY_AVAILABLE]);
     }
 
-    protected function _getCacheDriver() : CacheProvider
+    protected function _getCacheDriver(): CacheProvider
     {
         return new PhpFileCache($this->directory);
     }

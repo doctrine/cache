@@ -98,7 +98,7 @@ class PhpFileCache extends FileCache
     /**
      * @return array|null
      */
-    private function includeFileForId(string $id) : ?array
+    private function includeFileForId(string $id): ?array
     {
         $fileName = $this->getFilename($id);
 

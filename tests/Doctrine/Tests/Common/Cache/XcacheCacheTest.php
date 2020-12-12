@@ -10,7 +10,7 @@ use Doctrine\Common\Cache\XcacheCache;
  */
 class XcacheCacheTest extends CacheTest
 {
-    protected function _getCacheDriver() : CacheProvider
+    protected function _getCacheDriver(): CacheProvider
     {
         return new XcacheCache();
     }
