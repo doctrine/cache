@@ -33,7 +33,10 @@
         "doctrine/coding-standard": "^8.0"
     },
     "suggest": {
-        "alcaeus/mongo-php-adapter": "Required to use legacy MongoDB driver"
+        "alcaeus/mongo-php-adapter": "Required to use legacy MongoDB driver",
+        "psr/cache": "Common interface for caching libraries",
+        "symfony/cache": "Use Symfony\\Component\\Cache\\DoctrineProvider to bridge to PSR-6",
+        "cache/psr-6-doctrine-bridge": "Use Cache\\Bridge\\Doctrine\\DoctrineCacheBridge to bridge to PSR-6"
     },
     "conflict": {
         "doctrine/common": ">2.2,<2.4"

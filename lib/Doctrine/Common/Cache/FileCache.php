@@ -37,6 +37,8 @@ use const PATHINFO_DIRNAME;
 
 /**
  * Base file cache driver.
+ *
+ * @deprecated Deprecated without replacement in doctrine/cache 1.11. This class will be dropped in 2.0
  */
 abstract class FileCache extends CacheProvider
 {

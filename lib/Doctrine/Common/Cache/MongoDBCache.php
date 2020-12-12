@@ -12,6 +12,8 @@ use const E_USER_DEPRECATED;
 
 /**
  * MongoDB cache provider.
+ *
+ * @deprecated Deprecated without replacement in doctrine/cache 1.11. This class will be dropped in 2.0
  */
 class MongoDBCache extends CacheProvider
 {
