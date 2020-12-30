@@ -4,6 +4,7 @@ namespace Doctrine\Tests\Common\Cache;
 
 use Doctrine\Common\Cache\ApcuCache;
 use Doctrine\Common\Cache\CacheProvider;
+
 use function ini_get;
 
 /**
@@ -11,7 +12,7 @@ use function ini_get;
  */
 class ApcuCacheTest extends CacheTest
 {
-    protected function setUp() : void
+    protected function setUp(): void
     {
         if (ini_get('apc.enable_cli')) {
             return;
@@ -20,12 +21,12 @@ class ApcuCacheTest extends CacheTest
         $this->markTestSkipped('APC must be enabled for the CLI with the ini setting apc.enable_cli=1');
     }
 
-    protected function _getCacheDriver() : CacheProvider
+    protected function getCacheDriver(): CacheProvider
     {
         return new ApcuCache();
     }
 
-    public function testLifetime() : void
+    public function testLifetime(): void
     {
         $this->markTestSkipped('The APC cache TTL is not working in a single process/request. See https://bugs.php.net/bug.php?id=58084');
     }

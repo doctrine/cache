@@ -3,6 +3,7 @@
 namespace Doctrine\Common\Cache;
 
 use Traversable;
+
 use function array_values;
 use function count;
 use function iterator_to_array;
@@ -28,7 +29,7 @@ class ChainCache extends CacheProvider
             : array_values($cacheProviders);
     }
 
-    public function setDefaultLifeTimeForDownstreamCacheProviders(int $defaultLifeTimeForDownstreamCacheProviders) : void
+    public function setDefaultLifeTimeForDownstreamCacheProviders(int $defaultLifeTimeForDownstreamCacheProviders): void
     {
         $this->defaultLifeTimeForDownstreamCacheProviders = $defaultLifeTimeForDownstreamCacheProviders;
     }

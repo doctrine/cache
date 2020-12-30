@@ -11,7 +11,7 @@ use function time;
  */
 class ArrayCache extends CacheProvider
 {
-    /** @var array[] $data each element being a tuple of [$data, $expiration], where the expiration is int|bool */
+    /** @psalm-var array<string, array{mixed, int|bool}>> $data each element being a tuple of [$data, $expiration], where the expiration is int|bool */
     private $data = [];
 
     /** @var int */
