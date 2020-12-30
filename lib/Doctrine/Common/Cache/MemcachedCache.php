@@ -3,6 +3,7 @@
 namespace Doctrine\Common\Cache;
 
 use Memcached;
+
 use function array_keys;
 use function preg_match;
 use function strlen;

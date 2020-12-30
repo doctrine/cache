@@ -5,6 +5,7 @@ namespace Doctrine\Tests\Common\Cache;
 use Doctrine\Common\Cache\Cache;
 use Doctrine\Common\Cache\CacheProvider;
 use Doctrine\Common\Cache\PhpFileCache;
+
 use const PHP_VERSION_ID;
 
 /**
@@ -12,7 +13,10 @@ use const PHP_VERSION_ID;
  */
 class PhpFileCacheTest extends BaseFileCacheTest
 {
-    public function provideDataToCache() : array
+    /**
+     * @return mixed[]
+     */
+    public function provideDataToCache(): array
     {
         $data = parent::provideDataToCache();
 
@@ -25,9 +29,9 @@ class PhpFileCacheTest extends BaseFileCacheTest
         return $data;
     }
 
-    public function testImplementsSetState() : void
+    public function testImplementsSetState(): void
     {
-        $cache = $this->_getCacheDriver();
+        $cache = $this->getCacheDriver();
 
         // Test save
         $cache->save('test_set_state', new SetStateClass([1, 2, 3]));
@@ -50,9 +54,9 @@ class PhpFileCacheTest extends BaseFileCacheTest
     /**
      * @group 154
      */
-    public function testNotImplementsSetState() : void
+    public function testNotImplementsSetState(): void
     {
-        $cache = $this->_getCacheDriver();
+        $cache = $this->getCacheDriver();
 
         $cache->save('test_not_set_state', new NotSetStateClass([5, 6, 7]));
         self::assertEquals(new NotSetStateClass([5, 6, 7]), $cache->fetch('test_not_set_state'));
@@ -61,18 +65,18 @@ class PhpFileCacheTest extends BaseFileCacheTest
     /**
      * @group 154
      */
-    public function testNotImplementsSetStateInArray() : void
+    public function testNotImplementsSetStateInArray(): void
     {
-        $cache = $this->_getCacheDriver();
+        $cache = $this->getCacheDriver();
 
         $cache->save('test_not_set_state_in_array', [new NotSetStateClass([4, 3, 2])]);
         self::assertEquals([new NotSetStateClass([4, 3, 2])], $cache->fetch('test_not_set_state_in_array'));
         self::assertTrue($cache->contains('test_not_set_state_in_array'));
     }
 
-    public function testGetStats() : void
+    public function testGetStats(): void
     {
-        $cache = $this->_getCacheDriver();
+        $cache = $this->getCacheDriver();
         $stats = $cache->getStats();
 
         self::assertNull($stats[Cache::STATS_HITS]);
@@ -82,7 +86,7 @@ class PhpFileCacheTest extends BaseFileCacheTest
         self::assertGreaterThan(0, $stats[Cache::STATS_MEMORY_AVAILABLE]);
     }
 
-    protected function _getCacheDriver() : CacheProvider
+    protected function getCacheDriver(): CacheProvider
     {
         return new PhpFileCache($this->directory);
     }
@@ -90,13 +94,20 @@ class PhpFileCacheTest extends BaseFileCacheTest
 
 class NotSetStateClass
 {
+    /** @var mixed */
     private $value;
 
+    /**
+     * @param mixed $value
+     */
     public function __construct($value)
     {
         $this->value = $value;
     }
 
+    /**
+     * @return mixed
+     */
     public function getValue()
     {
         return $this->value;
@@ -105,9 +116,13 @@ class NotSetStateClass
 
 class SetStateClass extends NotSetStateClass
 {
+    /** @var mixed[] */
     public static $values = [];
 
-    public static function __set_state($data)
+    /**
+     * @param mixed[] $data
+     */
+    public static function __set_state($data): self
     {
         self::$values = $data;
 

@@ -6,11 +6,12 @@ use Doctrine\Common\Cache\CacheProvider;
 use Doctrine\Tests\DoctrineTestCase;
 use PHPUnit_Framework_MockObject_MockObject;
 
+use function assert;
+
 class CacheProviderTest extends DoctrineTestCase
 {
-    public function testFetchMultiWillFilterNonRequestedKeys() : void
+    public function testFetchMultiWillFilterNonRequestedKeys(): void
     {
-        /** @var CacheProvider|PHPUnit_Framework_MockObject_MockObject $cache */
         $cache = $this->getMockForAbstractClass(
             CacheProvider::class,
             [],
@@ -20,6 +21,7 @@ class CacheProviderTest extends DoctrineTestCase
             true,
             ['doFetchMultiple']
         );
+        assert($cache instanceof CacheProvider || $cache instanceof PHPUnit_Framework_MockObject_MockObject);
 
         $cache
             ->expects($this->once())
@@ -36,9 +38,8 @@ class CacheProviderTest extends DoctrineTestCase
         );
     }
 
-    public function testFailedDeleteAllDoesNotChangeNamespaceVersion() : void
+    public function testFailedDeleteAllDoesNotChangeNamespaceVersion(): void
     {
-        /** @var CacheProvider|PHPUnit_Framework_MockObject_MockObject $cache */
         $cache = $this->getMockForAbstractClass(
             CacheProvider::class,
             [],
@@ -48,6 +49,7 @@ class CacheProviderTest extends DoctrineTestCase
             true,
             ['doFetch', 'doSave', 'doContains']
         );
+        assert($cache instanceof CacheProvider || $cache instanceof PHPUnit_Framework_MockObject_MockObject);
 
         $cache
             ->expects($this->once())
@@ -74,9 +76,8 @@ class CacheProviderTest extends DoctrineTestCase
         $cache->contains('key');
     }
 
-    public function testSaveMultipleNoFail() : void
+    public function testSaveMultipleNoFail(): void
     {
-        /** @var CacheProvider|PHPUnit_Framework_MockObject_MockObject $cache */
         $cache = $this->getMockForAbstractClass(
             CacheProvider::class,
             [],
@@ -86,6 +87,7 @@ class CacheProviderTest extends DoctrineTestCase
             true,
             ['doSave']
         );
+        assert($cache instanceof CacheProvider || $cache instanceof PHPUnit_Framework_MockObject_MockObject);
 
         $cache
             ->expects($this->at(1))
@@ -105,13 +107,13 @@ class CacheProviderTest extends DoctrineTestCase
         ]);
     }
 
-    public function testDeleteMultipleNoFail() : void
+    public function testDeleteMultipleNoFail(): void
     {
-        /** @var CacheProvider|PHPUnit_Framework_MockObject_MockObject $cache */
         $cache = $this
             ->getMockBuilder(CacheProvider::class)
             ->setMethods(['doDelete'])
             ->getMockForAbstractClass();
+        assert($cache instanceof CacheProvider || $cache instanceof PHPUnit_Framework_MockObject_MockObject);
 
         $cache
             ->expects($this->at(1))
@@ -128,10 +130,10 @@ class CacheProviderTest extends DoctrineTestCase
         $cache->deleteMultiple(['kerr', 'kok']);
     }
 
-    public function testInvalidNamespaceVersionCacheEntry() : void
+    public function testInvalidNamespaceVersionCacheEntry(): void
     {
-        /** @var CacheProvider|PHPUnit_Framework_MockObject_MockObject $cache */
         $cache = $this->getMockForAbstractClass(CacheProvider::class);
+        assert($cache instanceof CacheProvider || $cache instanceof PHPUnit_Framework_MockObject_MockObject);
 
         $cache->expects($this->once())
               ->method('doFetch')

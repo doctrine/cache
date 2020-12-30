@@ -84,7 +84,7 @@ interface Cache
      * - <b>memory_available</b>
      * Memory allowed to use for storage.
      *
-     * @return array|null An associative array with server's statistics if available, NULL otherwise.
+     * @return mixed[]|null An associative array with server's statistics if available, NULL otherwise.
      */
     public function getStats();
 }

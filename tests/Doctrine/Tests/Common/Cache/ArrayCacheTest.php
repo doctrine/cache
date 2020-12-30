@@ -8,14 +8,14 @@ use Doctrine\Common\Cache\CacheProvider;
 
 class ArrayCacheTest extends CacheTest
 {
-    protected function _getCacheDriver() : CacheProvider
+    protected function getCacheDriver(): CacheProvider
     {
         return new ArrayCache();
     }
 
-    public function testGetStats() : void
+    public function testGetStats(): void
     {
-        $cache = $this->_getCacheDriver();
+        $cache = $this->getCacheDriver();
         $cache->fetch('test1');
         $cache->fetch('test2');
         $cache->fetch('test3');
@@ -46,7 +46,7 @@ class ArrayCacheTest extends CacheTest
         self::assertEquals(8, $stats[Cache::STATS_MISSES]); // +1 for internal call to DoctrineNamespaceCacheKey
     }
 
-    protected function isSharedStorage() : bool
+    protected function isSharedStorage(): bool
     {
         return false;
     }

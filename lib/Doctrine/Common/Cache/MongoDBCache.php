@@ -5,8 +5,10 @@ namespace Doctrine\Common\Cache;
 use InvalidArgumentException;
 use MongoCollection;
 use MongoDB\Collection;
-use const E_USER_DEPRECATED;
+
 use function trigger_error;
+
+use const E_USER_DEPRECATED;
 
 /**
  * MongoDB cache provider.

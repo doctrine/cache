@@ -11,9 +11,10 @@ use Memcache;
  */
 class MemcacheCacheTest extends CacheTest
 {
+    /** @var Memcache */
     private $memcache;
 
-    protected function setUp() : void
+    protected function setUp(): void
     {
         $this->memcache = new Memcache();
 
@@ -25,7 +26,7 @@ class MemcacheCacheTest extends CacheTest
         $this->markTestSkipped('Cannot connect to Memcache.');
     }
 
-    protected function tearDown() : void
+    protected function tearDown(): void
     {
         if (! ($this->memcache instanceof Memcache)) {
             return;
@@ -39,7 +40,7 @@ class MemcacheCacheTest extends CacheTest
      *
      * Memcache does not support " " and null byte as key so we remove them from the tests.
      */
-    public function provideCacheIds() : array
+    public function provideCacheIds(): array
     {
         $ids = parent::provideCacheIds();
         unset($ids[21], $ids[22]);
@@ -47,15 +48,12 @@ class MemcacheCacheTest extends CacheTest
         return $ids;
     }
 
-    public function testGetMemcacheReturnsInstanceOfMemcache() : void
+    public function testGetMemcacheReturnsInstanceOfMemcache(): void
     {
-        self::assertInstanceOf('Memcache', $this->_getCacheDriver()->getMemcache());
+        self::assertInstanceOf('Memcache', $this->getCacheDriver()->getMemcache());
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    protected function _getCacheDriver() : CacheProvider
+    protected function getCacheDriver(): CacheProvider
     {
         $driver = new MemcacheCache();
         $driver->setMemcache($this->memcache);

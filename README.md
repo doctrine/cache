@@ -1,6 +1,6 @@
 # Doctrine Cache
 
-[![Build Status](https://img.shields.io/travis/doctrine/cache/master.svg?style=flat-square)](http://travis-ci.org/doctrine/cache) 
+[![Build Status](https://github.com/doctrine/cache/workflows/Continuous%20Integration/badge.svg)](https://github.com/doctrine/cache/actions)
 [![Code Coverage](https://codecov.io/gh/doctrine/dbal/branch/cache/graph/badge.svg)](https://codecov.io/gh/doctrine/dbal/branch/master)
 
 [![Latest Stable Version](https://img.shields.io/packagist/v/doctrine/cache.svg?style=flat-square)](https://packagist.org/packages/doctrine/cache)

@@ -8,6 +8,7 @@ use Doctrine\Common\Cache\MongoDBCache;
 use MongoDB\Client;
 use MongoDB\Collection;
 use MongoDB\Driver\Exception\Exception;
+
 use function sleep;
 
 /**
@@ -18,7 +19,7 @@ class ExtMongoDBCacheTest extends CacheTest
     /** @var Collection */
     private $collection;
 
-    protected function setUp() : void
+    protected function setUp(): void
     {
         try {
             $mongo = new Client();
@@ -30,7 +31,7 @@ class ExtMongoDBCacheTest extends CacheTest
         $this->collection = $mongo->selectCollection('doctrine_common_cache', 'test');
     }
 
-    protected function tearDown() : void
+    protected function tearDown(): void
     {
         if (! ($this->collection instanceof Collection)) {
             return;
@@ -39,9 +40,9 @@ class ExtMongoDBCacheTest extends CacheTest
         $this->collection->drop();
     }
 
-    public function testGetStats() : void
+    public function testGetStats(): void
     {
-        $cache = $this->_getCacheDriver();
+        $cache = $this->getCacheDriver();
         // Run a query to create the collection
         $this->collection->find([]);
         $stats = $cache->getStats();
@@ -53,9 +54,9 @@ class ExtMongoDBCacheTest extends CacheTest
         self::assertNull($stats[Cache::STATS_MEMORY_AVAILABLE]);
     }
 
-    public function testLifetime() : void
+    public function testLifetime(): void
     {
-        $cache = $this->_getCacheDriver();
+        $cache = $this->getCacheDriver();
         $cache->save('expire', 'value', 2);
         self::assertCount(1, $this->collection->listIndexes());
         self::assertTrue($cache->contains('expire'), 'Data should not be expired yet');
@@ -64,7 +65,7 @@ class ExtMongoDBCacheTest extends CacheTest
         self::assertCount(2, $this->collection->listIndexes());
     }
 
-    protected function _getCacheDriver() : CacheProvider
+    protected function getCacheDriver(): CacheProvider
     {
         return new MongoDBCache($this->collection);
     }

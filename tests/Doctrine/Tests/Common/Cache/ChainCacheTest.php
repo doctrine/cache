@@ -9,20 +9,20 @@ use Doctrine\Common\Cache\ChainCache;
 
 class ChainCacheTest extends CacheTest
 {
-    protected function _getCacheDriver() : CacheProvider
+    protected function getCacheDriver(): CacheProvider
     {
         return new ChainCache([new ArrayCache()]);
     }
 
-    public function testGetStats() : void
+    public function testGetStats(): void
     {
-        $cache = $this->_getCacheDriver();
+        $cache = $this->getCacheDriver();
         $stats = $cache->getStats();
 
-        self::assertInternalType('array', $stats);
+        self::assertIsArray($stats);
     }
 
-    public function testOnlyFetchFirstOne() : void
+    public function testOnlyFetchFirstOne(): void
     {
         $cache1 = new ArrayCache();
         $cache2 = $this->getMockForAbstractClass(CacheProvider::class);
@@ -35,7 +35,7 @@ class ChainCacheTest extends CacheTest
         self::assertEquals('bar', $chainCache->fetch('id'));
     }
 
-    public function testOnlyFetchFirstCompleteSet() : void
+    public function testOnlyFetchFirstCompleteSet(): void
     {
         $cache1 = new ArrayCache();
         $cache2 = $this
@@ -51,7 +51,7 @@ class ChainCacheTest extends CacheTest
         self::assertEquals(['bar' => 'Bar', 'foo' => 'Foo'], $chainCache->fetchMultiple(['bar', 'foo']));
     }
 
-    public function testFetchPropagateToFastestCache() : void
+    public function testFetchPropagateToFastestCache(): void
     {
         $cache1 = new ArrayCache();
         $cache2 = new ArrayCache();
@@ -68,7 +68,7 @@ class ChainCacheTest extends CacheTest
         self::assertTrue($cache1->contains('bar'));
     }
 
-    public function testFetchPropagatesToFastestCacheUsingDefaultLifeTimeForDownstreamCacheProviders() : void
+    public function testFetchPropagatesToFastestCacheUsingDefaultLifeTimeForDownstreamCacheProviders(): void
     {
         $defaultLifeTimeForDownstreamCacheProviders = 0;
 
@@ -90,7 +90,7 @@ class ChainCacheTest extends CacheTest
         self::assertEquals('value', $result);
     }
 
-    public function testFetchPropagatesToFastestCacheUsingIndicatedDefaultLifeTimeForDownstreamCacheProviders() : void
+    public function testFetchPropagatesToFastestCacheUsingIndicatedDefaultLifeTimeForDownstreamCacheProviders(): void
     {
         $specificDefaultLifeTimeForDownstreamCacheProviders = 12345;
 
@@ -113,7 +113,7 @@ class ChainCacheTest extends CacheTest
         self::assertEquals('value', $result);
     }
 
-    public function testFetchMultiplePropagateToFastestCache() : void
+    public function testFetchMultiplePropagateToFastestCache(): void
     {
         $cache1 = new ArrayCache();
         $cache2 = new ArrayCache();
@@ -132,7 +132,7 @@ class ChainCacheTest extends CacheTest
         self::assertTrue($cache1->contains('foo'));
     }
 
-    public function testFetchMultiplePropagatesToFastestCacheUsingIndicatedDefaultLifeTimeForDownstreamCacheProviders() : void
+    public function testFetchMultiplePropagatesToFastestCacheUsingIndicatedDefaultLifeTimeForDownstreamCacheProviders(): void
     {
         $specificDefaultLifeTimeForDownstreamCacheProviders = 12345;
 
@@ -155,7 +155,7 @@ class ChainCacheTest extends CacheTest
         self::assertEquals(['bar' => 'Bar', 'foo' => 'Foo'], $result);
     }
 
-    public function testNamespaceIsPropagatedToAllProviders() : void
+    public function testNamespaceIsPropagatedToAllProviders(): void
     {
         $cache1 = new ArrayCache();
         $cache2 = new ArrayCache();
@@ -167,7 +167,7 @@ class ChainCacheTest extends CacheTest
         self::assertEquals('bar', $cache2->getNamespace());
     }
 
-    public function testDeleteToAllProviders() : void
+    public function testDeleteToAllProviders(): void
     {
         $cache1 = $this->getMockForAbstractClass('Doctrine\Common\Cache\CacheProvider');
         $cache2 = $this->getMockForAbstractClass('Doctrine\Common\Cache\CacheProvider');
@@ -179,7 +179,7 @@ class ChainCacheTest extends CacheTest
         $chainCache->delete('bar');
     }
 
-    public function testDeleteMultipleToAllProviders() : void
+    public function testDeleteMultipleToAllProviders(): void
     {
         $cache1 = $this
             ->getMockBuilder(CacheProvider::class)
@@ -197,7 +197,7 @@ class ChainCacheTest extends CacheTest
         $chainCache->deleteMultiple(['bar', 'foo']);
     }
 
-    public function testFlushToAllProviders() : void
+    public function testFlushToAllProviders(): void
     {
         $cache1 = $this->getMockForAbstractClass('Doctrine\Common\Cache\CacheProvider');
         $cache2 = $this->getMockForAbstractClass('Doctrine\Common\Cache\CacheProvider');
@@ -212,7 +212,7 @@ class ChainCacheTest extends CacheTest
     /**
      * @group 155
      */
-    public function testChainCacheAcceptsArrayIteratorsAsDependency() : void
+    public function testChainCacheAcceptsArrayIteratorsAsDependency(): void
     {
         $cache1 = $this->getMockForAbstractClass(CacheProvider::class);
         $cache2 = $this->getMockForAbstractClass(CacheProvider::class);
@@ -223,7 +223,7 @@ class ChainCacheTest extends CacheTest
         (new ChainCache(new ArrayIterator([$cache1, $cache2])))->flushAll();
     }
 
-    protected function isSharedStorage() : bool
+    protected function isSharedStorage(): bool
     {
         return false;
     }

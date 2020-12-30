@@ -1,0 +1,104 @@
+
+name: "Continuous Integration"
+
+on:
+  pull_request:
+    branches:
+      - "*.x"
+      - "master"
+  push:
+    branches:
+      - "*.x"
+      - "master"
+
+env:
+  fail-fast: true
+
+jobs:
+  phpunit:
+    name: "PHPUnit"
+    runs-on: "ubuntu-20.04"
+
+    strategy:
+      matrix:
+        php-version:
+          - "7.1"
+          - "7.2"
+          - "7.3"
+          - "7.4"
+          - "8.0"
+
+    services:
+      mongodb:
+        image: "mongo:4.4"
+        ports:
+          - "27017:27017"
+      redis:
+        image: "redis:6.0.9"
+        ports:
+          - "6379:6379"
+      memcached:
+        image: "memcached:1.6.9"
+        ports:
+          - "11211:11211"
+
+    steps:
+      - name: "Checkout"
+        uses: "actions/checkout@v2"
+        with:
+          fetch-depth: 2
+
+      - name: "Install PHP with XDebug"
+        uses: "shivammathur/setup-php@v2"
+        if: "${{ matrix.php-version == '7.1' }}"
+        with:
+          php-version: "${{ matrix.php-version }}"
+          coverage: "xdebug"
+          extensions: "apcu, mongodb-4.4"
+          ini-values: "zend.assertions=1, apc.enable_cli=1"
+
+      - name: "Install PHP with PCOV"
+        uses: "shivammathur/setup-php@v2"
+        if: "${{ matrix.php-version != '7.1' }}"
+        with:
+          php-version: "${{ matrix.php-version }}"
+          coverage: "pcov"
+          extensions: "apcu, mongodb-4.4"
+          ini-values: "zend.assertions=1, apc.enable_cli=1"
+
+      - name: "Install dependencies with Composer"
+        uses: "ramsey/composer-install@v1"
+        with:
+          dependency-versions: "${{ matrix.dependencies }}"
+          composer-options: "--prefer-dist --no-suggest"
+
+      - name: "Run PHPUnit"
+        run: "vendor/bin/phpunit --coverage-clover=coverage.xml"
+
+      - name: "Upload coverage file"
+        uses: "actions/upload-artifact@v2"
+        with:
+          name: "phpunit-${{ matrix.php-version }}.coverage"
+          path: "coverage.xml"
+
+  upload_coverage:
+    name: "Upload coverage to Codecov"
+    runs-on: "ubuntu-20.04"
+    needs:
+      - "phpunit"
+
+    steps:
+      - name: "Checkout"
+        uses: "actions/checkout@v2"
+        with:
+          fetch-depth: 2
+
+      - name: "Download coverage files"
+        uses: "actions/download-artifact@v2"
+        with:
+          path: "reports"
+
+      - name: "Upload to Codecov"
+        uses: "codecov/codecov-action@v1"
+        with:
+          directory: reports
