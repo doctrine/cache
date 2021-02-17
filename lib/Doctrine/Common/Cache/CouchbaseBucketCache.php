@@ -19,6 +19,8 @@ use function version_compare;
 
 /**
  * Couchbase ^2.3.0 cache provider.
+ *
+ * @deprecated Deprecated without replacement in doctrine/cache 1.11. This class will be dropped in 2.0
  */
 final class CouchbaseBucketCache extends CacheProvider
 {
