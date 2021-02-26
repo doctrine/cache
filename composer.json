@@ -30,13 +30,12 @@
         "mongodb/mongodb": "^1.1",
         "phpunit/phpunit": "^7.0 || ^8.0 || ^9.0",
         "predis/predis":   "~1.0",
-        "doctrine/coding-standard": "^8.0"
+        "doctrine/coding-standard": "^8.0",
+        "psr/cache": "^1.0",
+        "cache/integration-tests": "dev-master"
     },
     "suggest": {
-        "alcaeus/mongo-php-adapter": "Required to use legacy MongoDB driver",
-        "psr/cache": "Common interface for caching libraries",
-        "symfony/cache": "Use Symfony\\Component\\Cache\\DoctrineProvider to bridge to PSR-6",
-        "cache/psr-6-doctrine-bridge": "Use Cache\\Bridge\\Doctrine\\DoctrineCacheBridge to bridge to PSR-6"
+        "alcaeus/mongo-php-adapter": "Required to use legacy MongoDB driver"
     },
     "conflict": {
         "doctrine/common": ">2.2,<2.4"
