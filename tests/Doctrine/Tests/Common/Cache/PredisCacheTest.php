@@ -90,9 +90,4 @@ class PredisCacheTest extends CacheTest
 
         self::assertInstanceOf(PredisCache::class, new PredisCache($predisClient));
     }
-
-    public function testFetchMultiple(): void
-    {
-        $this->markTestSkipped('this is probably a bug that needs to be fixed');
-    }
 }

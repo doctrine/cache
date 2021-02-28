@@ -7,6 +7,7 @@ use Predis\ClientInterface;
 use function array_combine;
 use function array_filter;
 use function array_map;
+use function array_values;
 use function call_user_func_array;
 use function serialize;
 use function unserialize;
@@ -42,7 +43,7 @@ class PredisCache extends CacheProvider
      */
     protected function doFetchMultiple(array $keys)
     {
-        $fetchedItems = call_user_func_array([$this->client, 'mget'], $keys);
+        $fetchedItems = call_user_func_array([$this->client, 'mget'], array_values($keys));
 
         return array_map('unserialize', array_filter(array_combine($keys, $fetchedItems)));
     }
