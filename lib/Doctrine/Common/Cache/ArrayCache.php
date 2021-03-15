@@ -7,6 +7,8 @@ use function time;
 /**
  * Array cache driver.
  *
+ * @deprecated Deprecated without replacement in doctrine/cache 1.11. This class will be dropped in 2.0
+ *
  * @link   www.doctrine-project.org
  */
 class ArrayCache extends CacheProvider

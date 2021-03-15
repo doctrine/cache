@@ -10,6 +10,8 @@ use function iterator_to_array;
 
 /**
  * Cache provider that allows to easily chain multiple cache providers
+ *
+ * @deprecated Deprecated without replacement in doctrine/cache 1.11. This class will be dropped in 2.0
  */
 class ChainCache extends CacheProvider
 {
