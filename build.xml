@@ -55,11 +55,7 @@
                 if (count($parts) != 3) {
                     throw new \InvalidArgumentException('Version is assumed in format x.y.z, ${doctrine.current_version} given');
                 }
-                if ('${current_git_branch}' === 'master') {
-                    $parts[1]++;
-                } else {
-                    $parts[2]++;
-                }
+                $parts[2]++;
                 echo implode('.', $parts);
             " />
         </exec>
