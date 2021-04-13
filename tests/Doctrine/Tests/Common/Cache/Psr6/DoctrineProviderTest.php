@@ -13,15 +13,23 @@ namespace Doctrine\Tests\Common\Cache\Psr6;
 
 use Doctrine\Common\Cache\CacheProvider;
 use Doctrine\Common\Cache\Psr6\DoctrineProvider;
-use PHPUnit\Framework\TestCase;
+use Doctrine\Tests\Common\Cache\CacheTest;
 use Symfony\Component\Cache\Adapter\ArrayAdapter;
 
-class DoctrineProviderTest extends TestCase
+use function sprintf;
+
+class DoctrineProviderTest extends CacheTest
 {
+    protected function getCacheDriver(): CacheProvider
+    {
+        $pool = new ArrayAdapter();
+
+        return new DoctrineProvider($pool);
+    }
+
     public function testProvider()
     {
-        $pool  = new ArrayAdapter();
-        $cache = new DoctrineProvider($pool);
+        $cache = $this->getCacheDriver();
 
         $this->assertInstanceOf(CacheProvider::class, $cache);
 
@@ -41,5 +49,15 @@ class DoctrineProviderTest extends TestCase
         $cache->flushAll();
         $this->assertFalse($cache->fetch($key));
         $this->assertFalse($cache->contains($key));
+    }
+
+    public function testGetStats(): void
+    {
+        $this->markTestSkipped(sprintf('"%s" does not expose statistics', DoctrineProvider::class));
+    }
+
+    protected function isSharedStorage(): bool
+    {
+        return false;
     }
 }
