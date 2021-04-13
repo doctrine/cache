@@ -13,6 +13,7 @@ namespace Doctrine\Common\Cache\Psr6;
 
 use Doctrine\Common\Cache\CacheProvider;
 use Psr\Cache\CacheItemPoolInterface;
+use Symfony\Component\Cache\Adapter\DoctrineAdapter as SymfonyDoctrineAdapter;
 
 use function rawurlencode;
 
@@ -26,9 +27,33 @@ final class DoctrineProvider extends CacheProvider
     /** @var CacheItemPoolInterface */
     private $pool;
 
-    public function __construct(CacheItemPoolInterface $pool)
+    public static function wrap(CacheItemPoolInterface $pool): CacheProvider
+    {
+        if ($pool instanceof CacheAdapter) {
+            return $pool->getCache();
+        }
+
+        if ($pool instanceof SymfonyDoctrineAdapter) {
+            $getCache = function () {
+                // phpcs:ignore Squiz.Scope.StaticThisUsage.Found
+                return $this->provider;
+            };
+
+            return $getCache->bindTo($pool, SymfonyDoctrineAdapter::class)();
+        }
+
+        return new self($pool);
+    }
+
+    private function __construct(CacheItemPoolInterface $pool)
     {
         $this->pool = $pool;
+    }
+
+    /** @internal */
+    public function getPool(): CacheItemPoolInterface
+    {
+        return $this->pool;
     }
 
     /**

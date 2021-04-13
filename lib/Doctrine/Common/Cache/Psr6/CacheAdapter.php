@@ -7,6 +7,7 @@ use Doctrine\Common\Cache\ClearableCache;
 use Doctrine\Common\Cache\MultiOperationCache;
 use Psr\Cache\CacheItemInterface;
 use Psr\Cache\CacheItemPoolInterface;
+use Symfony\Component\Cache\DoctrineProvider as SymfonyDoctrineProvider;
 
 use function array_key_exists;
 use function assert;
@@ -30,9 +31,33 @@ final class CacheAdapter implements CacheItemPoolInterface
     /** @var CacheItem[] */
     private $deferredItems = [];
 
-    public function __construct(Cache $cache)
+    public static function wrap(Cache $cache): CacheItemPoolInterface
+    {
+        if ($cache instanceof DoctrineProvider) {
+            return $cache->getPool();
+        }
+
+        if ($cache instanceof SymfonyDoctrineProvider) {
+            $getPool = function () {
+                // phpcs:ignore Squiz.Scope.StaticThisUsage.Found
+                return $this->pool;
+            };
+
+            return $getPool->bindTo($cache, SymfonyDoctrineProvider::class)();
+        }
+
+        return new self($cache);
+    }
+
+    private function __construct(Cache $cache)
     {
         $this->cache = $cache;
+    }
+
+    /** @internal */
+    public function getCache(): Cache
+    {
+        return $this->cache;
     }
 
     /**
