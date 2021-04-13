@@ -24,7 +24,7 @@ class DoctrineProviderTest extends CacheTest
     {
         $pool = new ArrayAdapter();
 
-        return new DoctrineProvider($pool);
+        return DoctrineProvider::wrap($pool);
     }
 
     public function testProvider()

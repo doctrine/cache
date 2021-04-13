@@ -18,6 +18,6 @@ final class CacheAdapterTest extends CachePoolTest
             $this->arrayCache = new ArrayCache();
         }
 
-        return new CacheAdapter($this->arrayCache);
+        return CacheAdapter::wrap($this->arrayCache);
     }
 }

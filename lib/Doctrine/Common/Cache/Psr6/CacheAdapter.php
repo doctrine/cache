@@ -30,7 +30,12 @@ final class CacheAdapter implements CacheItemPoolInterface
     /** @var CacheItem[] */
     private $deferredItems = [];
 
-    public function __construct(Cache $cache)
+    public static function wrap(Cache $cache): CacheItemPoolInterface
+    {
+        return new self($cache);
+    }
+
+    private function __construct(Cache $cache)
     {
         $this->cache = $cache;
     }

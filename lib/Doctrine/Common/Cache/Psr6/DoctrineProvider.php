@@ -26,7 +26,12 @@ final class DoctrineProvider extends CacheProvider
     /** @var CacheItemPoolInterface */
     private $pool;
 
-    public function __construct(CacheItemPoolInterface $pool)
+    public static function wrap(CacheItemPoolInterface $pool): CacheProvider
+    {
+        return new self($pool);
+    }
+
+    private function __construct(CacheItemPoolInterface $pool)
     {
         $this->pool = $pool;
     }
