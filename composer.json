@@ -32,7 +32,8 @@
         "predis/predis":   "~1.0",
         "doctrine/coding-standard": "^8.0",
         "psr/cache": "^1.0 || ^2.0",
-        "cache/integration-tests": "dev-master"
+        "cache/integration-tests": "dev-master",
+        "symfony/cache": "^4.4 || ^5.2"
     },
     "suggest": {
         "alcaeus/mongo-php-adapter": "Required to use legacy MongoDB driver"
