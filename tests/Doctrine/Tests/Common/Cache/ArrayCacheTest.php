@@ -4,7 +4,6 @@ namespace Doctrine\Tests\Common\Cache;
 
 use Doctrine\Common\Cache\Cache;
 use Doctrine\Common\Cache\CacheProvider;
-use Doctrine\Tests\Common\Cache\ArrayCache;
 
 class ArrayCacheTest extends CacheTest
 {
