@@ -201,7 +201,7 @@ final class CacheAdapter implements CacheItemPoolInterface
         }
 
         if ($itemsCount === 1) {
-            return $this->cache->save($key, $item->get(), $lifetime);
+            return $this->cache->save($key, $item->get(), (int) $lifetime);
         }
 
         $success = true;
