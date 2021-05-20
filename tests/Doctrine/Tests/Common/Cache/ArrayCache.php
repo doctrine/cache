@@ -1,15 +1,16 @@
 <?php
 
-namespace Doctrine\Common\Cache;
+namespace Doctrine\Tests\Common\Cache;
+
+use Doctrine\Common\Cache\Cache;
+use Doctrine\Common\Cache\CacheProvider;
 
 use function time;
 
 /**
- * Array cache driver.
+ * Array cache driver used for testing
  *
- * @deprecated Deprecated without replacement in doctrine/cache 1.11. This class will be dropped in 2.0
- *
- * @link   www.doctrine-project.org
+ * @internal
  */
 class ArrayCache extends CacheProvider
 {

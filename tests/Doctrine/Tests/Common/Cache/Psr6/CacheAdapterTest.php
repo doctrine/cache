@@ -3,10 +3,10 @@
 namespace Doctrine\Tests\Common\Cache\Psr6;
 
 use Cache\IntegrationTests\CachePoolTest;
-use Doctrine\Common\Cache\ArrayCache;
 use Doctrine\Common\Cache\Cache;
 use Doctrine\Common\Cache\Psr6\CacheAdapter;
 use Doctrine\Common\Cache\Psr6\DoctrineProvider;
+use Doctrine\Tests\Common\Cache\ArrayCache;
 use Psr\Cache\CacheItemInterface;
 use Psr\Cache\CacheItemPoolInterface;
 use Symfony\Component\Cache\Adapter\ArrayAdapter;

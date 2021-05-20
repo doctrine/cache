@@ -11,10 +11,10 @@
 
 namespace Doctrine\Tests\Common\Cache\Psr6;
 
-use Doctrine\Common\Cache\ArrayCache;
 use Doctrine\Common\Cache\CacheProvider;
 use Doctrine\Common\Cache\Psr6\CacheAdapter;
 use Doctrine\Common\Cache\Psr6\DoctrineProvider;
+use Doctrine\Tests\Common\Cache\ArrayCache;
 use Doctrine\Tests\Common\Cache\CacheTest;
 use Symfony\Component\Cache\Adapter\ArrayAdapter;
 use Symfony\Component\Cache\Adapter\DoctrineAdapter as SymfonyDoctrineAdapter;
