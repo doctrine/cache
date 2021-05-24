@@ -19,6 +19,7 @@ use Doctrine\Tests\Common\Cache\CacheTest;
 use Symfony\Component\Cache\Adapter\ArrayAdapter;
 use Symfony\Component\Cache\Adapter\DoctrineAdapter as SymfonyDoctrineAdapter;
 
+use function array_keys;
 use function sprintf;
 
 class DoctrineProviderTest extends CacheTest
@@ -52,6 +53,25 @@ class DoctrineProviderTest extends CacheTest
         $cache->flushAll();
         $this->assertFalse($cache->fetch($key));
         $this->assertFalse($cache->contains($key));
+    }
+
+    public function testProviderMultiOperation()
+    {
+        $cache = $this->getCacheDriver();
+
+        $values = [
+            'foo'      => 'bar',
+            '{}()/\@:' => 'baz',
+        ];
+        $keys   = array_keys($values);
+
+        $this->assertTrue($cache->saveMultiple($values));
+        $this->assertSame($values, $cache->fetchMultiple($keys));
+
+        $this->assertTrue($cache->deleteMultiple($keys));
+        foreach ($keys as $key) {
+            $this->assertFalse($cache->contains($key));
+        }
     }
 
     public function testWithWrappedCache()

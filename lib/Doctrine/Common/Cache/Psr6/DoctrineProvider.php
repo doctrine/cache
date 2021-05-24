@@ -12,9 +12,16 @@
 namespace Doctrine\Common\Cache\Psr6;
 
 use Doctrine\Common\Cache\CacheProvider;
+use Psr\Cache\CacheItemInterface;
 use Psr\Cache\CacheItemPoolInterface;
 use Symfony\Component\Cache\Adapter\DoctrineAdapter as SymfonyDoctrineAdapter;
+use Traversable;
 
+use function array_combine;
+use function array_filter;
+use function array_keys;
+use function array_map;
+use function iterator_to_array;
 use function rawurlencode;
 
 /**
@@ -67,6 +74,26 @@ final class DoctrineProvider extends CacheProvider
     }
 
     /**
+     * @inheritDoc
+     */
+    protected function doFetchMultiple(array $keys): array
+    {
+        $items = $this->pool->getItems(array_map('rawurlencode', $keys));
+        if ($items instanceof Traversable) {
+            $items = iterator_to_array($items);
+        }
+
+        $items = array_combine($keys, $items);
+        $items = array_filter($items, static function (CacheItemInterface $item) {
+            return $item->isHit();
+        });
+
+        return array_map(static function (CacheItemInterface $item) {
+            return $item->get();
+        }, $items);
+    }
+
+    /**
      * {@inheritdoc}
      *
      * @return bool
@@ -93,6 +120,28 @@ final class DoctrineProvider extends CacheProvider
     }
 
     /**
+     * @inheritDoc
+     */
+    protected function doSaveMultiple(array $keysAndValues, $lifetime = 0): bool
+    {
+        $keys = array_keys($keysAndValues);
+
+        $items = $this->pool->getItems(array_map('rawurlencode', $keys));
+        if ($items instanceof Traversable) {
+            $items = iterator_to_array($items);
+        }
+
+        $items = array_combine($keys, $items);
+        foreach ($items as $key => $item) {
+            if (! $this->pool->saveDeferred($item->set($keysAndValues[$key]))) {
+                return false;
+            }
+        }
+
+        return $this->pool->commit();
+    }
+
+    /**
      * {@inheritdoc}
      *
      * @return bool
@@ -100,6 +149,14 @@ final class DoctrineProvider extends CacheProvider
     protected function doDelete($id)
     {
         return $this->pool->deleteItem(rawurlencode($id));
+    }
+
+    /**
+     * @inheritDoc
+     */
+    protected function doDeleteMultiple(array $keys): bool
+    {
+        return $this->pool->deleteItems(array_map('rawurlencode', $keys));
     }
 
     /**
