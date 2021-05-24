@@ -19,8 +19,10 @@ use Traversable;
 
 use function array_combine;
 use function array_filter;
+use function array_flip;
 use function array_keys;
 use function array_map;
+use function array_replace;
 use function iterator_to_array;
 use function rawurlencode;
 
@@ -129,7 +131,7 @@ final class DoctrineProvider extends CacheProvider
      */
     protected function doSaveMultiple(array $keysAndValues, $lifetime = 0): bool
     {
-        $keys = array_keys($keysAndValues);
+        $keys        = array_keys($keysAndValues);
         $encodedKeys = array_map('rawurlencode', $keys);
 
         $items = $this->pool->getItems($encodedKeys);
