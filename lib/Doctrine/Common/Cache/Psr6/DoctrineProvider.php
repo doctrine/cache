@@ -78,10 +78,15 @@ final class DoctrineProvider extends CacheProvider
      */
     protected function doFetchMultiple(array $keys): array
     {
-        $items = $this->pool->getItems(array_map('rawurlencode', $keys));
+        $encodedKeys = array_map('rawurlencode', $keys);
+
+        $items = $this->pool->getItems($encodedKeys);
         if ($items instanceof Traversable) {
             $items = iterator_to_array($items);
         }
+
+        // Sorting items by keys
+        $items = array_replace(array_flip($encodedKeys), $items);
 
         $items = array_combine($keys, $items);
         $items = array_filter($items, static function (CacheItemInterface $item) {
@@ -125,11 +130,15 @@ final class DoctrineProvider extends CacheProvider
     protected function doSaveMultiple(array $keysAndValues, $lifetime = 0): bool
     {
         $keys = array_keys($keysAndValues);
+        $encodedKeys = array_map('rawurlencode', $keys);
 
-        $items = $this->pool->getItems(array_map('rawurlencode', $keys));
+        $items = $this->pool->getItems($encodedKeys);
         if ($items instanceof Traversable) {
             $items = iterator_to_array($items);
         }
+
+        // Sorting items by keys
+        $items = array_replace(array_flip($encodedKeys), $items);
 
         $items = array_combine($keys, $items);
         foreach ($items as $key => $item) {
