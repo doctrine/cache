@@ -82,9 +82,6 @@ final class DoctrineProvider extends CacheProvider
 
         $result = [];
         foreach ($keys as $key) {
-            // To be checked whether redoing the rawurlencode is slower or faster than using a
-            // single `array_combine` to create a mapping of keys to encoded keys, or comparing
-            // that to building both the list and the map with a loop instead of the array_map
             $item = $items[rawurlencode($key)];
 
             if (! $item->isHit()) {
@@ -134,9 +131,6 @@ final class DoctrineProvider extends CacheProvider
         }
 
         foreach ($keysAndValues as $key => $value) {
-            // To be checked whether redoing the rawurlencode is slower or faster than using a
-            // single `array_combine` to create a mapping of keys to encoded keys, or comparing
-            // that to building both the list and the map with a loop instead of the array_map
             $item = $items[rawurlencode($key)];
 
             if (! $this->pool->saveDeferred($item->set($value))) {
