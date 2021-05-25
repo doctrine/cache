@@ -11,6 +11,7 @@
 
 namespace Doctrine\Common\Cache\Psr6;
 
+use Doctrine\Common\Cache\Cache;
 use Doctrine\Common\Cache\CacheProvider;
 use Psr\Cache\CacheItemPoolInterface;
 use Symfony\Component\Cache\Adapter\DoctrineAdapter as SymfonyDoctrineAdapter;
@@ -27,7 +28,7 @@ final class DoctrineProvider extends CacheProvider
     /** @var CacheItemPoolInterface */
     private $pool;
 
-    public static function wrap(CacheItemPoolInterface $pool): CacheProvider
+    public static function wrap(CacheItemPoolInterface $pool): Cache
     {
         if ($pool instanceof CacheAdapter) {
             return $pool->getCache();
