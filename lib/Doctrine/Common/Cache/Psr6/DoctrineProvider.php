@@ -12,17 +12,12 @@
 namespace Doctrine\Common\Cache\Psr6;
 
 use Doctrine\Common\Cache\CacheProvider;
-use Psr\Cache\CacheItemInterface;
 use Psr\Cache\CacheItemPoolInterface;
 use Symfony\Component\Cache\Adapter\DoctrineAdapter as SymfonyDoctrineAdapter;
 use Traversable;
 
-use function array_combine;
-use function array_filter;
-use function array_flip;
 use function array_keys;
 use function array_map;
-use function array_replace;
 use function iterator_to_array;
 use function rawurlencode;
 
@@ -80,24 +75,26 @@ final class DoctrineProvider extends CacheProvider
      */
     protected function doFetchMultiple(array $keys): array
     {
-        $encodedKeys = array_map('rawurlencode', $keys);
-
-        $items = $this->pool->getItems($encodedKeys);
+        $items = $this->pool->getItems(array_map('rawurlencode', $keys));
         if ($items instanceof Traversable) {
             $items = iterator_to_array($items);
         }
 
-        // Sorting items by keys
-        $items = array_replace(array_flip($encodedKeys), $items);
+        $result = [];
+        foreach ($keys as $key) {
+            // To be checked whether redoing the rawurlencode is slower or faster than using a
+            // single `array_combine` to create a mapping of keys to encoded keys, or comparing
+            // that to building both the list and the map with a loop instead of the array_map
+            $item = $items[rawurlencode($key)];
 
-        $items = array_combine($keys, $items);
-        $items = array_filter($items, static function (CacheItemInterface $item) {
-            return $item->isHit();
-        });
+            if (! $item->isHit()) {
+                continue;
+            }
 
-        return array_map(static function (CacheItemInterface $item) {
-            return $item->get();
-        }, $items);
+            $result[$key] = $item->get();
+        }
+
+        return $result;
     }
 
     /**
@@ -131,20 +128,18 @@ final class DoctrineProvider extends CacheProvider
      */
     protected function doSaveMultiple(array $keysAndValues, $lifetime = 0): bool
     {
-        $keys        = array_keys($keysAndValues);
-        $encodedKeys = array_map('rawurlencode', $keys);
-
-        $items = $this->pool->getItems($encodedKeys);
+        $items = $this->pool->getItems(array_map('rawurlencode', array_keys($keysAndValues)));
         if ($items instanceof Traversable) {
             $items = iterator_to_array($items);
         }
 
-        // Sorting items by keys
-        $items = array_replace(array_flip($encodedKeys), $items);
+        foreach ($keysAndValues as $key => $value) {
+            // To be checked whether redoing the rawurlencode is slower or faster than using a
+            // single `array_combine` to create a mapping of keys to encoded keys, or comparing
+            // that to building both the list and the map with a loop instead of the array_map
+            $item = $items[rawurlencode($key)];
 
-        $items = array_combine($keys, $items);
-        foreach ($items as $key => $item) {
-            if (! $this->pool->saveDeferred($item->set($keysAndValues[$key]))) {
+            if (! $this->pool->saveDeferred($item->set($value))) {
                 return false;
             }
         }
