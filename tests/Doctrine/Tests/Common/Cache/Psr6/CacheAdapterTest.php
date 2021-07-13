@@ -37,6 +37,9 @@ final class CacheAdapterTest extends CachePoolTest
         self::assertSame($rootCache, CacheAdapter::wrap($wrapped));
     }
 
+    /**
+     * @requires function Symfony\Component\Cache\DoctrineProvider::__construct
+     */
     public function testWithWrappedSymfonyCache()
     {
         $rootCache = new ArrayAdapter();
