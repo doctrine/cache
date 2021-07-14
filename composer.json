@@ -31,16 +31,16 @@
         "phpunit/phpunit": "^7.0 || ^8.0 || ^9.0",
         "predis/predis":   "~1.0",
         "doctrine/coding-standard": "^8.0",
-        "psr/cache": "^1.0 || ^2.0",
+        "psr/cache": "^1.0 || ^2.0 || ^3.0",
         "cache/integration-tests": "dev-master",
-        "symfony/cache": "^4.4 || ^5.2"
+        "symfony/cache": "^4.4 || ^5.2 || ^6.0@dev",
+        "symfony/var-exporter": "^4.4 || ^5.2 || ^6.0@dev"
     },
     "suggest": {
         "alcaeus/mongo-php-adapter": "Required to use legacy MongoDB driver"
     },
     "conflict": {
-        "doctrine/common": ">2.2,<2.4",
-        "psr/cache": ">=3"
+        "doctrine/common": ">2.2,<2.4"
     },
     "autoload": {
         "psr-4": { "Doctrine\\Common\\Cache\\": "lib/Doctrine/Common/Cache" }
