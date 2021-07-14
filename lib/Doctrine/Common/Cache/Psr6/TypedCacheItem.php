@@ -8,32 +8,23 @@ use DateTimeInterface;
 use Psr\Cache\CacheItemInterface;
 use TypeError;
 
-use function get_class;
-use function gettype;
+use function get_debug_type;
 use function is_int;
-use function is_object;
 use function microtime;
 use function sprintf;
 
 final class TypedCacheItem implements CacheItemInterface
 {
-    /** @var string */
-    private $key;
-    /** @var mixed */
-    private $value;
-    /** @var bool */
-    private $isHit;
-    /** @var float|null */
-    private $expiry;
+    private ?float $expiry = null;
 
     /**
      * @internal
      */
-    public function __construct(string $key, mixed $data, bool $isHit)
-    {
-        $this->key   = $key;
-        $this->value = $data;
-        $this->isHit = $isHit;
+    public function __construct(
+        private string $key,
+        private mixed $value,
+        private bool $isHit,
+    ) {
     }
 
     public function getKey(): string
@@ -51,10 +42,7 @@ final class TypedCacheItem implements CacheItemInterface
         return $this->isHit;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public function set($value): static
+    public function set(mixed $value): static
     {
         $this->value = $value;
 
@@ -73,7 +61,7 @@ final class TypedCacheItem implements CacheItemInterface
         } else {
             throw new TypeError(sprintf(
                 'Expected $expiration to be an instance of DateTimeInterface or null, got %s',
-                is_object($expiration) ? get_class($expiration) : gettype($expiration)
+                get_debug_type($expiration)
             ));
         }
 
@@ -94,7 +82,7 @@ final class TypedCacheItem implements CacheItemInterface
         } else {
             throw new TypeError(sprintf(
                 'Expected $time to be either an integer, an instance of DateInterval or null, got %s',
-                is_object($time) ? get_class($time) : gettype($time)
+                get_debug_type($time)
             ));
         }
 
