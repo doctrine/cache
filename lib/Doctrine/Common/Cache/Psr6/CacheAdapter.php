@@ -218,6 +218,8 @@ final class CacheAdapter implements CacheItemPoolInterface
             $byLifetime[(int) $lifetime][$key] = $item->get();
         }
 
+        $this->deferredItems = [];
+
         switch (count($expiredKeys)) {
             case 0:
                 break;

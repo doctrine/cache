@@ -110,4 +110,21 @@ final class CacheAdapterTest extends CachePoolTest
         self::assertTrue($adapter->deleteItems(['1', '2']));
         self::assertCount(1, $rootCache->values);
     }
+
+    public function testItemsAreFlushedToTheUnderlyingCacheOnce(): void
+    {
+        $wrapped = $this->createMock(Cache::class);
+
+        $adapter   = CacheAdapter::wrap($wrapped);
+        $cacheItem = $adapter->getItem('answer-to-life-universe-everything');
+        $cacheItem->set(42);
+        $adapter->saveDeferred($cacheItem);
+
+        $wrapped->expects(self::once())
+            ->method('save')
+            ->willReturn(true);
+
+        $adapter->commit();
+        $adapter->commit();
+    }
 }
