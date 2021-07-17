@@ -37,11 +37,11 @@ final class CacheAdapter implements CacheItemPoolInterface
 
     public static function wrap(Cache $cache): CacheItemPoolInterface
     {
-        if ($cache instanceof DoctrineProvider) {
+        if ($cache instanceof DoctrineProvider && ! $cache->getNamespace()) {
             return $cache->getPool();
         }
 
-        if ($cache instanceof SymfonyDoctrineProvider) {
+        if ($cache instanceof SymfonyDoctrineProvider && ! $cache->getNamespace()) {
             $getPool = function () {
                 // phpcs:ignore Squiz.Scope.StaticThisUsage.Found
                 return $this->pool;
@@ -217,6 +217,8 @@ final class CacheAdapter implements CacheItemPoolInterface
             ++$itemsCount;
             $byLifetime[(int) $lifetime][$key] = $item->get();
         }
+
+        $this->deferredItems = [];
 
         switch (count($expiredKeys)) {
             case 0:
