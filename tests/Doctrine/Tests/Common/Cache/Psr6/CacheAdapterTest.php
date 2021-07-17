@@ -127,4 +127,43 @@ final class CacheAdapterTest extends CachePoolTest
         $adapter->commit();
         $adapter->commit();
     }
+
+    public function testNamespacingFeatureIsPreservedWithDoctrineProvider(): void
+    {
+        $wrapped = new ArrayAdapter();
+
+        $cacheApp1 = DoctrineProvider::wrap($wrapped);
+        $cacheApp1->setNamespace('app 1');
+
+        $cacheApp2 = DoctrineProvider::wrap($wrapped);
+        $cacheApp2->setNamespace('app 2');
+
+        $psrCacheApp1 = CacheAdapter::wrap($cacheApp1);
+        $psrCacheApp2 = CacheAdapter::wrap($cacheApp2);
+
+        $item = $psrCacheApp1->getItem('some key')->set('some value');
+        $psrCacheApp1->save($item);
+        self::assertFalse($psrCacheApp2->getItem('some key')->isHit());
+    }
+
+    /**
+     * @requires function Symfony\Component\Cache\DoctrineProvider::__construct
+     */
+    public function testNamespacingFeatureIsPreservedWithSymfonyDoctrineProvider(): void
+    {
+        $wrapped = new ArrayAdapter();
+
+        $cacheApp1 = new SymfonyDoctrineProvider($wrapped);
+        $cacheApp1->setNamespace('app 1');
+
+        $cacheApp2 = new SymfonyDoctrineProvider($wrapped);
+        $cacheApp2->setNamespace('app 2');
+
+        $psrCacheApp1 = CacheAdapter::wrap($cacheApp1);
+        $psrCacheApp2 = CacheAdapter::wrap($cacheApp2);
+
+        $item = $psrCacheApp1->getItem('some key')->set('some value');
+        $psrCacheApp1->save($item);
+        self::assertFalse($psrCacheApp2->getItem('some key')->isHit());
+    }
 }
