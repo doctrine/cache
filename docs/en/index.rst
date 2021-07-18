@@ -57,3 +57,4 @@ like this:
 
     $cachePool = new FilesystemAdapter();
     $cache = DoctrineProvider::wrap($cachePool);
+    // $cache instanceof \Doctrine\Common\Cache\Cache
