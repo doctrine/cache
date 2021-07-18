@@ -13,3 +13,15 @@ There are two new classes to use in the `Doctrine\Common\Cache\Psr6` namespace:
   This implementation is designed for libraries that leak the cache and want to
   switch to allowing PSR-6 implementations. This class is design to be used
   during the transition phase of sunsetting doctrine/cache support.
+
+A full example to setup a filesystem based PSR-6 cache with symfony/cache
+using the `DoctrineProvider` to convert back to Doctrine's `Cache` interface:
+
+```php
+use Doctrine\Common\Cache\Psr6\DoctrineProvider;
+use Symfony\Component\Cache\Adapter\FilesystemAdapter;
+
+$cachePool = new FilesystemAdapter();
+$cache = DoctrineProvider::wrap($cachePool);
+// $cache instanceof \Doctrine\Common\Cache\Cache
+```
