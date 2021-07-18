@@ -17,11 +17,11 @@ There are two new classes to use in the `Doctrine\Common\Cache\Psr6` namespace:
 A full example to setup a filesystem based PSR-6 cache with symfony/cache
 using the `DoctrineProvider` to convert back to Doctrine's `Cache` interface:
 
-.. code-block:: php
+```php
+use Doctrine\Common\Cache\Psr6\DoctrineProvider;
+use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 
-    use Doctrine\Common\Cache\Psr6\DoctrineProvider;
-    use Symfony\Component\Cache\Adapter\FilesystemAdapter;
-
-    $cachePool = new FilesystemAdapter();
-    $cache = DoctrineProvider::wrap($cachePool);
-    // $cache instanceof \Doctrine\Common\Cache\Cache
+$cachePool = new FilesystemAdapter();
+$cache = DoctrineProvider::wrap($cachePool);
+// $cache instanceof \Doctrine\Common\Cache\Cache
+```
