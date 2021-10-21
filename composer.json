@@ -1,7 +1,7 @@
 {
     "name": "doctrine/cache",
     "type": "library",
-    "description": "PHP Doctrine Cache library is a popular cache implementation that supports many different drivers such as redis, memcache, apc, mongodb and others.",
+    "description": "PHP Doctrine Cache library is a popular cache implementation that supports many different drivers such as redis, memcache, apc, mongodb and others. Abandoned in favor of any implementation of psr/cache, which is a standard",
     "keywords": [
         "php",
         "cache",
@@ -47,5 +47,6 @@
     },
     "autoload-dev": {
         "psr-4": { "Doctrine\\Tests\\": "tests/Doctrine/Tests" }
-    }
+    },
+    "abandoned": "psr/cache-implementation"
 }
