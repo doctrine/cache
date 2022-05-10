@@ -129,6 +129,7 @@ final class DoctrineProvider extends CacheProvider
         if ($this->pool instanceof ResetInterface) {
             $this->pool->reset();
         }
+
         $this->setNamespace($this->getNamespace());
     }
 }
