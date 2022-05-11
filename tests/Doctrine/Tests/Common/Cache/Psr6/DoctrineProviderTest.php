@@ -19,6 +19,7 @@ use Doctrine\Tests\Common\Cache\CacheTest;
 use Symfony\Component\Cache\Adapter\ArrayAdapter;
 use Symfony\Component\Cache\Adapter\DoctrineAdapter as SymfonyDoctrineAdapter;
 
+use function class_exists;
 use function sprintf;
 
 class DoctrineProviderTest extends CacheTest
@@ -64,6 +65,10 @@ class DoctrineProviderTest extends CacheTest
 
     public function testWithWrappedSymfonyCache()
     {
+        if (! class_exists(SymfonyDoctrineAdapter::class)) {
+            self::markTestSkipped('This test requires Symfony 5 or lower.');
+        }
+
         $rootCache = new ArrayCache();
         $wrapped   = new SymfonyDoctrineAdapter($rootCache);
 
