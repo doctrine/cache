@@ -8,6 +8,8 @@ on:
   push:
     branches:
       - "*.x"
+  schedule:
+      - cron: "0 0 * * 0"
 
 env:
   fail-fast: true
