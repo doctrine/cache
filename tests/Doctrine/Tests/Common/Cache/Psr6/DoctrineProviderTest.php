@@ -64,6 +64,10 @@ class DoctrineProviderTest extends CacheTest
 
     public function testWithWrappedSymfonyCache()
     {
+        if (! class_exists(SymfonyDoctrineAdapter::class)) {
+            self::markTestSkipped('This test requires Symfony 5 or lower.');
+        }
+
         $rootCache = new ArrayCache();
         $wrapped   = new SymfonyDoctrineAdapter($rootCache);
 
