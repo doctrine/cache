@@ -19,6 +19,7 @@ use Doctrine\Tests\Common\Cache\CacheTest;
 use Symfony\Component\Cache\Adapter\ArrayAdapter;
 use Symfony\Component\Cache\Adapter\DoctrineAdapter as SymfonyDoctrineAdapter;
 
+use function class_exists;
 use function sprintf;
 
 class DoctrineProviderTest extends CacheTest

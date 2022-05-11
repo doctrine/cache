@@ -6,6 +6,7 @@ use Doctrine\Common\Cache\CacheProvider;
 use Doctrine\Common\Cache\SQLite3Cache;
 use SQLite3;
 
+use function sys_get_temp_dir;
 use function tempnam;
 use function unlink;
 
@@ -22,7 +23,7 @@ class SQLite3CacheTest extends CacheTest
 
     protected function setUp(): void
     {
-        $this->file = tempnam(null, 'doctrine-cache-test-');
+        $this->file = tempnam(sys_get_temp_dir(), 'doctrine-cache-test-');
         unlink($this->file);
         $this->sqlite = new SQLite3($this->file);
     }

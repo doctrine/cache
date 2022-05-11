@@ -71,8 +71,9 @@ class MemcachedCacheTest extends CacheTest
     }
 
     /**
-     * @dataProvider provideInvalidCacheIdSets
      * @psalm-param array<string, int> $ids
+     *
+     * @dataProvider provideInvalidCacheIdSets
      */
     public function testSaveMultipleInvalidCacheIds(array $ids): void
     {
