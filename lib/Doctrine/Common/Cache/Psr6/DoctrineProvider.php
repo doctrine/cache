@@ -124,7 +124,7 @@ final class DoctrineProvider extends CacheProvider
         return null;
     }
 
-    public function reset()
+    public function reset(): void
     {
         if ($this->pool instanceof ResetInterface) {
             $this->pool->reset();
