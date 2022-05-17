@@ -58,6 +58,15 @@ final class DoctrineProvider extends CacheProvider
         return $this->pool;
     }
 
+    public function reset(): void
+    {
+        if ($this->pool instanceof ResetInterface) {
+            $this->pool->reset();
+        }
+
+        $this->setNamespace($this->getNamespace());
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -122,14 +131,5 @@ final class DoctrineProvider extends CacheProvider
     protected function doGetStats()
     {
         return null;
-    }
-
-    public function reset(): void
-    {
-        if ($this->pool instanceof ResetInterface) {
-            $this->pool->reset();
-        }
-
-        $this->setNamespace($this->getNamespace());
     }
 }
