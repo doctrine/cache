@@ -18,9 +18,11 @@ use Doctrine\Common\Cache\Psr6\DoctrineProvider;
 use Doctrine\Tests\Common\Cache\CacheTest;
 use Symfony\Component\Cache\Adapter\ArrayAdapter;
 use Symfony\Component\Cache\Adapter\DoctrineAdapter as SymfonyDoctrineAdapter;
+use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 
 use function class_exists;
 use function sprintf;
+use function sys_get_temp_dir;
 
 class DoctrineProviderTest extends CacheTest
 {
@@ -78,6 +80,42 @@ class DoctrineProviderTest extends CacheTest
     public function testGetStats(): void
     {
         $this->markTestSkipped(sprintf('"%s" does not expose statistics', DoctrineProvider::class));
+    }
+
+    public function testResetArrayAdapter()
+    {
+        $cache = $this->getCacheDriver();
+
+        $cache->save('test', 'test');
+
+        $cache->reset();
+
+        $this->assertSame(false, $cache->fetch('test'));
+    }
+
+    public function testResetFilesystemAdapter()
+    {
+        $pool   = new FilesystemAdapter('', 0, sys_get_temp_dir() . '/doctrine-cache-test');
+        $pool2  = new FilesystemAdapter('', 0, sys_get_temp_dir() . '/doctrine-cache-test');
+        $cache  = DoctrineProvider::wrap($pool);
+        $cache2 = DoctrineProvider::wrap($pool2);
+
+        $cache->save('test', 'test');
+        $cache->reset();
+
+        // we make sure with the next assertion the cache behave like expected and the test is not accidentally changed
+        // to use ArrayAdapter as this test scenario requires a persisted cache adapter
+        $this->assertSame('test', $cache->fetch('test'));
+
+        // the second cache instance will now remove all exist files via namespaceVersion still the first cache
+        // will receive the data until then the reset is called. the assertion after deleteAll is not required
+        // but better show why the reset is even needed when cache service is used in long-running processes.
+        $cache2->deleteAll();
+        $this->assertSame('test', $cache->fetch('test'));
+        $cache->reset();
+
+        // the previous called reset will reset the namespaceVersion and so the cache is correctly false now
+        $this->assertSame(false, $cache->fetch('test'));
     }
 
     protected function isSharedStorage(): bool
