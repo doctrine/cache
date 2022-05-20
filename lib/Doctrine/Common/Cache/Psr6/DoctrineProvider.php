@@ -15,6 +15,7 @@ use Doctrine\Common\Cache\Cache;
 use Doctrine\Common\Cache\CacheProvider;
 use Psr\Cache\CacheItemPoolInterface;
 use Symfony\Component\Cache\Adapter\DoctrineAdapter as SymfonyDoctrineAdapter;
+use Symfony\Contracts\Service\ResetInterface;
 
 use function rawurlencode;
 
@@ -55,6 +56,15 @@ final class DoctrineProvider extends CacheProvider
     public function getPool(): CacheItemPoolInterface
     {
         return $this->pool;
+    }
+
+    public function reset(): void
+    {
+        if ($this->pool instanceof ResetInterface) {
+            $this->pool->reset();
+        }
+
+        $this->setNamespace($this->getNamespace());
     }
 
     /**
