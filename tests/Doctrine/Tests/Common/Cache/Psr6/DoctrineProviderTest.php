@@ -18,10 +18,11 @@ use Doctrine\Common\Cache\Psr6\DoctrineProvider;
 use Doctrine\Tests\Common\Cache\CacheTest;
 use Symfony\Component\Cache\Adapter\ArrayAdapter;
 use Symfony\Component\Cache\Adapter\DoctrineAdapter as SymfonyDoctrineAdapter;
-
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
+
 use function class_exists;
 use function sprintf;
+use function sys_get_temp_dir;
 
 class DoctrineProviderTest extends CacheTest
 {
@@ -94,9 +95,9 @@ class DoctrineProviderTest extends CacheTest
 
     public function testResetFilesystemAdapter()
     {
-        $pool = new FilesystemAdapter('', 0, sys_get_temp_dir() . '/doctrine-cache-test');
-        $pool2 = new FilesystemAdapter('', 0, sys_get_temp_dir() . '/doctrine-cache-test');
-        $cache = DoctrineProvider::wrap($pool);
+        $pool   = new FilesystemAdapter('', 0, sys_get_temp_dir() . '/doctrine-cache-test');
+        $pool2  = new FilesystemAdapter('', 0, sys_get_temp_dir() . '/doctrine-cache-test');
+        $cache  = DoctrineProvider::wrap($pool);
         $cache2 = DoctrineProvider::wrap($pool2);
 
         $cache->save('test', 'test');
