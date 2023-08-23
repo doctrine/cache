@@ -1,5 +1,5 @@
 {
-    "active": true,
+    "active": false,
     "name": "Cache",
     "slug": "cache",
     "docsSlug": "doctrine-cache",
