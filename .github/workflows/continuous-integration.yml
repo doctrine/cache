@@ -15,7 +15,7 @@ env:
 jobs:
   phpunit:
     name: "PHPUnit"
-    runs-on: "ubuntu-20.04"
+    runs-on: "ubuntu-22.04"
 
     strategy:
       fail-fast: false
@@ -28,10 +28,11 @@ jobs:
           - "8.0"
           - "8.1"
           - "8.2"
+          - "8.3"
 
     steps:
       - name: "Checkout"
-        uses: "actions/checkout@v3"
+        uses: "actions/checkout@v4"
         with:
           fetch-depth: 2
 
@@ -52,7 +53,7 @@ jobs:
           ini-values: "zend.assertions=1"
 
       - name: "Install dependencies with Composer"
-        uses: "ramsey/composer-install@v2"
+        uses: "ramsey/composer-install@v3"
         with:
           dependency-versions: "${{ matrix.dependencies }}"
           composer-options: "--prefer-dist --no-suggest"
@@ -61,20 +62,20 @@ jobs:
         run: "vendor/bin/phpunit --coverage-clover=coverage.xml"
 
       - name: "Upload coverage file"
-        uses: "actions/upload-artifact@v3"
+        uses: "actions/upload-artifact@v4"
         with:
           name: "phpunit-${{ matrix.php-version }}.coverage"
           path: "coverage.xml"
 
   upload_coverage:
     name: "Upload coverage to Codecov"
-    runs-on: "ubuntu-20.04"
+    runs-on: "ubuntu-22.04"
     needs:
       - "phpunit"
 
     steps:
       - name: "Checkout"
-        uses: "actions/checkout@v3"
+        uses: "actions/checkout@v4"
         with:
           fetch-depth: 2
 
@@ -84,6 +85,6 @@ jobs:
           path: "reports"
 
       - name: "Upload to Codecov"
-        uses: "codecov/codecov-action@v3"
+        uses: "codecov/codecov-action@v4"
         with:
           directory: reports
