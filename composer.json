@@ -1,5 +1,6 @@
 {
     "name": "doctrine/cache",
+    "abandoned": true,
     "type": "library",
     "description": "PHP Doctrine Cache library is a popular cache implementation that supports many different drivers such as redis, memcache, apc, mongodb and others.",
     "keywords": [
