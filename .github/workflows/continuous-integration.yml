@@ -67,6 +67,13 @@ jobs:
           name: "phpunit-${{ matrix.php-version }}.coverage"
           path: "coverage.xml"
 
+      - name: "Upload coverage to Qlty"
+        if: "${{ matrix.php-version == '8.3' }}"
+        uses: "qltysh/qlty-action/coverage@v2"
+        with:
+          token: "${{ secrets.QLTY_COVERAGE_TOKEN }}"
+          files: "coverage.xml"
+
   upload_coverage:
     name: "Upload coverage to Codecov"
     runs-on: "ubuntu-22.04"
