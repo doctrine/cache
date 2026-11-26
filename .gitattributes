@@ -1,11 +1,6 @@
-/docs export-ignore
-/.github export-ignore
-/tests export-ignore
-.doctrine-project.json export-ignore
-.gitattributes export-ignore
-.gitignore export-ignore
-.scrutinizer.yml export-ignore
-build.properties export-ignore
-build.xml export-ignore
-phpcs.xml.dist export-ignore
-phpunit.xml.dist export-ignore
+/* export-ignore
+/lib -export-ignore
+/lib/** -export-ignore
+/LICENSE -export-ignore
+/*.md -export-ignore
+/composer.json -export-ignore
